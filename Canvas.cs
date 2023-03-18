@@ -47,15 +47,20 @@ namespace GCEd
 			e.Graphics.FillRectangle(Brushes.LightGray, 0, 0, e.ClipRectangle.Width, e.ClipRectangle.Height);
 			e.Graphics.MultiplyTransform(viewMatrix);
 
+			var arr = new[] { new Point(1, 1) };
+			viewMatrix.VectorTransformPoints(arr);
+			using var pen = new Pen(Color.Blue, 1 / arr[0].X);
+			using var pen2 = new Pen(Color.LightBlue, 1 / arr[0].X);
+
 			foreach (var op in ops)
 			{
 				if (op.Line.Instruction == GInstruction.G0)
 				{
-					e.Graphics.DrawLine(Pens.LightBlue, op.AbsXStart, op.AbsYStart, op.AbsXEnd, op.AbsYEnd);
+					e.Graphics.DrawLine(pen2, op.AbsXStart, op.AbsYStart, op.AbsXEnd, op.AbsYEnd);
 				}
 				else if (op.Line.Instruction == GInstruction.G1)
 				{
-					e.Graphics.DrawLine(Pens.Blue, op.AbsXStart, op.AbsYStart, op.AbsXEnd, op.AbsYEnd);
+					e.Graphics.DrawLine(pen, op.AbsXStart, op.AbsYStart, op.AbsXEnd, op.AbsYEnd);
 				}
 				else if (op.Line.Instruction == GInstruction.G2 || op.Line.Instruction == GInstruction.G3)
 				{
@@ -66,17 +71,17 @@ namespace GCEd
 					var r = (float)Math.Sqrt(dxs * dxs + dys * dys);
 					var ths = (float)(Math.Atan2(dxs, dys) * 180 / Math.PI);
 					var the = (float)(Math.Atan2(dxe, dye) * 180 / Math.PI);
-					if (ths < 0) ths += 360;
 					if (op.Line.Instruction == GInstruction.G2 && the < ths) the += 360;
+					if (op.Line.Instruction == GInstruction.G3 && ths < the) ths += 360;
 					ths = 90 - ths;
 					the = 90 - the;
 					if (op.Line.Instruction == GInstruction.G2)
 					{
-						e.Graphics.DrawArc(Pens.Blue, op.AbsI - r, op.AbsJ - r, 2 * r, 2 * r, ths, the - ths);
+						e.Graphics.DrawArc(pen, op.AbsI - r, op.AbsJ - r, 2 * r, 2 * r, ths, the - ths);
 					}
 					else
 					{
-						e.Graphics.DrawArc(Pens.Blue, op.AbsI - r, op.AbsJ - r, 2 * r, 2 * r, ths, the - ths);
+						e.Graphics.DrawArc(pen, op.AbsI - r, op.AbsJ - r, 2 * r, 2 * r, ths, the - ths);
 					}
 				}
 
