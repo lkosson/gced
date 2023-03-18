@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+
 namespace GCEd
 {
 	internal static class Program
@@ -8,12 +11,10 @@ namespace GCEd
 		[STAThread]
 		static void Main()
 		{
-			var gp = new GProgram();
-			gp.Read("test.nc");
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
 			ApplicationConfiguration.Initialize();
-			Application.Run(new Form1());
+			Application.Run(new MainForm());
 		}
 	}
 }
