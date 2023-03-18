@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Content Include="test.nc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

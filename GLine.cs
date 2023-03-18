@@ -9,7 +9,7 @@ namespace GCEd
 {
 	class GLine
 	{
-		private static Dictionary<decimal, GInstruction> instructions;
+		private static Dictionary<(char, decimal), GInstruction> instructions;
 
 		public GInstruction Instruction { get; set; }
 		public string RawText { get; set; }
@@ -26,11 +26,12 @@ namespace GCEd
 
 		static GLine()
 		{
-			instructions = new Dictionary<decimal, GInstruction>();
+			instructions = new Dictionary<(char, decimal), GInstruction>();
 			foreach (var instruction in Enum.GetValues<GInstruction>())
 			{
 				if (instruction < GInstruction.G0) continue;
-				instructions[Decimal.Parse(instruction.ToString().Substring(1), CultureInfo.InvariantCulture)] = instruction;
+				var str = instruction.ToString();
+				instructions[(str[0], Decimal.Parse(str.Substring(1), CultureInfo.InvariantCulture))] = instruction;
 			}
 		}
 
@@ -81,7 +82,7 @@ namespace GCEd
 						else if (currentField == 'K') K = value;
 						else if (currentField == 'F') F = value;
 						else if (currentField == 'S') S = value;
-						else if (instructions.TryGetValue(value, out var instruction)) Instruction = instruction;
+						else if (instructions.TryGetValue((currentField.Value, value), out var instruction)) Instruction = instruction;
 						else if (currentField == 'G' || currentField == 'M') Instruction = GInstruction.Unknown;
 						else
 						{
@@ -216,11 +217,6 @@ namespace GCEd
 		/// Set millimeters
 		/// </summary>
 		G21,
-
-		/// <summary>
-		/// Move home
-		/// </summary>
-		G28,
 
 		/// <summary>
 		/// Set coordinate system

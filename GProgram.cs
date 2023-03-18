@@ -34,5 +34,18 @@ namespace GCEd
 			using var sr = new StreamReader(filename, Encoding.UTF8);
 			Read(sr);
 		}
+
+		public List<GOperation> Run()
+		{
+			var result = new List<GOperation>(Lines.Count);
+			var context = new GContext();
+			foreach (var line in Lines)
+			{
+				var goperation = new GOperation(line);
+				goperation.Execute(context);
+				result.Add(goperation);
+			}
+			return result;
+		}
 	}
 }
