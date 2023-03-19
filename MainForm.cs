@@ -7,6 +7,7 @@ namespace GCEd
 		public MainForm()
 		{
 			InitializeComponent();
+			DoubleBuffered = true;
 		}
 
 		private void timerFPSCounter_Tick(object sender, System.EventArgs e)
@@ -15,6 +16,8 @@ namespace GCEd
 			Text = (canvas.PaintTime / canvas.FrameCount) + " ms";
 			if (canvas.PaintTime == 0) return;
 			Text += ", " + (1000 * canvas.FrameCount / canvas.PaintTime) + " fps";
+
+			Text += ", " + canvas.VisCount + " / " + canvas.ItemCount;
 
 			canvas.FrameCount = 0;
 			canvas.PaintTime = 0;

@@ -15,26 +15,41 @@ namespace GCEd
 	{
 		public int PaintTime { get; set; }
 		public int FrameCount { get; set; }
+		public int ItemCount { get; set; }
+		public int VisCount { get; set; }
 
 		private Matrix viewMatrix;
+		private Matrix inverseViewMatrix;
 		private Point mouseDragStart;
 		private MouseButtons mouseDragButton;
+		private bool matrixUpdated;
+		private CanvasStyle style;
 
-		private IEnumerable<GOperation> ops;
+		private IEnumerable<CanvasItem> items;
 
 		public Canvas()
 		{
 			DoubleBuffered = true;
 			viewMatrix = new Matrix();
+			inverseViewMatrix = new Matrix();
+			style = new CanvasStyle();
 			var p = new GProgram();
 			p.Read("test.nc");
-			ops = p.Run();
+			var ops = p.Run();
+			var items = new List<CanvasItem>();
+			foreach (var op in ops)
+			{
+				if (op.Line.Instruction == GInstruction.G0 || op.Line.Instruction == GInstruction.G1) items.Add(new CanvasItemLine(op));
+				else if (op.Line.Instruction == GInstruction.G2 || op.Line.Instruction == GInstruction.G3) items.Add(new CanvasItemArc(op));
+			}
+			this.items = items;
 		}
 
 		protected override void OnLoad(EventArgs e)
 		{
 			viewMatrix.Scale(1f, -1f);
 			viewMatrix.Translate(0f, -Height);
+			matrixUpdated = true;
 			base.OnLoad(e);
 		}
 
@@ -42,49 +57,36 @@ namespace GCEd
 		{
 			var sw = Stopwatch.StartNew();
 
-			//e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 			e.Graphics.FillRectangle(Brushes.LightGray, 0, 0, e.ClipRectangle.Width, e.ClipRectangle.Height);
 			e.Graphics.MultiplyTransform(viewMatrix);
 
-			var arr = new[] { new Point(1, 1) };
-			viewMatrix.VectorTransformPoints(arr);
-			using var pen = new Pen(Color.Blue, 1 / arr[0].X);
-			using var pen2 = new Pen(Color.LightBlue, 1 / arr[0].X);
-
-			foreach (var op in ops)
+			if (matrixUpdated)
 			{
-				if (op.Line.Instruction == GInstruction.G0)
-				{
-					e.Graphics.DrawLine(pen2, op.AbsXStart, op.AbsYStart, op.AbsXEnd, op.AbsYEnd);
-				}
-				else if (op.Line.Instruction == GInstruction.G1)
-				{
-					e.Graphics.DrawLine(pen, op.AbsXStart, op.AbsYStart, op.AbsXEnd, op.AbsYEnd);
-				}
-				else if (op.Line.Instruction == GInstruction.G2 || op.Line.Instruction == GInstruction.G3)
-				{
-					var dxs = op.AbsXStart - op.AbsI;
-					var dys = op.AbsYStart - op.AbsJ;
-					var dxe = op.AbsXEnd - op.AbsI;
-					var dye = op.AbsYEnd - op.AbsJ;
-					var r = (float)Math.Sqrt(dxs * dxs + dys * dys);
-					var ths = (float)(Math.Atan2(dxs, dys) * 180 / Math.PI);
-					var the = (float)(Math.Atan2(dxe, dye) * 180 / Math.PI);
-					if (op.Line.Instruction == GInstruction.G2 && the < ths) the += 360;
-					if (op.Line.Instruction == GInstruction.G3 && ths < the) ths += 360;
-					ths = 90 - ths;
-					the = 90 - the;
-					if (op.Line.Instruction == GInstruction.G2)
-					{
-						e.Graphics.DrawArc(pen, op.AbsI - r, op.AbsJ - r, 2 * r, 2 * r, ths, the - ths);
-					}
-					else
-					{
-						e.Graphics.DrawArc(pen, op.AbsI - r, op.AbsJ - r, 2 * r, 2 * r, ths, the - ths);
-					}
-				}
+				inverseViewMatrix.Reset();
+				inverseViewMatrix.Multiply(viewMatrix);
+				inverseViewMatrix.Invert();
+				style.ViewMatrixChanged(viewMatrix);
+				foreach (var item in items) item.ViewMatrixChanged(viewMatrix);
+				matrixUpdated = false;
+			}
 
+			var clipBounds = new[] { new PointF(e.ClipRectangle.X, e.ClipRectangle.Y), new PointF(e.ClipRectangle.X + e.ClipRectangle.Width, e.ClipRectangle.Y + e.ClipRectangle.Height) };
+			inverseViewMatrix.TransformPoints(clipBounds);
+			var clipX1 = Math.Min(clipBounds[0].X, clipBounds[1].X);
+			var clipY1 = Math.Min(clipBounds[0].Y, clipBounds[1].Y);
+			var clipX2 = Math.Max(clipBounds[0].X, clipBounds[1].X);
+			var clipY2 = Math.Max(clipBounds[0].Y, clipBounds[1].Y);
+			var absClipRectangle = new RectangleF(clipX1, clipY1, clipX2 - clipX1, clipY2 - clipY1);
+
+			ItemCount = 0;
+			VisCount = 0;
+			foreach (var item in items)
+			{
+				ItemCount++;
+				if (!item.AbsBoundingBox.IntersectsWith(absClipRectangle)) continue;
+				item.Draw(e.Graphics, style);
+				VisCount++;
 			}
 
 			sw.Stop();
@@ -106,6 +108,7 @@ namespace GCEd
 			scaleMatrix.Multiply(viewMatrix);
 
 			viewMatrix = scaleMatrix;
+			matrixUpdated = true;
 
 			Invalidate();
 		}
@@ -132,6 +135,7 @@ namespace GCEd
 				translateMatrix.Translate(e.X - mouseDragStart.X, e.Y - mouseDragStart.Y);
 				translateMatrix.Multiply(viewMatrix);
 				viewMatrix = translateMatrix;
+				matrixUpdated = true;
 
 				mouseDragStart = e.Location;
 				Invalidate();
