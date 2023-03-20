@@ -14,6 +14,8 @@ namespace GCEd
 	{
 		public GOperation Operation { get; set; }
 		public RectangleF AbsBoundingBox { get; protected set; }
+		public bool Selected { get; set; }
+		public bool Hovered { get; set; }
 
 		public CanvasItem(GOperation operation)
 		{

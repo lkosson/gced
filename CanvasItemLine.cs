@@ -29,13 +29,19 @@ namespace GCEd
 
 		public override void Draw(Graphics g, CanvasStyle style)
 		{
-			if (Operation.Line.Instruction == GInstruction.G0) g.DrawLine(style.IdlePen, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsXEnd, Operation.AbsYEnd);
-			else g.DrawLine(style.ActivePen, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsXEnd, Operation.AbsYEnd);
+			var pen = Selected ? style.SelectedPen
+				: Hovered ? style.HoveredPen
+				: Operation.Line.Instruction == GInstruction.G0 ? style.IdlePen
+				: style.ActivePen;
+			g.DrawLine(pen, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsXEnd, Operation.AbsYEnd);
 		}
 
 		public override float Distance(PointF p)
 		{
-			return base.Distance(p);
+			if (AbsBoundingBox == default) return base.Distance(p);
+
+			return (float)(Math.Abs((Operation.AbsXEnd - Operation.AbsXStart) * (Operation.AbsYStart - p.Y) - (Operation.AbsXStart - p.X) * (Operation.AbsYEnd - Operation.AbsYStart))
+				/ Math.Sqrt((Operation.AbsXEnd - Operation.AbsXStart) * (Operation.AbsXEnd - Operation.AbsXStart) + (Operation.AbsYEnd - Operation.AbsYStart) * (Operation.AbsYEnd - Operation.AbsYStart)));
 		}
 
 		public override void Dispose()

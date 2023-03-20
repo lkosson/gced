@@ -14,6 +14,7 @@ namespace GCEd
 	{
 		public Pen IdlePen { get; private set; } = default!;
 		public Pen ActivePen { get; private set; } = default!;
+		public Pen HoveredPen { get; private set; } = default!;
 		public Pen SelectedPen { get; private set; } = default!;
 
 		public CanvasStyle()
@@ -27,6 +28,7 @@ namespace GCEd
 			var len = Math.Max(probe[0].X, 0.0001f);
 			IdlePen = new Pen(Color.LightBlue, 1 / len);
 			ActivePen = new Pen(Color.Blue, 1 / len);
+			HoveredPen = new Pen(Color.DarkGreen, 1 / len);
 			SelectedPen = new Pen(Color.DarkGreen, 2 / len);
 		}
 
@@ -34,6 +36,7 @@ namespace GCEd
 		{
 			IdlePen.Dispose();
 			ActivePen.Dispose();
+			HoveredPen.Dispose();
 			SelectedPen.Dispose();
 		}
 	}

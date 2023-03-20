@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,12 +44,30 @@ namespace GCEd
 
 		public override void Draw(Graphics g, CanvasStyle style)
 		{
-			g.DrawArc(style.ActivePen, Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius, angle, sweep);
+			var pen = Selected ? style.SelectedPen
+				: Hovered ? style.HoveredPen
+				: style.ActivePen;
+
+			g.DrawArc(pen, Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius, angle, sweep);
 		}
 
 		public override float Distance(PointF p)
 		{
-			return base.Distance(p);
+			var dx = p.X - Operation.AbsI;
+			var dy = p.Y - Operation.AbsJ;
+			var pointAngle = 90 - (float)(Math.Atan2(dx, dy) * 180 / Math.PI);
+			var minAngle = Math.Min(angle, angle + sweep);
+			var maxAngle = Math.Max(angle, angle + sweep);
+			if (pointAngle >= minAngle && pointAngle <= maxAngle)
+			{
+				return (float)Math.Abs(Math.Sqrt(dx * dx + dy * dy) - radius);
+			}
+			else
+			{
+				var d1 = (float)Math.Sqrt((p.X - Operation.AbsXStart) * (p.X - Operation.AbsXStart) + (p.Y - Operation.AbsYStart) * (p.Y - Operation.AbsYStart));
+				var d2 = (float)Math.Sqrt((p.X - Operation.AbsXEnd) * (p.X - Operation.AbsXEnd) + (p.Y - Operation.AbsYEnd) * (p.Y - Operation.AbsYEnd));
+				return Math.Min(d1, d2);
+			}
 		}
 
 		public override void Dispose()

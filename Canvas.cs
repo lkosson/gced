@@ -57,8 +57,10 @@ namespace GCEd
 		{
 			var sw = Stopwatch.StartNew();
 
+			var viewClip = e.ClipRectangle;
+			viewClip.Inflate(1, 1);
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			e.Graphics.FillRectangle(Brushes.LightGray, 0, 0, e.ClipRectangle.Width, e.ClipRectangle.Height);
+			e.Graphics.FillRectangle(Brushes.LightGray, viewClip.Left, viewClip.Top, viewClip.Width, viewClip.Height);
 			e.Graphics.MultiplyTransform(viewMatrix);
 
 			if (matrixUpdated)
@@ -71,20 +73,14 @@ namespace GCEd
 				matrixUpdated = false;
 			}
 
-			var clipBounds = new[] { new PointF(e.ClipRectangle.X, e.ClipRectangle.Y), new PointF(e.ClipRectangle.X + e.ClipRectangle.Width, e.ClipRectangle.Y + e.ClipRectangle.Height) };
-			inverseViewMatrix.TransformPoints(clipBounds);
-			var clipX1 = Math.Min(clipBounds[0].X, clipBounds[1].X);
-			var clipY1 = Math.Min(clipBounds[0].Y, clipBounds[1].Y);
-			var clipX2 = Math.Max(clipBounds[0].X, clipBounds[1].X);
-			var clipY2 = Math.Max(clipBounds[0].Y, clipBounds[1].Y);
-			var absClipRectangle = new RectangleF(clipX1, clipY1, clipX2 - clipX1, clipY2 - clipY1);
+			var absClipRect = ViewToAbs(viewClip);
 
 			ItemCount = 0;
 			VisCount = 0;
 			foreach (var item in items)
 			{
 				ItemCount++;
-				if (!item.AbsBoundingBox.IntersectsWith(absClipRectangle)) continue;
+				if (!item.AbsBoundingBox.IntersectsWith(absClipRect)) continue;
 				item.Draw(e.Graphics, style);
 				VisCount++;
 			}
@@ -92,6 +88,54 @@ namespace GCEd
 			sw.Stop();
 			PaintTime += (int)sw.ElapsedMilliseconds;
 			FrameCount++;
+		}
+
+		private float ViewToAbs(int dist)
+		{
+			var abs = ViewToAbs(new Rectangle(0, 0, dist, dist));
+			return (float)Math.Sqrt(abs.Width * abs.Width + abs.Height * abs.Height);
+		}
+
+		private PointF ViewToAbs(Point point)
+		{
+			var probe = new[] { new PointF(point.X, point.Y) };
+			inverseViewMatrix.TransformPoints(probe);
+			return probe[0];
+		}
+
+		private RectangleF ViewToAbs(Rectangle rectView)
+		{
+			var bounds = new[] { new PointF(rectView.X, rectView.Y), new PointF(rectView.X + rectView.Width, rectView.Y + rectView.Height) };
+			inverseViewMatrix.TransformPoints(bounds);
+			var absX1 = Math.Min(bounds[0].X, bounds[1].X);
+			var absY1 = Math.Min(bounds[0].Y, bounds[1].Y);
+			var absX2 = Math.Max(bounds[0].X, bounds[1].X);
+			var absY2 = Math.Max(bounds[0].Y, bounds[1].Y);
+			return new RectangleF(absX1, absY1, absX2 - absX1, absY2 - absY1);
+		}
+
+		private int AbsToView(float dist)
+		{
+			var abs = AbsToView(new RectangleF(0, 0, dist, dist));
+			return (int)Math.Sqrt(abs.Width * abs.Width + abs.Height * abs.Height);
+		}
+
+		private Point AbsToView(PointF point)
+		{
+			var probe = new[] { point };
+			viewMatrix.TransformPoints(probe);
+			return new Point((int)Math.Ceiling(probe[0].X), (int)Math.Ceiling(probe[0].Y));
+		}
+
+		private Rectangle AbsToView(RectangleF rectAbs)
+		{
+			var bounds = new[] { new PointF(rectAbs.X, rectAbs.Y), new PointF(rectAbs.X + rectAbs.Width, rectAbs.Y + rectAbs.Height) };
+			viewMatrix.TransformPoints(bounds);
+			var viewX1 = (int)Math.Floor(Math.Min(bounds[0].X, bounds[1].X));
+			var viewY1 = (int)Math.Floor(Math.Min(bounds[0].Y, bounds[1].Y));
+			var viewX2 = (int)Math.Ceiling(Math.Max(bounds[0].X, bounds[1].X));
+			var viewY2 = (int)Math.Ceiling(Math.Max(bounds[0].Y, bounds[1].Y));
+			return new Rectangle(viewX1, viewY1, viewX2 - viewX1, viewY2 - viewY1);
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e)
@@ -139,6 +183,29 @@ namespace GCEd
 
 				mouseDragStart = e.Location;
 				Invalidate();
+			}
+
+			if (mouseDragButton == MouseButtons.None)
+			{
+				var absPos = ViewToAbs(e.Location);
+				var hoverDist = ViewToAbs(5);
+				foreach (var item in items)
+				{
+					var absInflatedBounds = item.AbsBoundingBox;
+					absInflatedBounds.Inflate(hoverDist, hoverDist);
+					var selected = false;
+					if (absInflatedBounds.Left <= absPos.X && absInflatedBounds.Right >= absPos.X && absInflatedBounds.Top <= absPos.Y && absInflatedBounds.Bottom >= absPos.Y)
+					{
+						var dist = item.Distance(absPos);
+						if (dist < hoverDist) selected = true;
+					}
+					var changed = selected != item.Selected;
+					if (changed)
+					{
+						item.Selected = selected;
+						Invalidate(AbsToView(absInflatedBounds));
+					}
+				}
 			}
 		}
 	}
