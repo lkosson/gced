@@ -63,7 +63,21 @@ namespace GCEd
 				if (absY2 < bounding.Bottom) absY2 = bounding.Bottom;
 			}
 
-			viewMatrix = new Matrix(new RectangleF(absX1, absY1, absX2 - absX1, absY2 - absY1), new[] { new PointF(0, Height), new PointF(Height * (absX2 - absX1) / (absY2 - absY1), Height), new PointF(0, 0) });
+			var ratioAbs = (absX2 - absX1) / (absY2 - absY1);
+			var ratioView = 1.0f * Width / Height;
+
+			if (ratioAbs < ratioView)
+			{
+				var viewWidth = Height * (absX2 - absX1) / (absY2 - absY1);
+				var viewWidthOffset = (Width - viewWidth) / 2;
+				viewMatrix = new Matrix(new RectangleF(absX1, absY1, absX2 - absX1, absY2 - absY1), new[] { new PointF(viewWidthOffset, Height), new PointF(viewWidthOffset + viewWidth, Height), new PointF(viewWidthOffset, 0) });
+			}
+			else
+			{
+				var viewHeight = Width * (absY2 - absY1) / (absX2 - absX1);
+				var viewHeightOffset = (Height - viewHeight) / 2;
+				viewMatrix = new Matrix(new RectangleF(absX1, absY1, absX2 - absX1, absY2 - absY1), new[] { new PointF(0, viewHeightOffset + viewHeight), new PointF(Width, viewHeightOffset + viewHeight), new PointF(0, viewHeightOffset) });
+			}
 
 			matrixUpdated = true;
 			base.OnLoad(e);
