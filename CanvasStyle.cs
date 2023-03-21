@@ -14,7 +14,8 @@ namespace GCEd
 	{
 		public Pen IdlePen { get; private set; } = default!;
 		public Pen ActivePen { get; private set; } = default!;
-		public Pen HoveredPen { get; private set; } = default!;
+		public Pen HoveredIdlePen { get; private set; } = default!;
+		public Pen HoveredActivePen { get; private set; } = default!;
 		public Pen SelectedPen { get; private set; } = default!;
 
 		public CanvasStyle()
@@ -28,15 +29,30 @@ namespace GCEd
 			var len = Math.Max(probe[0].X, 0.0001f);
 			IdlePen = new Pen(Color.LightBlue, 1 / len);
 			ActivePen = new Pen(Color.Blue, 1 / len);
-			HoveredPen = new Pen(Color.DarkGreen, 1 / len);
-			SelectedPen = new Pen(Color.DarkGreen, 2 / len);
+			HoveredIdlePen = new Pen(Color.LightBlue, 3 / len);
+			HoveredActivePen = new Pen(Color.Blue, 3 / len);
+			SelectedPen = new Pen(Color.DarkGreen, 3 / len);
+
+			var arrowPath = new GraphicsPath();
+			arrowPath.AddLine(0, 0, 1f, -2f);
+			arrowPath.AddLine(0, 0, -1f, -2f);
+			arrowPath.AddLine(1f, -2f, -1f, -2f);
+			HoveredActivePen.CustomEndCap = new CustomLineCap(null, arrowPath, LineCap.ArrowAnchor);
+
+			var capPath = new GraphicsPath();
+			capPath.AddLine(2f, 0f, -2f, 0f);
+			HoveredActivePen.CustomStartCap = new CustomLineCap(null, capPath, LineCap.ArrowAnchor);
+
+			SelectedPen.CustomEndCap = HoveredActivePen.CustomEndCap;
+			SelectedPen.CustomStartCap = HoveredActivePen.CustomStartCap;
 		}
 
 		public virtual void Dispose()
 		{
 			IdlePen.Dispose();
 			ActivePen.Dispose();
-			HoveredPen.Dispose();
+			HoveredIdlePen.Dispose();
+			HoveredActivePen.Dispose();
 			SelectedPen.Dispose();
 		}
 	}

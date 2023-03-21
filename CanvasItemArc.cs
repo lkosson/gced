@@ -35,11 +35,6 @@ namespace GCEd
 			angle = startAngle;
 			sweep = endAngle - startAngle;
 			if (angle < 0) angle += 360;
-			if (sweep < 0)
-			{
-				angle += sweep;
-				sweep = -sweep;
-			}
 			AbsBoundingBox = new RectangleF(Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius);
 		}
 
@@ -51,7 +46,7 @@ namespace GCEd
 		public override void Draw(Graphics g, CanvasStyle style)
 		{
 			var pen = Selected ? style.SelectedPen
-				: Hovered ? style.HoveredPen
+				: Hovered ? style.HoveredActivePen
 				: style.ActivePen;
 
 			g.DrawArc(pen, Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius, angle, sweep);
@@ -63,9 +58,33 @@ namespace GCEd
 			var dy = p.Y - Operation.AbsJ;
 			var pointAngle = 90 - (float)(Math.Atan2(dx, dy) * 180 / Math.PI);
 			if (pointAngle < 0) pointAngle += 360;
-			var minAngle = Math.Min(angle, angle + sweep);
-			var maxAngle = Math.Max(angle, angle + sweep);
-			if (pointAngle >= minAngle && pointAngle <= maxAngle)
+
+			var onArc = false;
+
+			if (sweep > 0)
+			{
+				if (angle + sweep < 360)
+				{
+					onArc = pointAngle >= angle && pointAngle <= angle + sweep;
+				}
+				else
+				{
+					onArc = pointAngle >= angle || pointAngle < angle + sweep - 360;
+				}
+			}
+			else
+			{
+				if (angle + sweep > 0)
+				{
+					onArc = pointAngle <= angle && pointAngle >= angle + sweep;
+				}
+				else
+				{
+					onArc = pointAngle <= angle || pointAngle >= angle + sweep + 360;
+				}
+			}
+
+			if (onArc)
 			{
 				return (float)Math.Abs(Math.Sqrt(dx * dx + dy * dy) - radius);
 			}

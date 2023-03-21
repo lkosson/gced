@@ -22,6 +22,7 @@ namespace GCEd
 		private Matrix inverseViewMatrix;
 		private Point mouseDragStart;
 		private MouseButtons mouseDragButton;
+		private bool mouseDragged;
 		private bool matrixUpdated;
 		private CanvasStyle style;
 
@@ -88,6 +89,14 @@ namespace GCEd
 			sw.Stop();
 			PaintTime += (int)sw.ElapsedMilliseconds;
 			FrameCount++;
+		}
+
+		private void Invalidate(CanvasItem item)
+		{
+			var absBounds = item.AbsBoundingBox;
+			var viewBound = AbsToView(absBounds);
+			viewBound.Inflate(5, 5);
+			Invalidate(viewBound);
 		}
 
 		private float ViewToAbs(int dist)
@@ -166,6 +175,23 @@ namespace GCEd
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
+			if (!mouseDragged)
+			{
+				foreach (var item in items)
+				{
+					if (item.Hovered && !item.Selected)
+					{
+						item.Selected = true;
+						Invalidate(item);
+					}
+					else if (item.Selected)
+					{
+						item.Selected = false;
+						Invalidate(item);
+					}
+				}
+			}
+			mouseDragged = false;
 			mouseDragButton = MouseButtons.None;
 			base.OnMouseUp(e);
 		}
@@ -182,6 +208,7 @@ namespace GCEd
 				matrixUpdated = true;
 
 				mouseDragStart = e.Location;
+				mouseDragged = true;
 				Invalidate();
 			}
 
@@ -189,22 +216,60 @@ namespace GCEd
 			{
 				var absPos = ViewToAbs(e.Location);
 				var hoverDist = ViewToAbs(5);
+				var bestItem = (CanvasItem?)null;
+				var bestDistance = Single.MaxValue;
+
 				foreach (var item in items)
 				{
 					var absInflatedBounds = item.AbsBoundingBox;
 					absInflatedBounds.Inflate(hoverDist, hoverDist);
-					var selected = false;
+					var hovered = false;
+					var distance = Single.MaxValue;
 					if (absInflatedBounds.Left <= absPos.X && absInflatedBounds.Right >= absPos.X && absInflatedBounds.Top <= absPos.Y && absInflatedBounds.Bottom >= absPos.Y)
 					{
-						var dist = item.Distance(absPos);
-						if (dist < hoverDist) selected = true;
+						distance = item.Distance(absPos);
+						if (distance < hoverDist) hovered = true;
 					}
-					var changed = selected != item.Selected;
-					if (changed)
+					if (hovered)
 					{
-						item.Selected = selected;
-						Invalidate(AbsToView(absInflatedBounds));
+						if (bestItem == null)
+						{
+							bestItem = item;
+							bestDistance = distance;
+						}
+						else if (bestDistance > distance)
+						{
+							if (bestItem.Hovered)
+							{
+								bestItem.Hovered = false;
+								Invalidate(bestItem);
+							}
+							bestDistance = distance;
+							bestItem = item;
+						}
+						else
+						{
+							if (item.Hovered)
+							{
+								item.Hovered = false;
+								Invalidate(item);
+							}
+						}
 					}
+					else
+					{
+						if (item.Hovered)
+						{
+							item.Hovered = false;
+							Invalidate(item);
+						}
+					}
+				}
+
+				if (bestItem != null && !bestItem.Hovered)
+				{
+					bestItem.Hovered = true;
+					Invalidate(bestItem);
 				}
 			}
 		}
