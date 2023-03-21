@@ -34,6 +34,12 @@ namespace GCEd
 			endAngle = 90 - endAngle;
 			angle = startAngle;
 			sweep = endAngle - startAngle;
+			if (angle < 0) angle += 360;
+			if (sweep < 0)
+			{
+				angle += sweep;
+				sweep = -sweep;
+			}
 			AbsBoundingBox = new RectangleF(Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius);
 		}
 
@@ -56,6 +62,7 @@ namespace GCEd
 			var dx = p.X - Operation.AbsI;
 			var dy = p.Y - Operation.AbsJ;
 			var pointAngle = 90 - (float)(Math.Atan2(dx, dy) * 180 / Math.PI);
+			if (pointAngle < 0) pointAngle += 360;
 			var minAngle = Math.Min(angle, angle + sweep);
 			var maxAngle = Math.Max(angle, angle + sweep);
 			if (pointAngle >= minAngle && pointAngle <= maxAngle)
