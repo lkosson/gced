@@ -48,8 +48,23 @@ namespace GCEd
 
 		protected override void OnLoad(EventArgs e)
 		{
-			viewMatrix.Scale(1f, -1f);
-			viewMatrix.Translate(0f, -Height);
+			var absX1 = Single.MaxValue;
+			var absY1 = Single.MaxValue;
+			var absX2 = Single.MinValue;
+			var absY2 = Single.MinValue;
+
+			foreach (var item in items)
+			{
+				var bounding = item.AbsBoundingBox;
+				bounding.Inflate(5, 5);
+				if (absX1 > bounding.Left) absX1 = bounding.Left;
+				if (absY1 > bounding.Top) absY1 = bounding.Top;
+				if (absX2 < bounding.Right) absX2 = bounding.Right;
+				if (absY2 < bounding.Bottom) absY2 = bounding.Bottom;
+			}
+
+			viewMatrix = new Matrix(new RectangleF(absX1, absY1, absX2 - absX1, absY2 - absY1), new[] { new PointF(0, Height), new PointF(Height * (absX2 - absX1) / (absY2 - absY1), Height), new PointF(0, 0) });
+
 			matrixUpdated = true;
 			base.OnLoad(e);
 		}

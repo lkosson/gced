@@ -34,9 +34,7 @@ namespace GCEd
 			SelectedPen = new Pen(Color.DarkGreen, 3 / len);
 
 			var arrowPath = new GraphicsPath();
-			arrowPath.AddLine(0, 0, 1f, -2f);
-			arrowPath.AddLine(0, 0, -1f, -2f);
-			arrowPath.AddLine(1f, -2f, -1f, -2f);
+			arrowPath.AddLines(new[] { new PointF(0f, 0f), new PointF(1f, -2f), new PointF(-1f, -2f), new PointF(0f, 0f) });
 			HoveredActivePen.CustomEndCap = new CustomLineCap(null, arrowPath, LineCap.ArrowAnchor);
 
 			var capPath = new GraphicsPath();
