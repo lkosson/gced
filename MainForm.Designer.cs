@@ -29,6 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			GCEd.GProgram gProgram1 = new GCEd.GProgram();
 			this.canvas = new GCEd.Canvas();
 			this.timerFPSCounter = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
@@ -38,12 +39,15 @@
 			this.canvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.canvas.FrameCount = 16;
+			this.canvas.FrameCount = 92;
+			this.canvas.ItemCount = 0;
 			this.canvas.Location = new System.Drawing.Point(12, 12);
 			this.canvas.Name = "canvas";
-			this.canvas.PaintTime = 827;
+			this.canvas.PaintTime = 841;
+			this.canvas.Program = gProgram1;
 			this.canvas.Size = new System.Drawing.Size(776, 426);
 			this.canvas.TabIndex = 0;
+			this.canvas.VisCount = 0;
 			// 
 			// timerFPSCounter
 			// 
