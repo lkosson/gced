@@ -14,12 +14,15 @@ namespace GCEd
 	partial class Canvas : UserControl
 	{
 		public GProgram Program { get => program; set { program = value; OnProgramChanged(); } }
-		//public GOperation
 
 		public int PaintTime { get; set; }
 		public int FrameCount { get; set; }
 		public int ItemCount { get; set; }
 		public int VisCount { get; set; }
+
+		public GOperation? SelectedOperation => items.FirstOrDefault(item => item.Selected)?.Operation;
+
+		public event EventHandler? SelectedOperationChanged;
 
 		private GProgram program;
 
@@ -223,19 +226,23 @@ namespace GCEd
 		{
 			if (!mouseDragged)
 			{
+				var selectionChanged = false;
 				foreach (var item in items)
 				{
 					if (item.Hovered && !item.Selected)
 					{
 						item.Selected = true;
+						selectionChanged = true;
 						Invalidate(item);
 					}
 					else if (item.Selected)
 					{
 						item.Selected = false;
+						selectionChanged = true;
 						Invalidate(item);
 					}
 				}
+				if (selectionChanged) SelectedOperationChanged?.Invoke(this, EventArgs.Empty);
 			}
 			mouseDragged = false;
 			mouseDragButton = MouseButtons.None;

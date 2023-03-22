@@ -29,10 +29,10 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			GCEd.GProgram gProgram1 = new GCEd.GProgram();
+			GCEd.GProgram gProgram2 = new GCEd.GProgram();
 			this.canvas = new GCEd.Canvas();
 			this.timerFPSCounter = new System.Windows.Forms.Timer(this.components);
-			this.itemProperties = new GCEd.OperationProperties();
+			this.operationProperties = new GCEd.OperationProperties();
 			this.SuspendLayout();
 			// 
 			// canvas
@@ -45,33 +45,34 @@
 			this.canvas.Location = new System.Drawing.Point(12, 12);
 			this.canvas.Name = "canvas";
 			this.canvas.PaintTime = 841;
-			this.canvas.Program = gProgram1;
+			this.canvas.Program = gProgram2;
 			this.canvas.Size = new System.Drawing.Size(570, 426);
 			this.canvas.TabIndex = 0;
 			this.canvas.VisCount = 0;
+			this.canvas.SelectedOperationChanged += new System.EventHandler(this.canvas_SelectedOperationChanged);
 			// 
 			// timerFPSCounter
 			// 
 			this.timerFPSCounter.Enabled = true;
 			this.timerFPSCounter.Tick += new System.EventHandler(this.timerFPSCounter_Tick);
 			// 
-			// itemProperties
+			// operationProperties
 			// 
-			this.itemProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.operationProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.itemProperties.Location = new System.Drawing.Point(585, 12);
-			this.itemProperties.Margin = new System.Windows.Forms.Padding(0);
-			this.itemProperties.Name = "itemProperties";
-			this.itemProperties.Operation = null;
-			this.itemProperties.Size = new System.Drawing.Size(206, 426);
-			this.itemProperties.TabIndex = 1;
+			this.operationProperties.Location = new System.Drawing.Point(585, 12);
+			this.operationProperties.Margin = new System.Windows.Forms.Padding(0);
+			this.operationProperties.Name = "operationProperties";
+			this.operationProperties.Operation = null;
+			this.operationProperties.Size = new System.Drawing.Size(206, 426);
+			this.operationProperties.TabIndex = 1;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
-			this.Controls.Add(this.itemProperties);
+			this.Controls.Add(this.operationProperties);
 			this.Controls.Add(this.canvas);
 			this.Name = "MainForm";
 			this.Text = "MainForm";
@@ -83,6 +84,6 @@
 
 		private Canvas canvas;
 		private System.Windows.Forms.Timer timerFPSCounter;
-		private OperationProperties itemProperties;
+		private OperationProperties operationProperties;
 	}
 }

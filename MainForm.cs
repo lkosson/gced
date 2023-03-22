@@ -25,5 +25,10 @@ namespace GCEd
 			canvas.FrameCount = 0;
 			canvas.PaintTime = 0;
 		}
+
+		private void canvas_SelectedOperationChanged(object sender, System.EventArgs e)
+		{
+			operationProperties.Operation = canvas.SelectedOperation;
+		}
 	}
 }
