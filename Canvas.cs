@@ -11,12 +11,16 @@ using System.Windows.Forms;
 
 namespace GCEd
 {
-	public partial class Canvas : UserControl
+	partial class Canvas : UserControl
 	{
+		public GProgram Program { get => program; set { program = value; OnProgramChanged(); } }
+
 		public int PaintTime { get; set; }
 		public int FrameCount { get; set; }
 		public int ItemCount { get; set; }
 		public int VisCount { get; set; }
+
+		private GProgram program;
 
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
@@ -34,11 +38,21 @@ namespace GCEd
 			viewMatrix = new Matrix();
 			inverseViewMatrix = new Matrix();
 			style = new CanvasStyle();
-			var p = new GProgram();
-			p.Read("test.nc");
-			var ops = p.Run();
+			program = new GProgram();
+			items = Enumerable.Empty<CanvasItem>();
+		}
+
+		private void OnProgramChanged()
+		{
+			RunProgram();
+			PanZoomViewToFit();
+		}
+
+		private void RunProgram()
+		{
+			var operations = program.Run();
 			var items = new List<CanvasItem>();
-			foreach (var op in ops)
+			foreach (var op in operations)
 			{
 				if (op.Line.Instruction == GInstruction.G0 || op.Line.Instruction == GInstruction.G1) items.Add(new CanvasItemLine(op));
 				else if (op.Line.Instruction == GInstruction.G2 || op.Line.Instruction == GInstruction.G3) items.Add(new CanvasItemArc(op));
@@ -46,7 +60,7 @@ namespace GCEd
 			this.items = items;
 		}
 
-		protected override void OnLoad(EventArgs e)
+		private void PanZoomViewToFit()
 		{
 			var absX1 = Single.MaxValue;
 			var absY1 = Single.MaxValue;
@@ -80,7 +94,6 @@ namespace GCEd
 			}
 
 			matrixUpdated = true;
-			base.OnLoad(e);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)

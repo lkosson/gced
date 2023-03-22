@@ -8,6 +8,9 @@ namespace GCEd
 		{
 			InitializeComponent();
 			DoubleBuffered = true;
+			var program = new GProgram();
+			program.Read("test.nc");
+			canvas.Program = program;
 		}
 
 		private void timerFPSCounter_Tick(object sender, System.EventArgs e)
