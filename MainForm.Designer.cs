@@ -32,6 +32,7 @@
 			GCEd.GProgram gProgram1 = new GCEd.GProgram();
 			this.canvas = new GCEd.Canvas();
 			this.timerFPSCounter = new System.Windows.Forms.Timer(this.components);
+			this.itemProperties = new GCEd.ItemProperties();
 			this.SuspendLayout();
 			// 
 			// canvas
@@ -45,7 +46,7 @@
 			this.canvas.Name = "canvas";
 			this.canvas.PaintTime = 841;
 			this.canvas.Program = gProgram1;
-			this.canvas.Size = new System.Drawing.Size(776, 426);
+			this.canvas.Size = new System.Drawing.Size(570, 426);
 			this.canvas.TabIndex = 0;
 			this.canvas.VisCount = 0;
 			// 
@@ -54,11 +55,23 @@
 			this.timerFPSCounter.Enabled = true;
 			this.timerFPSCounter.Tick += new System.EventHandler(this.timerFPSCounter_Tick);
 			// 
+			// itemProperties
+			// 
+			this.itemProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.itemProperties.Location = new System.Drawing.Point(585, 12);
+			this.itemProperties.Margin = new System.Windows.Forms.Padding(0);
+			this.itemProperties.Name = "itemProperties";
+			this.itemProperties.Operation = null;
+			this.itemProperties.Size = new System.Drawing.Size(206, 426);
+			this.itemProperties.TabIndex = 1;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.itemProperties);
 			this.Controls.Add(this.canvas);
 			this.Name = "MainForm";
 			this.Text = "MainForm";
@@ -70,5 +83,6 @@
 
 		private Canvas canvas;
 		private System.Windows.Forms.Timer timerFPSCounter;
+		private ItemProperties itemProperties;
 	}
 }

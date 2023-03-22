@@ -30,6 +30,7 @@
 		{
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.label2 = new System.Windows.Forms.Label();
+			this.verticalLabel1 = new GCEd.VerticalLabel();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
@@ -41,51 +42,29 @@
 			this.label11 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.verticalLabel1 = new GCEd.VerticalLabel();
 			this.verticalLabel2 = new GCEd.VerticalLabel();
 			this.label13 = new System.Windows.Forms.Label();
 			this.verticalLabel3 = new GCEd.VerticalLabel();
-			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown8 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown9 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown10 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown11 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown12 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown13 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown14 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown15 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown16 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown17 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown18 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown19 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown20 = new System.Windows.Forms.NumericUpDown();
+			this.txtAbsStartX = new System.Windows.Forms.TextBox();
+			this.txtAbsStartY = new System.Windows.Forms.TextBox();
+			this.txtAbsStartZ = new System.Windows.Forms.TextBox();
+			this.txtRelEndX = new System.Windows.Forms.TextBox();
+			this.txtAbsEndX = new System.Windows.Forms.TextBox();
+			this.txtRelEndY = new System.Windows.Forms.TextBox();
+			this.txtAbsEndY = new System.Windows.Forms.TextBox();
+			this.txtRelEndZ = new System.Windows.Forms.TextBox();
+			this.txtAbsEndZ = new System.Windows.Forms.TextBox();
+			this.txtRelCenterI = new System.Windows.Forms.TextBox();
+			this.txtAbsCenterI = new System.Windows.Forms.TextBox();
+			this.txtRelCenterJ = new System.Windows.Forms.TextBox();
+			this.txtAbsCenterJ = new System.Windows.Forms.TextBox();
+			this.txtRelCenterK = new System.Windows.Forms.TextBox();
+			this.txtAbsCenterK = new System.Windows.Forms.TextBox();
+			this.txtAbsF = new System.Windows.Forms.TextBox();
+			this.txtAbsS = new System.Windows.Forms.TextBox();
+			this.txtRelF = new System.Windows.Forms.TextBox();
+			this.txtRelS = new System.Windows.Forms.TextBox();
 			this.tableLayoutPanel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown8)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown9)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown12)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown13)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown14)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown15)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown16)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown17)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown18)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown19)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown20)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
@@ -111,26 +90,25 @@
 			this.tableLayoutPanel1.Controls.Add(this.verticalLabel2, 0, 4);
 			this.tableLayoutPanel1.Controls.Add(this.label13, 1, 11);
 			this.tableLayoutPanel1.Controls.Add(this.verticalLabel3, 0, 7);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown1, 2, 1);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown2, 3, 1);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown3, 2, 2);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown4, 3, 2);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown5, 2, 3);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown6, 3, 3);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown7, 2, 4);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown8, 3, 4);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown9, 2, 5);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown10, 3, 5);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown11, 2, 6);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown12, 3, 6);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown13, 2, 7);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown14, 3, 7);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown15, 2, 8);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown16, 3, 8);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown17, 2, 9);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown18, 3, 9);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown19, 3, 10);
-			this.tableLayoutPanel1.Controls.Add(this.numericUpDown20, 3, 11);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsStartX, 3, 1);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsStartY, 3, 2);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsStartZ, 3, 3);
+			this.tableLayoutPanel1.Controls.Add(this.txtRelEndX, 2, 4);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsEndX, 3, 4);
+			this.tableLayoutPanel1.Controls.Add(this.txtRelEndY, 2, 5);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsEndY, 3, 5);
+			this.tableLayoutPanel1.Controls.Add(this.txtRelEndZ, 2, 6);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsEndZ, 3, 6);
+			this.tableLayoutPanel1.Controls.Add(this.txtRelCenterI, 2, 7);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsCenterI, 3, 7);
+			this.tableLayoutPanel1.Controls.Add(this.txtRelCenterJ, 2, 8);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsCenterJ, 3, 8);
+			this.tableLayoutPanel1.Controls.Add(this.txtRelCenterK, 2, 9);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsCenterK, 3, 9);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsF, 3, 10);
+			this.tableLayoutPanel1.Controls.Add(this.txtAbsS, 3, 11);
+			this.tableLayoutPanel1.Controls.Add(this.txtRelF, 2, 10);
+			this.tableLayoutPanel1.Controls.Add(this.txtRelS, 2, 11);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -161,6 +139,20 @@
 			this.label2.Size = new System.Drawing.Size(22, 15);
 			this.label2.TabIndex = 0;
 			this.label2.Text = "X=";
+			// 
+			// verticalLabel1
+			// 
+			this.verticalLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.verticalLabel1.AutoSize = true;
+			this.verticalLabel1.Location = new System.Drawing.Point(3, 15);
+			this.verticalLabel1.Name = "verticalLabel1";
+			this.tableLayoutPanel1.SetRowSpan(this.verticalLabel1, 3);
+			this.verticalLabel1.Size = new System.Drawing.Size(15, 87);
+			this.verticalLabel1.TabIndex = 1;
+			this.verticalLabel1.Text = "Start";
+			this.verticalLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// label3
 			// 
@@ -274,20 +266,6 @@
 			this.label1.Text = "Relative";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// verticalLabel1
-			// 
-			this.verticalLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.verticalLabel1.AutoSize = true;
-			this.verticalLabel1.Location = new System.Drawing.Point(3, 15);
-			this.verticalLabel1.Name = "verticalLabel1";
-			this.tableLayoutPanel1.SetRowSpan(this.verticalLabel1, 3);
-			this.verticalLabel1.Size = new System.Drawing.Size(15, 87);
-			this.verticalLabel1.TabIndex = 1;
-			this.verticalLabel1.Text = "Start";
-			this.verticalLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
 			// verticalLabel2
 			// 
 			this.verticalLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -326,425 +304,190 @@
 			this.verticalLabel3.Text = "Center";
 			this.verticalLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// numericUpDown1
+			// txtAbsStartX
 			// 
-			this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown1.AutoSize = true;
-			this.numericUpDown1.DecimalPlaces = 3;
-			this.numericUpDown1.Location = new System.Drawing.Point(52, 18);
-			this.numericUpDown1.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown1.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown1.Name = "numericUpDown1";
-			this.numericUpDown1.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown1.TabIndex = 2;
-			this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsStartX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsStartX.Location = new System.Drawing.Point(147, 18);
+			this.txtAbsStartX.Name = "txtAbsStartX";
+			this.txtAbsStartX.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsStartX.TabIndex = 2;
+			this.txtAbsStartX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
-			// numericUpDown2
+			// txtAbsStartY
 			// 
-			this.numericUpDown2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown2.AutoSize = true;
-			this.numericUpDown2.DecimalPlaces = 3;
-			this.numericUpDown2.Location = new System.Drawing.Point(147, 18);
-			this.numericUpDown2.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown2.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown2.Name = "numericUpDown2";
-			this.numericUpDown2.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown2.TabIndex = 2;
-			this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsStartY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsStartY.Location = new System.Drawing.Point(147, 47);
+			this.txtAbsStartY.Name = "txtAbsStartY";
+			this.txtAbsStartY.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsStartY.TabIndex = 2;
+			this.txtAbsStartY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
-			// numericUpDown3
+			// txtAbsStartZ
 			// 
-			this.numericUpDown3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown3.AutoSize = true;
-			this.numericUpDown3.DecimalPlaces = 3;
-			this.numericUpDown3.Location = new System.Drawing.Point(52, 47);
-			this.numericUpDown3.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown3.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown3.Name = "numericUpDown3";
-			this.numericUpDown3.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown3.TabIndex = 2;
-			this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsStartZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsStartZ.Location = new System.Drawing.Point(147, 76);
+			this.txtAbsStartZ.Name = "txtAbsStartZ";
+			this.txtAbsStartZ.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsStartZ.TabIndex = 2;
+			this.txtAbsStartZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
-			// numericUpDown4
+			// txtRelEndX
 			// 
-			this.numericUpDown4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown4.AutoSize = true;
-			this.numericUpDown4.DecimalPlaces = 3;
-			this.numericUpDown4.Location = new System.Drawing.Point(147, 47);
-			this.numericUpDown4.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown4.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown4.Name = "numericUpDown4";
-			this.numericUpDown4.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown4.TabIndex = 2;
-			this.numericUpDown4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelEndX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtRelEndX.Location = new System.Drawing.Point(52, 105);
+			this.txtRelEndX.Name = "txtRelEndX";
+			this.txtRelEndX.Size = new System.Drawing.Size(89, 23);
+			this.txtRelEndX.TabIndex = 2;
+			this.txtRelEndX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelEndX.TextChanged += new System.EventHandler(this.txtRelEndX_TextChanged);
 			// 
-			// numericUpDown5
+			// txtAbsEndX
 			// 
-			this.numericUpDown5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown5.AutoSize = true;
-			this.numericUpDown5.DecimalPlaces = 3;
-			this.numericUpDown5.Location = new System.Drawing.Point(52, 76);
-			this.numericUpDown5.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown5.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown5.Name = "numericUpDown5";
-			this.numericUpDown5.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown5.TabIndex = 2;
-			this.numericUpDown5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsEndX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsEndX.Location = new System.Drawing.Point(147, 105);
+			this.txtAbsEndX.Name = "txtAbsEndX";
+			this.txtAbsEndX.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsEndX.TabIndex = 2;
+			this.txtAbsEndX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsEndX.TextChanged += new System.EventHandler(this.txtAbsEndX_TextChanged);
 			// 
-			// numericUpDown6
+			// txtRelEndY
 			// 
-			this.numericUpDown6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown6.AutoSize = true;
-			this.numericUpDown6.DecimalPlaces = 3;
-			this.numericUpDown6.Location = new System.Drawing.Point(147, 76);
-			this.numericUpDown6.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown6.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown6.Name = "numericUpDown6";
-			this.numericUpDown6.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown6.TabIndex = 2;
-			this.numericUpDown6.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelEndY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtRelEndY.Location = new System.Drawing.Point(52, 134);
+			this.txtRelEndY.Name = "txtRelEndY";
+			this.txtRelEndY.Size = new System.Drawing.Size(89, 23);
+			this.txtRelEndY.TabIndex = 2;
+			this.txtRelEndY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelEndY.TextChanged += new System.EventHandler(this.txtRelEndY_TextChanged);
 			// 
-			// numericUpDown7
+			// txtAbsEndY
 			// 
-			this.numericUpDown7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown7.AutoSize = true;
-			this.numericUpDown7.DecimalPlaces = 3;
-			this.numericUpDown7.Location = new System.Drawing.Point(52, 105);
-			this.numericUpDown7.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown7.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown7.Name = "numericUpDown7";
-			this.numericUpDown7.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown7.TabIndex = 2;
-			this.numericUpDown7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsEndY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsEndY.Location = new System.Drawing.Point(147, 134);
+			this.txtAbsEndY.Name = "txtAbsEndY";
+			this.txtAbsEndY.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsEndY.TabIndex = 2;
+			this.txtAbsEndY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsEndY.TextChanged += new System.EventHandler(this.txtAbsEndY_TextChanged);
 			// 
-			// numericUpDown8
+			// txtRelEndZ
 			// 
-			this.numericUpDown8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown8.AutoSize = true;
-			this.numericUpDown8.DecimalPlaces = 3;
-			this.numericUpDown8.Location = new System.Drawing.Point(147, 105);
-			this.numericUpDown8.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown8.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown8.Name = "numericUpDown8";
-			this.numericUpDown8.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown8.TabIndex = 2;
-			this.numericUpDown8.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelEndZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtRelEndZ.Location = new System.Drawing.Point(52, 163);
+			this.txtRelEndZ.Name = "txtRelEndZ";
+			this.txtRelEndZ.Size = new System.Drawing.Size(89, 23);
+			this.txtRelEndZ.TabIndex = 2;
+			this.txtRelEndZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelEndZ.TextChanged += new System.EventHandler(this.txtRelEndZ_TextChanged);
 			// 
-			// numericUpDown9
+			// txtAbsEndZ
 			// 
-			this.numericUpDown9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown9.AutoSize = true;
-			this.numericUpDown9.DecimalPlaces = 3;
-			this.numericUpDown9.Location = new System.Drawing.Point(52, 134);
-			this.numericUpDown9.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown9.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown9.Name = "numericUpDown9";
-			this.numericUpDown9.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown9.TabIndex = 2;
-			this.numericUpDown9.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsEndZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsEndZ.Location = new System.Drawing.Point(147, 163);
+			this.txtAbsEndZ.Name = "txtAbsEndZ";
+			this.txtAbsEndZ.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsEndZ.TabIndex = 2;
+			this.txtAbsEndZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsEndZ.TextChanged += new System.EventHandler(this.txtAbsEndZ_TextChanged);
 			// 
-			// numericUpDown10
+			// txtRelCenterI
 			// 
-			this.numericUpDown10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown10.AutoSize = true;
-			this.numericUpDown10.DecimalPlaces = 3;
-			this.numericUpDown10.Location = new System.Drawing.Point(147, 134);
-			this.numericUpDown10.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown10.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown10.Name = "numericUpDown10";
-			this.numericUpDown10.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown10.TabIndex = 2;
-			this.numericUpDown10.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelCenterI.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtRelCenterI.Location = new System.Drawing.Point(52, 192);
+			this.txtRelCenterI.Name = "txtRelCenterI";
+			this.txtRelCenterI.Size = new System.Drawing.Size(89, 23);
+			this.txtRelCenterI.TabIndex = 2;
+			this.txtRelCenterI.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelCenterI.TextChanged += new System.EventHandler(this.txtRelCenterI_TextChanged);
 			// 
-			// numericUpDown11
+			// txtAbsCenterI
 			// 
-			this.numericUpDown11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown11.AutoSize = true;
-			this.numericUpDown11.DecimalPlaces = 3;
-			this.numericUpDown11.Location = new System.Drawing.Point(52, 163);
-			this.numericUpDown11.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown11.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown11.Name = "numericUpDown11";
-			this.numericUpDown11.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown11.TabIndex = 2;
-			this.numericUpDown11.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsCenterI.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsCenterI.Location = new System.Drawing.Point(147, 192);
+			this.txtAbsCenterI.Name = "txtAbsCenterI";
+			this.txtAbsCenterI.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsCenterI.TabIndex = 2;
+			this.txtAbsCenterI.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsCenterI.TextChanged += new System.EventHandler(this.txtAbsCenterI_TextChanged);
 			// 
-			// numericUpDown12
+			// txtRelCenterJ
 			// 
-			this.numericUpDown12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown12.AutoSize = true;
-			this.numericUpDown12.DecimalPlaces = 3;
-			this.numericUpDown12.Location = new System.Drawing.Point(147, 163);
-			this.numericUpDown12.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown12.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown12.Name = "numericUpDown12";
-			this.numericUpDown12.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown12.TabIndex = 2;
-			this.numericUpDown12.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelCenterJ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtRelCenterJ.Location = new System.Drawing.Point(52, 221);
+			this.txtRelCenterJ.Name = "txtRelCenterJ";
+			this.txtRelCenterJ.Size = new System.Drawing.Size(89, 23);
+			this.txtRelCenterJ.TabIndex = 2;
+			this.txtRelCenterJ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelCenterJ.TextChanged += new System.EventHandler(this.txtRelCenterJ_TextChanged);
 			// 
-			// numericUpDown13
+			// txtAbsCenterJ
 			// 
-			this.numericUpDown13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown13.AutoSize = true;
-			this.numericUpDown13.DecimalPlaces = 3;
-			this.numericUpDown13.Location = new System.Drawing.Point(52, 192);
-			this.numericUpDown13.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown13.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown13.Name = "numericUpDown13";
-			this.numericUpDown13.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown13.TabIndex = 2;
-			this.numericUpDown13.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsCenterJ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsCenterJ.Location = new System.Drawing.Point(147, 221);
+			this.txtAbsCenterJ.Name = "txtAbsCenterJ";
+			this.txtAbsCenterJ.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsCenterJ.TabIndex = 2;
+			this.txtAbsCenterJ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsCenterJ.TextChanged += new System.EventHandler(this.txtAbsCenterJ_TextChanged);
 			// 
-			// numericUpDown14
+			// txtRelCenterK
 			// 
-			this.numericUpDown14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown14.AutoSize = true;
-			this.numericUpDown14.DecimalPlaces = 3;
-			this.numericUpDown14.Location = new System.Drawing.Point(147, 192);
-			this.numericUpDown14.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown14.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown14.Name = "numericUpDown14";
-			this.numericUpDown14.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown14.TabIndex = 2;
-			this.numericUpDown14.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelCenterK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtRelCenterK.Location = new System.Drawing.Point(52, 250);
+			this.txtRelCenterK.Name = "txtRelCenterK";
+			this.txtRelCenterK.Size = new System.Drawing.Size(89, 23);
+			this.txtRelCenterK.TabIndex = 2;
+			this.txtRelCenterK.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelCenterK.TextChanged += new System.EventHandler(this.txtRelCenterK_TextChanged);
 			// 
-			// numericUpDown15
+			// txtAbsCenterK
 			// 
-			this.numericUpDown15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown15.AutoSize = true;
-			this.numericUpDown15.DecimalPlaces = 3;
-			this.numericUpDown15.Location = new System.Drawing.Point(52, 221);
-			this.numericUpDown15.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown15.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown15.Name = "numericUpDown15";
-			this.numericUpDown15.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown15.TabIndex = 2;
-			this.numericUpDown15.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsCenterK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsCenterK.Location = new System.Drawing.Point(147, 250);
+			this.txtAbsCenterK.Name = "txtAbsCenterK";
+			this.txtAbsCenterK.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsCenterK.TabIndex = 2;
+			this.txtAbsCenterK.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsCenterK.TextChanged += new System.EventHandler(this.txtAbsCenterK_TextChanged);
 			// 
-			// numericUpDown16
+			// txtAbsF
 			// 
-			this.numericUpDown16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown16.AutoSize = true;
-			this.numericUpDown16.DecimalPlaces = 3;
-			this.numericUpDown16.Location = new System.Drawing.Point(147, 221);
-			this.numericUpDown16.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown16.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown16.Name = "numericUpDown16";
-			this.numericUpDown16.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown16.TabIndex = 2;
-			this.numericUpDown16.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsF.Location = new System.Drawing.Point(147, 279);
+			this.txtAbsF.Name = "txtAbsF";
+			this.txtAbsF.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsF.TabIndex = 2;
+			this.txtAbsF.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsF.TextChanged += new System.EventHandler(this.txtAbsF_TextChanged);
 			// 
-			// numericUpDown17
+			// txtAbsS
 			// 
-			this.numericUpDown17.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown17.AutoSize = true;
-			this.numericUpDown17.DecimalPlaces = 3;
-			this.numericUpDown17.Location = new System.Drawing.Point(52, 250);
-			this.numericUpDown17.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown17.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown17.Name = "numericUpDown17";
-			this.numericUpDown17.Size = new System.Drawing.Size(89, 23);
-			this.numericUpDown17.TabIndex = 2;
-			this.numericUpDown17.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtAbsS.Location = new System.Drawing.Point(147, 308);
+			this.txtAbsS.Name = "txtAbsS";
+			this.txtAbsS.Size = new System.Drawing.Size(90, 23);
+			this.txtAbsS.TabIndex = 2;
+			this.txtAbsS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtAbsS.TextChanged += new System.EventHandler(this.txtAbsS_TextChanged);
 			// 
-			// numericUpDown18
+			// txtRelF
 			// 
-			this.numericUpDown18.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown18.AutoSize = true;
-			this.numericUpDown18.DecimalPlaces = 3;
-			this.numericUpDown18.Location = new System.Drawing.Point(147, 250);
-			this.numericUpDown18.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown18.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown18.Name = "numericUpDown18";
-			this.numericUpDown18.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown18.TabIndex = 2;
-			this.numericUpDown18.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtRelF.Location = new System.Drawing.Point(52, 279);
+			this.txtRelF.Name = "txtRelF";
+			this.txtRelF.Size = new System.Drawing.Size(89, 23);
+			this.txtRelF.TabIndex = 2;
+			this.txtRelF.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
-			// numericUpDown19
+			// txtRelS
 			// 
-			this.numericUpDown19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown19.AutoSize = true;
-			this.numericUpDown19.DecimalPlaces = 3;
-			this.numericUpDown19.Location = new System.Drawing.Point(147, 279);
-			this.numericUpDown19.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown19.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown19.Name = "numericUpDown19";
-			this.numericUpDown19.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown19.TabIndex = 2;
-			this.numericUpDown19.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			// 
-			// numericUpDown20
-			// 
-			this.numericUpDown20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.numericUpDown20.AutoSize = true;
-			this.numericUpDown20.DecimalPlaces = 3;
-			this.numericUpDown20.Location = new System.Drawing.Point(147, 308);
-			this.numericUpDown20.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.numericUpDown20.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-			this.numericUpDown20.Name = "numericUpDown20";
-			this.numericUpDown20.Size = new System.Drawing.Size(90, 23);
-			this.numericUpDown20.TabIndex = 2;
-			this.numericUpDown20.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.txtRelS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.txtRelS.Location = new System.Drawing.Point(52, 308);
+			this.txtRelS.Name = "txtRelS";
+			this.txtRelS.Size = new System.Drawing.Size(89, 23);
+			this.txtRelS.TabIndex = 2;
+			this.txtRelS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// ItemProperties
 			// 
@@ -756,26 +499,6 @@
 			this.Size = new System.Drawing.Size(240, 356);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown8)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown9)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown12)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown13)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown14)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown15)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown16)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown17)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown18)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown19)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown20)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -799,25 +522,24 @@
 		private VerticalLabel verticalLabel2;
 		private System.Windows.Forms.Label label13;
 		private VerticalLabel verticalLabel3;
-		private System.Windows.Forms.NumericUpDown numericUpDown1;
-		private System.Windows.Forms.NumericUpDown numericUpDown2;
-		private System.Windows.Forms.NumericUpDown numericUpDown3;
-		private System.Windows.Forms.NumericUpDown numericUpDown4;
-		private System.Windows.Forms.NumericUpDown numericUpDown5;
-		private System.Windows.Forms.NumericUpDown numericUpDown6;
-		private System.Windows.Forms.NumericUpDown numericUpDown7;
-		private System.Windows.Forms.NumericUpDown numericUpDown8;
-		private System.Windows.Forms.NumericUpDown numericUpDown9;
-		private System.Windows.Forms.NumericUpDown numericUpDown10;
-		private System.Windows.Forms.NumericUpDown numericUpDown11;
-		private System.Windows.Forms.NumericUpDown numericUpDown12;
-		private System.Windows.Forms.NumericUpDown numericUpDown13;
-		private System.Windows.Forms.NumericUpDown numericUpDown14;
-		private System.Windows.Forms.NumericUpDown numericUpDown15;
-		private System.Windows.Forms.NumericUpDown numericUpDown16;
-		private System.Windows.Forms.NumericUpDown numericUpDown17;
-		private System.Windows.Forms.NumericUpDown numericUpDown18;
-		private System.Windows.Forms.NumericUpDown numericUpDown19;
-		private System.Windows.Forms.NumericUpDown numericUpDown20;
+		private System.Windows.Forms.TextBox txtAbsStartX;
+		private System.Windows.Forms.TextBox txtAbsStartY;
+		private System.Windows.Forms.TextBox txtAbsStartZ;
+		private System.Windows.Forms.TextBox txtRelEndX;
+		private System.Windows.Forms.TextBox txtAbsEndX;
+		private System.Windows.Forms.TextBox txtRelEndY;
+		private System.Windows.Forms.TextBox txtAbsEndY;
+		private System.Windows.Forms.TextBox txtRelEndZ;
+		private System.Windows.Forms.TextBox txtAbsEndZ;
+		private System.Windows.Forms.TextBox txtRelCenterI;
+		private System.Windows.Forms.TextBox txtAbsCenterI;
+		private System.Windows.Forms.TextBox txtRelCenterJ;
+		private System.Windows.Forms.TextBox txtAbsCenterJ;
+		private System.Windows.Forms.TextBox txtRelCenterK;
+		private System.Windows.Forms.TextBox txtAbsCenterK;
+		private System.Windows.Forms.TextBox txtAbsF;
+		private System.Windows.Forms.TextBox txtAbsS;
+		private System.Windows.Forms.TextBox txtRelF;
+		private System.Windows.Forms.TextBox txtRelS;
 	}
 }
