@@ -12,14 +12,14 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace GCEd
 {
-	partial class ItemProperties : UserControl
+	partial class OperationProperties : UserControl
 	{
 		public GOperation? Operation { get => operation; set { operation = value; OnOperationChanged(); } }
 
 		private GOperation? operation;
 		private bool changeInProgress;
 
-		public ItemProperties()
+		public OperationProperties()
 		{
 			InitializeComponent();
 		}

@@ -1,6 +1,6 @@
 ﻿namespace GCEd
 {
-	partial class ItemProperties
+	partial class OperationProperties
 	{
 		/// <summary> 
 		/// Required designer variable.

@@ -14,6 +14,7 @@ namespace GCEd
 	partial class Canvas : UserControl
 	{
 		public GProgram Program { get => program; set { program = value; OnProgramChanged(); } }
+		//public GOperation
 
 		public int PaintTime { get; set; }
 		public int FrameCount { get; set; }

@@ -32,7 +32,7 @@
 			GCEd.GProgram gProgram1 = new GCEd.GProgram();
 			this.canvas = new GCEd.Canvas();
 			this.timerFPSCounter = new System.Windows.Forms.Timer(this.components);
-			this.itemProperties = new GCEd.ItemProperties();
+			this.itemProperties = new GCEd.OperationProperties();
 			this.SuspendLayout();
 			// 
 			// canvas
@@ -83,6 +83,6 @@
 
 		private Canvas canvas;
 		private System.Windows.Forms.Timer timerFPSCounter;
-		private ItemProperties itemProperties;
+		private OperationProperties itemProperties;
 	}
 }
