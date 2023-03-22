@@ -15,6 +15,7 @@ namespace GCEd
 	partial class OperationProperties : UserControl
 	{
 		public GOperation? Operation { get => operation; set { operation = value; OnOperationChanged(); } }
+		public event EventHandler? OperationUpdated;
 
 		private GOperation? operation;
 		private bool changeInProgress;
@@ -95,9 +96,9 @@ namespace GCEd
 				txtAbsEndX.Text = Fmt(Operation.AbsXEnd);
 				txtAbsEndY.Text = Fmt(Operation.AbsYEnd);
 				txtAbsEndZ.Text = Fmt(Operation.AbsZEnd);
-				txtAbsCenterI.Text = Fmt(Operation.AbsI);
-				txtAbsCenterJ.Text = Fmt(Operation.AbsJ);
-				txtAbsCenterK.Text = Fmt(Operation.AbsK);
+				txtAbsCenterI.Text = Operation.Line.I.HasValue ? Fmt(Operation.AbsI) : "";
+				txtAbsCenterJ.Text = Operation.Line.J.HasValue ? Fmt(Operation.AbsJ) : "";
+				txtAbsCenterK.Text = Operation.Line.K.HasValue ? Fmt(Operation.AbsK) : "";
 				txtAbsF.Text = Fmt(Operation.Line.F);
 				txtAbsS.Text = Fmt(Operation.Line.S);
 			}
@@ -116,17 +117,19 @@ namespace GCEd
 
 			if (String.IsNullOrWhiteSpace(textbox.Text))
 			{
-				textbox.BackColor = SystemColors.Control;
+				textbox.BackColor = SystemColors.Window;
 				setter(null);
 				OnOperationChanged();
+				OperationUpdated?.Invoke(this, EventArgs.Empty);
 			}
 			else
 			{
 				if (Decimal.TryParse(textbox.Text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var val))
 				{
-					textbox.BackColor = SystemColors.Control;
+					textbox.BackColor = SystemColors.Window;
 					setter(val);
 					OnOperationChanged();
+					OperationUpdated?.Invoke(this, EventArgs.Empty);
 				}
 				else
 				{

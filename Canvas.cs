@@ -46,13 +46,25 @@ namespace GCEd
 			items = Enumerable.Empty<CanvasItem>();
 		}
 
+		public void RunProgram()
+		{
+			var selection = SelectedOperation;
+			RunProgramCore();
+			if (selection != null)
+			{
+				var item = items.FirstOrDefault(item => item.Operation.Line == selection.Line);
+				if (item != null) item.Selected = true;
+			}
+			Invalidate();
+		}
+
 		private void OnProgramChanged()
 		{
-			RunProgram();
+			RunProgramCore();
 			PanZoomViewToFit();
 		}
 
-		private void RunProgram()
+		private void RunProgramCore()
 		{
 			var operations = program.Run();
 			var items = new List<CanvasItem>();

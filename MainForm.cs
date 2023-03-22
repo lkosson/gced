@@ -30,5 +30,10 @@ namespace GCEd
 		{
 			operationProperties.Operation = canvas.SelectedOperation;
 		}
+
+		private void operationProperties_OperationUpdated(object sender, System.EventArgs e)
+		{
+			canvas.RunProgram();
+		}
 	}
 }

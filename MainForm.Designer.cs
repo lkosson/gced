@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			GCEd.GProgram gProgram2 = new GCEd.GProgram();
+			GCEd.GProgram gProgram1 = new GCEd.GProgram();
 			this.canvas = new GCEd.Canvas();
 			this.timerFPSCounter = new System.Windows.Forms.Timer(this.components);
 			this.operationProperties = new GCEd.OperationProperties();
@@ -45,7 +45,7 @@
 			this.canvas.Location = new System.Drawing.Point(12, 12);
 			this.canvas.Name = "canvas";
 			this.canvas.PaintTime = 841;
-			this.canvas.Program = gProgram2;
+			this.canvas.Program = gProgram1;
 			this.canvas.Size = new System.Drawing.Size(570, 426);
 			this.canvas.TabIndex = 0;
 			this.canvas.VisCount = 0;
@@ -66,6 +66,7 @@
 			this.operationProperties.Operation = null;
 			this.operationProperties.Size = new System.Drawing.Size(206, 426);
 			this.operationProperties.TabIndex = 1;
+			this.operationProperties.OperationUpdated += new System.EventHandler(this.operationProperties_OperationUpdated);
 			// 
 			// MainForm
 			// 
