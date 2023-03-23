@@ -13,18 +13,29 @@ namespace GCEd
 {
 	partial class Canvas : UserControl
 	{
-		public GProgram Program { get => program; set { program = value; OnProgramChanged(); } }
+		public IEnumerable<GOperation> Operations { get => items.Select(item => item.Operation); set { PopulateItems(value); PanZoomViewToFit(); } }
 
 		public int PaintTime { get; set; }
 		public int FrameCount { get; set; }
 		public int ItemCount { get; set; }
 		public int VisCount { get; set; }
 
-		public GOperation? SelectedOperation => items.FirstOrDefault(item => item.Selected)?.Operation;
+		public GOperation? SelectedOperation 
+		{ 
+			get => items.FirstOrDefault(item => item.Selected)?.Operation;
+			set
+			{
+				foreach (var item in items)
+				{
+					var selected = item.Operation == value;
+					if (!(selected ^ item.Selected)) continue;
+					item.Selected = selected;
+					Invalidate(item);
+				}
+			}
+		}
 
 		public event EventHandler? SelectedOperationChanged;
-
-		private GProgram program;
 
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
@@ -42,36 +53,21 @@ namespace GCEd
 			viewMatrix = new Matrix();
 			inverseViewMatrix = new Matrix();
 			style = new CanvasStyle();
-			program = new GProgram();
 			items = Enumerable.Empty<CanvasItem>();
 		}
 
-		public void RunProgram()
+		private void PopulateItems(IEnumerable<GOperation> operations)
 		{
-			var selection = SelectedOperation;
-			RunProgramCore();
-			if (selection != null)
-			{
-				var item = items.FirstOrDefault(item => item.Operation.Line == selection.Line);
-				if (item != null) item.Selected = true;
-			}
-			Invalidate();
-		}
-
-		private void OnProgramChanged()
-		{
-			RunProgramCore();
-			PanZoomViewToFit();
-		}
-
-		private void RunProgramCore()
-		{
-			var operations = program.Run();
+			var selectedOperation = SelectedOperation;
 			var items = new List<CanvasItem>();
-			foreach (var op in operations)
+			foreach (var operation in operations)
 			{
-				if (op.Line.Instruction == GInstruction.G0 || op.Line.Instruction == GInstruction.G1) items.Add(new CanvasItemLine(op));
-				else if (op.Line.Instruction == GInstruction.G2 || op.Line.Instruction == GInstruction.G3) items.Add(new CanvasItemArc(op));
+				CanvasItem item;
+				if (operation.Line.Instruction == GInstruction.G0 || operation.Line.Instruction == GInstruction.G1) item = new CanvasItemLine(operation);
+				else if (operation.Line.Instruction == GInstruction.G2 || operation.Line.Instruction == GInstruction.G3) item = new CanvasItemArc(operation);
+				else continue;
+				if (operation == selectedOperation) item.Selected = true;
+				items.Add(item);
 			}
 			this.items = items;
 		}
@@ -110,6 +106,8 @@ namespace GCEd
 			}
 
 			matrixUpdated = true;
+
+			Invalidate();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)

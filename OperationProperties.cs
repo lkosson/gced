@@ -81,9 +81,9 @@ namespace GCEd
 			}
 			else
 			{
-				txtRelEndX.Text = Fmt(Operation.Line.X);
-				txtRelEndY.Text = Fmt(Operation.Line.Y);
-				txtRelEndZ.Text = Fmt(Operation.Line.Z);
+				txtRelEndX.Text = Fmt(Operation.AbsXEnd - Operation.AbsXStart);
+				txtRelEndY.Text = Fmt(Operation.AbsYEnd - Operation.AbsYStart);
+				txtRelEndZ.Text = Fmt(Operation.AbsZEnd - Operation.AbsZStart);
 				txtRelCenterI.Text = Fmt(Operation.Line.I);
 				txtRelCenterJ.Text = Fmt(Operation.Line.J);
 				txtRelCenterK.Text = Fmt(Operation.Line.K);

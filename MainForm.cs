@@ -1,16 +1,27 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace GCEd
 {
 	public partial class MainForm : Form
 	{
+		private GProgram program;
+		private IEnumerable<GOperation> operations;
+
 		public MainForm()
 		{
 			InitializeComponent();
 			DoubleBuffered = true;
-			var program = new GProgram();
+			program = new GProgram();
 			program.Read("test.nc");
-			canvas.Program = program;
+			RunProgram();
+		}
+
+		private void RunProgram()
+		{
+			operations = program.Run();
+			canvas.Operations = operations;
+			operationsList.Operations = operations;
 		}
 
 		private void timerFPSCounter_Tick(object sender, System.EventArgs e)
@@ -28,12 +39,21 @@ namespace GCEd
 
 		private void canvas_SelectedOperationChanged(object sender, System.EventArgs e)
 		{
-			operationProperties.Operation = canvas.SelectedOperation;
+			var operation = canvas.SelectedOperation;
+			operationProperties.Operation = operation;
+			operationsList.SelectedOperation = operation;
 		}
 
 		private void operationProperties_OperationUpdated(object sender, System.EventArgs e)
 		{
-			canvas.RunProgram();
+			RunProgram();
+		}
+
+		private void operationsList_SelectedOperationChanged(object sender, System.EventArgs e)
+		{
+			var operation = operationsList.SelectedOperation;
+			canvas.SelectedOperation = operation;
+			operationProperties.Operation = operation;
 		}
 	}
 }
