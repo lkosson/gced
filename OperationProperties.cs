@@ -139,15 +139,15 @@ namespace GCEd
 			changeInProgress = false;
 		}
 
-		private void txtRelEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.X = value);
-		private void txtRelEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Y = value);
-		private void txtRelEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Z = value);
+		private void txtRelEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.X = Operation!.Absolute ? (decimal)Operation!.AbsXStart + value : value);
+		private void txtRelEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Y = Operation!.Absolute ? (decimal)Operation!.AbsYStart + value : value);
+		private void txtRelEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Z = Operation!.Absolute ? (decimal)Operation!.AbsZStart + value : value);
 		private void txtRelCenterI_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.I = value);
 		private void txtRelCenterJ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.J = value);
 		private void txtRelCenterK_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.K = value);
-		private void txtAbsEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.X = value.HasValue ? value.Value - (decimal)Operation!.AbsXStart : null);
-		private void txtAbsEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Y = value.HasValue ? value.Value - (decimal)Operation!.AbsYStart : null);
-		private void txtAbsEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Z = value.HasValue ? value.Value - (decimal)Operation!.AbsZStart : null);
+		private void txtAbsEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.X = value.HasValue ? Operation!.Absolute ? value.Value : value.Value - (decimal)Operation!.AbsXStart : null);
+		private void txtAbsEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Y = value.HasValue ? Operation!.Absolute ? value.Value : value.Value - (decimal)Operation!.AbsYStart : null);
+		private void txtAbsEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Z = value.HasValue ? Operation!.Absolute ? value.Value : value.Value - (decimal)Operation!.AbsZStart : null);
 		private void txtAbsCenterI_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.I = value.HasValue ? value.Value - (decimal)Operation!.AbsXStart : null);
 		private void txtAbsCenterJ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.J = value.HasValue ? value.Value - (decimal)Operation!.AbsYStart : null);
 		private void txtAbsCenterK_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.K = value.HasValue ? value.Value - (decimal)Operation!.AbsZStart : null);

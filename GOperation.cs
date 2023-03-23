@@ -27,6 +27,7 @@ namespace GCEd
 		public decimal F { get; set; }
 		public decimal S { get; set; }
 		public bool Active { get; set; }
+		public bool Absolute { get; set; }
 
 		public GOperation(GLine line)
 		{
@@ -38,8 +39,6 @@ namespace GCEd
 			AbsXStart = (float)context.X;
 			AbsYStart = (float)context.Y;
 			AbsZStart = (float)context.Z;
-
-			Active = context.Active;
 
 			if (Line.Instruction == GInstruction.G0
 				|| Line.Instruction == GInstruction.G1
@@ -100,6 +99,9 @@ namespace GCEd
 				context.Active = false;
 				context.Dynamic = false;
 			}
+
+			Active = context.Active;
+			Absolute = context.Absolute;
 
 			AbsXEnd = (float)context.X;
 			AbsYEnd = (float)context.Y;
