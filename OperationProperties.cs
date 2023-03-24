@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GCEd
 {
@@ -18,7 +17,8 @@ namespace GCEd
 		public event EventHandler? OperationUpdated;
 
 		private GOperation? operation;
-		private bool changeInProgress;
+		private TextBox? textBoxChangeInProgress;
+		private bool operationChangeInProgress;
 
 		public OperationProperties()
 		{
@@ -33,7 +33,7 @@ namespace GCEd
 			var isArc = Operation != null && (Operation.Line.Instruction == GInstruction.G2 || Operation.Line.Instruction == GInstruction.G3);
 			var isMove = isRapid || isLine || isArc;
 
-			changeInProgress = true;
+			operationChangeInProgress = true;
 			txtRelEndX.Enabled = hasOperation && isMove;
 			txtRelEndY.Enabled = hasOperation && isMove;
 			txtRelEndZ.Enabled = hasOperation && isMove;
@@ -81,28 +81,27 @@ namespace GCEd
 			}
 			else
 			{
-				txtRelEndX.Text = Fmt(Operation.AbsXEnd - Operation.AbsXStart);
-				txtRelEndY.Text = Fmt(Operation.AbsYEnd - Operation.AbsYStart);
-				txtRelEndZ.Text = Fmt(Operation.AbsZEnd - Operation.AbsZStart);
-				txtRelCenterI.Text = Fmt(Operation.Line.I);
-				txtRelCenterJ.Text = Fmt(Operation.Line.J);
-				txtRelCenterK.Text = Fmt(Operation.Line.K);
-				txtRelF.Text = Fmt(Operation.F);
-				txtRelS.Text = Fmt(Operation.S);
-
-				txtAbsStartX.Text = Fmt(Operation.AbsXStart);
-				txtAbsStartY.Text = Fmt(Operation.AbsYStart);
-				txtAbsStartZ.Text = Fmt(Operation.AbsZStart);
-				txtAbsEndX.Text = Fmt(Operation.AbsXEnd);
-				txtAbsEndY.Text = Fmt(Operation.AbsYEnd);
-				txtAbsEndZ.Text = Fmt(Operation.AbsZEnd);
-				txtAbsCenterI.Text = Operation.Line.I.HasValue ? Fmt(Operation.AbsI) : "";
-				txtAbsCenterJ.Text = Operation.Line.J.HasValue ? Fmt(Operation.AbsJ) : "";
-				txtAbsCenterK.Text = Operation.Line.K.HasValue ? Fmt(Operation.AbsK) : "";
-				txtAbsF.Text = Fmt(Operation.Line.F);
-				txtAbsS.Text = Fmt(Operation.Line.S);
+				if (textBoxChangeInProgress != txtRelEndX) txtRelEndX.Text = Fmt(Operation.AbsXEnd - Operation.AbsXStart);
+				if (textBoxChangeInProgress != txtRelEndY) txtRelEndY.Text = Fmt(Operation.AbsYEnd - Operation.AbsYStart);
+				if (textBoxChangeInProgress != txtRelEndZ) txtRelEndZ.Text = Fmt(Operation.AbsZEnd - Operation.AbsZStart);
+				if (textBoxChangeInProgress != txtRelCenterI) txtRelCenterI.Text = Fmt(Operation.Line.I);
+				if (textBoxChangeInProgress != txtRelCenterJ) txtRelCenterJ.Text = Fmt(Operation.Line.J);
+				if (textBoxChangeInProgress != txtRelCenterK) txtRelCenterK.Text = Fmt(Operation.Line.K);
+				if (textBoxChangeInProgress != txtRelF) txtRelF.Text = Fmt(Operation.F);
+				if (textBoxChangeInProgress != txtRelS) txtRelS.Text = Fmt(Operation.S);
+				if (textBoxChangeInProgress != txtAbsStartX) txtAbsStartX.Text = Fmt(Operation.AbsXStart);
+				if (textBoxChangeInProgress != txtAbsStartY) txtAbsStartY.Text = Fmt(Operation.AbsYStart);
+				if (textBoxChangeInProgress != txtAbsStartZ) txtAbsStartZ.Text = Fmt(Operation.AbsZStart);
+				if (textBoxChangeInProgress != txtAbsEndX) txtAbsEndX.Text = Fmt(Operation.AbsXEnd);
+				if (textBoxChangeInProgress != txtAbsEndY) txtAbsEndY.Text = Fmt(Operation.AbsYEnd);
+				if (textBoxChangeInProgress != txtAbsEndZ) txtAbsEndZ.Text = Fmt(Operation.AbsZEnd);
+				if (textBoxChangeInProgress != txtAbsCenterI) txtAbsCenterI.Text = Operation.Line.I.HasValue ? Fmt(Operation.AbsI) : "";
+				if (textBoxChangeInProgress != txtAbsCenterJ) txtAbsCenterJ.Text = Operation.Line.J.HasValue ? Fmt(Operation.AbsJ) : "";
+				if (textBoxChangeInProgress != txtAbsCenterK) txtAbsCenterK.Text = Operation.Line.K.HasValue ? Fmt(Operation.AbsK) : "";
+				if (textBoxChangeInProgress != txtAbsF) txtAbsF.Text = Fmt(Operation.Line.F);
+				if (textBoxChangeInProgress != txtAbsS) txtAbsS.Text = Fmt(Operation.Line.S);
 			}
-			changeInProgress = false;
+			operationChangeInProgress = false;
 		}
 
 		private static string Fmt(float val) => val.ToString("0.000", CultureInfo.InvariantCulture);
@@ -111,16 +110,19 @@ namespace GCEd
 
 		private void SetVal(object textboxSender, Action<decimal?> setter)
 		{
-			if (changeInProgress) return;
-			changeInProgress = true;
 			if (textboxSender is not TextBox textbox) return;
+			if (textBoxChangeInProgress != null) return;
+			textBoxChangeInProgress = textbox;
 
 			if (String.IsNullOrWhiteSpace(textbox.Text))
 			{
 				textbox.BackColor = SystemColors.Window;
 				setter(null);
-				OnOperationChanged();
-				OperationUpdated?.Invoke(this, EventArgs.Empty);
+				if (!operationChangeInProgress)
+				{
+					OperationUpdated?.Invoke(this, EventArgs.Empty);
+					OnOperationChanged();
+				}
 			}
 			else
 			{
@@ -128,15 +130,18 @@ namespace GCEd
 				{
 					textbox.BackColor = SystemColors.Window;
 					setter(val);
-					OnOperationChanged();
-					OperationUpdated?.Invoke(this, EventArgs.Empty);
+					if (!operationChangeInProgress)
+					{
+						OperationUpdated?.Invoke(this, EventArgs.Empty);
+						OnOperationChanged();
+					}
 				}
 				else
 				{
 					textbox.BackColor = Color.Red;
 				}
 			}
-			changeInProgress = false;
+			textBoxChangeInProgress = null;
 		}
 
 		private void txtRelEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.X = Operation!.Absolute ? (decimal)Operation!.AbsXStart + value : value);

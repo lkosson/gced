@@ -58,7 +58,7 @@ namespace GCEd
 
 		private void PopulateItems(IEnumerable<GOperation> operations)
 		{
-			var selectedOperation = SelectedOperation;
+			var selectedOperationLine = SelectedOperation?.Line;
 			var items = new List<CanvasItem>();
 			foreach (var operation in operations)
 			{
@@ -66,7 +66,7 @@ namespace GCEd
 				if (operation.Line.Instruction == GInstruction.G0 || operation.Line.Instruction == GInstruction.G1) item = new CanvasItemLine(operation);
 				else if (operation.Line.Instruction == GInstruction.G2 || operation.Line.Instruction == GInstruction.G3) item = new CanvasItemArc(operation);
 				else continue;
-				if (operation == selectedOperation) item.Selected = true;
+				if (operation.Line == selectedOperationLine) item.Selected = true;
 				items.Add(item);
 			}
 			this.items = items;

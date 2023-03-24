@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace GCEd
@@ -22,6 +23,12 @@ namespace GCEd
 			operations = program.Run();
 			canvas.Operations = operations;
 			operationsList.Operations = operations;
+			var line = operationProperties.Operation?.Line;
+			if (line != null)
+			{
+				var newOperation = operations.FirstOrDefault(operation => operation.Line == line);
+				if (newOperation != null) operationProperties.Operation = newOperation;
+			}
 		}
 
 		private void timerFPSCounter_Tick(object sender, System.EventArgs e)

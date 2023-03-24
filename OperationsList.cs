@@ -29,9 +29,16 @@ namespace GCEd
 		private void OnOperationsChanged()
 		{
 			selectionInProgress = true;
+			var selectedItem = (ListItem)listBoxOperations.SelectedItem;
+			var items = operations.Select(operation => new ListItem(operation)).Cast<object>().ToArray();
 			listBoxOperations.BeginUpdate();
 			listBoxOperations.Items.Clear();
-			listBoxOperations.Items.AddRange(operations.Select(operation => new ListItem(operation)).Cast<object>().ToArray());
+			listBoxOperations.Items.AddRange(items);
+			if (selectedItem != null)
+			{
+				var newSelectedItem = items.Cast<ListItem>().FirstOrDefault(item => item.Operation.Line == selectedItem.Operation.Line);
+				if (newSelectedItem != null) listBoxOperations.SelectedItem = newSelectedItem;
+			}
 			listBoxOperations.EndUpdate();
 			selectionInProgress = false;
 		}
