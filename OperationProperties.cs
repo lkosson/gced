@@ -31,6 +31,7 @@ namespace GCEd
 			var isRapid = Operation != null && Operation.Line.Instruction == GInstruction.G0;
 			var isLine = Operation != null && Operation.Line.Instruction == GInstruction.G1;
 			var isArc = Operation != null && (Operation.Line.Instruction == GInstruction.G2 || Operation.Line.Instruction == GInstruction.G3);
+			var isAbsolute = Operation != null && Operation.Absolute;
 			var isMove = isRapid || isLine || isArc;
 
 			operationChangeInProgress = true;
@@ -54,6 +55,22 @@ namespace GCEd
 			txtAbsCenterK.Enabled = hasOperation && isArc;
 			txtAbsF.Enabled = hasOperation && isMove;
 			txtAbsS.Enabled = hasOperation && (isLine || isArc);
+
+			txtAbsEndX.ForeColor = isAbsolute ? SystemColors.WindowText : SystemColors.GrayText;
+			txtAbsEndY.ForeColor = isAbsolute ? SystemColors.WindowText : SystemColors.GrayText;
+			txtAbsEndZ.ForeColor = isAbsolute ? SystemColors.WindowText : SystemColors.GrayText;
+
+			txtRelEndX.ForeColor = isAbsolute ? SystemColors.GrayText : SystemColors.WindowText;
+			txtRelEndY.ForeColor = isAbsolute ? SystemColors.GrayText : SystemColors.WindowText;
+			txtRelEndZ.ForeColor = isAbsolute ? SystemColors.GrayText : SystemColors.WindowText;
+
+			txtRelCenterI.ForeColor = SystemColors.WindowText;
+			txtRelCenterJ.ForeColor = SystemColors.WindowText;
+			txtRelCenterK.ForeColor = SystemColors.WindowText;
+
+			txtAbsCenterI.ForeColor = SystemColors.GrayText;
+			txtAbsCenterJ.ForeColor = SystemColors.GrayText;
+			txtAbsCenterK.ForeColor = SystemColors.GrayText;
 
 			if (Operation == null)
 			{
