@@ -40,6 +40,7 @@
 			this.listBoxOperations.ItemHeight = 15;
 			this.listBoxOperations.Location = new System.Drawing.Point(3, 3);
 			this.listBoxOperations.Name = "listBoxOperations";
+			this.listBoxOperations.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.listBoxOperations.Size = new System.Drawing.Size(348, 289);
 			this.listBoxOperations.TabIndex = 0;
 			this.listBoxOperations.SelectedIndexChanged += new System.EventHandler(this.listBoxOperations_SelectedIndexChanged);

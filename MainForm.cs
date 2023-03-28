@@ -44,11 +44,11 @@ namespace GCEd
 			canvas.PaintTime = 0;
 		}
 
-		private void canvas_SelectedOperationChanged(object sender, System.EventArgs e)
+		private void canvas_SelectedOperationsChanged(object sender, System.EventArgs e)
 		{
-			var operation = canvas.SelectedOperation;
-			operationProperties.Operation = operation;
-			operationsList.SelectedOperation = operation;
+			var operations = canvas.SelectedOperations;
+			operationProperties.Operation = operations.FirstOrDefault();
+			operationsList.SelectedOperations = operations;
 		}
 
 		private void operationProperties_OperationUpdated(object sender, System.EventArgs e)
@@ -56,11 +56,11 @@ namespace GCEd
 			RunProgram();
 		}
 
-		private void operationsList_SelectedOperationChanged(object sender, System.EventArgs e)
+		private void operationsList_SelectedOperationsChanged(object sender, System.EventArgs e)
 		{
-			var operation = operationsList.SelectedOperation;
-			canvas.SelectedOperation = operation;
-			operationProperties.Operation = operation;
+			var operations = operationsList.SelectedOperations;
+			canvas.SelectedOperations = operations;
+			operationProperties.Operation = operations.FirstOrDefault();
 		}
 	}
 }

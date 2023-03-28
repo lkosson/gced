@@ -12,18 +12,23 @@ namespace GCEd
 {
 	partial class OperationsList : UserControl
 	{
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IEnumerable<GOperation> Operations { get => operations; set { operations = value; OnOperationsChanged(); } }
-		public GOperation? SelectedOperation { get => selectedOperation; set { selectedOperation = value; OnSelectedOperationChanged(); } }
-		public event EventHandler? SelectedOperationChanged;
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public IEnumerable<GOperation> SelectedOperations { get => selectedOperations; set { selectedOperations.Clear(); selectedOperations.UnionWith(value); OnSelectedOperationsChanged(); } }
+
+		public event EventHandler? SelectedOperationsChanged;
 
 		private IEnumerable<GOperation> operations;
-		private GOperation? selectedOperation;
+		private HashSet<GOperation> selectedOperations;
 		private bool selectionInProgress;
 
 		public OperationsList()
 		{
 			InitializeComponent();
 			operations = Enumerable.Empty<GOperation>();
+			selectedOperations = new HashSet<GOperation>(GOperation.ByGLineEqualityComparer);
 		}
 
 		private void OnOperationsChanged()
@@ -43,19 +48,20 @@ namespace GCEd
 			selectionInProgress = false;
 		}
 
-		private void OnSelectedOperationChanged()
+		private void OnSelectedOperationsChanged()
 		{
 			if (selectionInProgress) return;
 			selectionInProgress = true;
-			listBoxOperations.BeginUpdate();
-			listBoxOperations.SelectedItems.Clear();
+			var newSelectedItems = new List<ListItem>();
 			foreach (ListItem item in listBoxOperations.Items)
 			{
-				if (item.Operation == selectedOperation)
-				{
-					listBoxOperations.SelectedItems.Add(item);
-					break;
-				}
+				if (selectedOperations.Contains(item.Operation)) newSelectedItems.Add(item);
+			}
+			listBoxOperations.BeginUpdate();
+			listBoxOperations.SelectedItems.Clear();
+			foreach (var item in newSelectedItems)
+			{
+				listBoxOperations.SelectedItems.Add(item);
 			}
 			listBoxOperations.EndUpdate();
 			selectionInProgress = false;
@@ -65,9 +71,12 @@ namespace GCEd
 		{
 			if (selectionInProgress) return;
 			selectionInProgress = true;
-			var item = (ListItem)listBoxOperations.SelectedItem;
-			selectedOperation = item?.Operation;
-			SelectedOperationChanged?.Invoke(this, EventArgs.Empty);
+			selectedOperations.Clear();
+			foreach (ListItem item in listBoxOperations.SelectedItems)
+			{
+				selectedOperations.Add(item.Operation);
+			}
+			SelectedOperationsChanged?.Invoke(this, EventArgs.Empty);
 			selectionInProgress = false;
 		}
 

@@ -13,7 +13,9 @@ namespace GCEd
 {
 	partial class OperationProperties : UserControl
 	{
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public GOperation? Operation { get => operation; set { operation = value; OnOperationChanged(); } }
+
 		public event EventHandler? OperationUpdated;
 
 		private GOperation? operation;
@@ -128,6 +130,7 @@ namespace GCEd
 		private void SetVal(object textboxSender, Action<decimal?> setter)
 		{
 			if (textboxSender is not TextBox textbox) return;
+			if (operationChangeInProgress) return;
 			if (textBoxChangeInProgress != null) return;
 			textBoxChangeInProgress = textbox;
 

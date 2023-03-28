@@ -13,6 +13,7 @@ namespace GCEd
 {
 	partial class Canvas : UserControl
 	{
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IEnumerable<GOperation> Operations { get => items.Select(item => item.Operation); set { PopulateItems(value); PanZoomViewToFit(); } }
 
 		public int PaintTime { get; set; }
@@ -20,14 +21,16 @@ namespace GCEd
 		public int ItemCount { get; set; }
 		public int VisCount { get; set; }
 
-		public GOperation? SelectedOperation 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public IEnumerable<GOperation> SelectedOperations
 		{ 
-			get => items.FirstOrDefault(item => item.Selected)?.Operation;
+			get => items.Where(item => item.Selected).Select(item => item.Operation).ToList();
 			set
 			{
+				var newSelection = new HashSet<GOperation>(value, GOperation.ByGLineEqualityComparer);
 				foreach (var item in items)
 				{
-					var selected = item.Operation == value;
+					var selected = newSelection.Contains(item.Operation);
 					if (!(selected ^ item.Selected)) continue;
 					item.Selected = selected;
 					Invalidate(item);
@@ -35,7 +38,7 @@ namespace GCEd
 			}
 		}
 
-		public event EventHandler? SelectedOperationChanged;
+		public event EventHandler? SelectedOperationsChanged;
 
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
@@ -58,7 +61,7 @@ namespace GCEd
 
 		private void PopulateItems(IEnumerable<GOperation> operations)
 		{
-			var selectedOperationLine = SelectedOperation?.Line;
+			var selection = new HashSet<GOperation>(SelectedOperations, GOperation.ByGLineEqualityComparer);
 			var items = new List<CanvasItem>();
 			foreach (var operation in operations)
 			{
@@ -66,7 +69,7 @@ namespace GCEd
 				if (operation.Line.Instruction == GInstruction.G0 || operation.Line.Instruction == GInstruction.G1) item = new CanvasItemLine(operation);
 				else if (operation.Line.Instruction == GInstruction.G2 || operation.Line.Instruction == GInstruction.G3) item = new CanvasItemArc(operation);
 				else continue;
-				if (operation.Line == selectedOperationLine) item.Selected = true;
+				if (selection.Contains(operation)) item.Selected = true;
 				items.Add(item);
 			}
 			this.items = items;
@@ -245,14 +248,14 @@ namespace GCEd
 						selectionChanged = true;
 						Invalidate(item);
 					}
-					else if (item.Selected)
+					else if (item.Selected && (ModifierKeys & Keys.Control) != Keys.Control)
 					{
 						item.Selected = false;
 						selectionChanged = true;
 						Invalidate(item);
 					}
 				}
-				if (selectionChanged) SelectedOperationChanged?.Invoke(this, EventArgs.Empty);
+				if (selectionChanged) SelectedOperationsChanged?.Invoke(this, EventArgs.Empty);
 			}
 			mouseDragged = false;
 			mouseDragButton = MouseButtons.None;

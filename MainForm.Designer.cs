@@ -48,7 +48,7 @@
 			this.canvas.Size = new System.Drawing.Size(570, 514);
 			this.canvas.TabIndex = 0;
 			this.canvas.VisCount = 0;
-			this.canvas.SelectedOperationChanged += new System.EventHandler(this.canvas_SelectedOperationChanged);
+			this.canvas.SelectedOperationsChanged += new System.EventHandler(this.canvas_SelectedOperationsChanged);
 			// 
 			// timerFPSCounter
 			// 
@@ -72,10 +72,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.operationsList.Location = new System.Drawing.Point(591, 349);
 			this.operationsList.Name = "operationsList";
-			this.operationsList.SelectedOperation = null;
 			this.operationsList.Size = new System.Drawing.Size(200, 177);
 			this.operationsList.TabIndex = 2;
-			this.operationsList.SelectedOperationChanged += new System.EventHandler(this.operationsList_SelectedOperationChanged);
+			this.operationsList.SelectedOperationsChanged += new System.EventHandler(this.operationsList_SelectedOperationsChanged);
 			// 
 			// MainForm
 			// 

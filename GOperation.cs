@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
@@ -10,6 +11,8 @@ namespace GCEd
 {
 	class GOperation
 	{
+		public readonly static IEqualityComparer<GOperation> ByGLineEqualityComparer = new ByGLineEqualityComparerImpl();
+
 		public GLine Line { get; set; }
 
 		public float AbsXStart { get; set; }
@@ -106,6 +109,13 @@ namespace GCEd
 			AbsXEnd = (float)context.X;
 			AbsYEnd = (float)context.Y;
 			AbsZEnd = (float)context.Z;
+		}
+
+		private class ByGLineEqualityComparerImpl : IEqualityComparer<GOperation>
+		{
+			public bool Equals(GOperation? x, GOperation? y) => Object.ReferenceEquals(x?.Line, y?.Line);
+
+			public int GetHashCode([DisallowNull] GOperation obj) => obj.Line == null ? 0 : obj.Line.GetHashCode();
 		}
 	}
 }
