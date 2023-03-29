@@ -61,7 +61,6 @@
 			this.operationsList.Name = "operationsList";
 			this.operationsList.Size = new System.Drawing.Size(200, 177);
 			this.operationsList.TabIndex = 2;
-			this.operationsList.SelectedOperationsChanged += new System.EventHandler(this.operationsList_SelectedOperationsChanged);
 			// 
 			// MainForm
 			// 

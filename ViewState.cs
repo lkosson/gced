@@ -46,15 +46,15 @@ namespace GCEd
 				if (selectedOperations.Contains(operation))
 					newSelection.Add(operation);
 			}
+			SetSelection(newSelection);
+		}
+
+		public void SetSelection(IEnumerable<GOperation> newSelection)
+		{
 			selectedOperations.Clear();
 			foreach (var operation in newSelection)
 				selectedOperations.Add(operation);
 			SelectedOperationsChanged?.Invoke();
-		}
-
-		public void UpdateSelection(IEnumerable<GOperation> operationsToSelect, IEnumerable<GOperation> operationsToUnselect)
-		{
-
 		}
 
 	}

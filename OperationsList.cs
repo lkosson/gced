@@ -13,29 +13,27 @@ namespace GCEd
 	partial class OperationsList : UserControl
 	{
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IEnumerable<GOperation> Operations { get => operations; set { operations = value; OnOperationsChanged(); } }
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IEnumerable<GOperation> SelectedOperations { get => selectedOperations; set { selectedOperations.Clear(); selectedOperations.UnionWith(value); OnSelectedOperationsChanged(); } }
-
-		public event EventHandler? SelectedOperationsChanged;
-
-		private IEnumerable<GOperation> operations;
-		private HashSet<GOperation> selectedOperations;
-		private bool selectionInProgress;
-
-		public OperationsList()
+		public ViewState ViewState
 		{
-			InitializeComponent();
-			operations = Enumerable.Empty<GOperation>();
-			selectedOperations = new HashSet<GOperation>(GOperation.ByGLineEqualityComparer);
+			get => viewState;
+			set
+			{
+				if (viewState != null)
+				{
+					viewState.OperationsChanged -= ViewState_OperationsChanged;
+					viewState.SelectedOperationsChanged -= ViewState_SelectedOperationsChanged;
+				}
+				viewState = value;
+				viewState.OperationsChanged += ViewState_OperationsChanged;
+				viewState.SelectedOperationsChanged += ViewState_SelectedOperationsChanged;
+			}
 		}
 
-		private void OnOperationsChanged()
+		private void ViewState_OperationsChanged()
 		{
 			selectionInProgress = true;
 			var selectedItem = (ListItem)listBoxOperations.SelectedItem;
-			var items = operations.Select(operation => new ListItem(operation)).Cast<object>().ToArray();
+			var items = viewState.Operations.Select(operation => new ListItem(operation)).Cast<object>().ToArray();
 			listBoxOperations.BeginUpdate();
 			listBoxOperations.Items.Clear();
 			listBoxOperations.Items.AddRange(items);
@@ -48,14 +46,14 @@ namespace GCEd
 			selectionInProgress = false;
 		}
 
-		private void OnSelectedOperationsChanged()
+		private void ViewState_SelectedOperationsChanged()
 		{
 			if (selectionInProgress) return;
 			selectionInProgress = true;
 			var newSelectedItems = new List<ListItem>();
 			foreach (ListItem item in listBoxOperations.Items)
 			{
-				if (selectedOperations.Contains(item.Operation)) newSelectedItems.Add(item);
+				if (viewState.SelectedOperations.Contains(item.Operation)) newSelectedItems.Add(item);
 			}
 			listBoxOperations.BeginUpdate();
 			listBoxOperations.SelectedItems.Clear();
@@ -67,16 +65,25 @@ namespace GCEd
 			selectionInProgress = false;
 		}
 
+
+		private ViewState viewState;
+		private bool selectionInProgress;
+
+		public OperationsList()
+		{
+			InitializeComponent();
+		}
+
 		private void listBoxOperations_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (selectionInProgress) return;
 			selectionInProgress = true;
-			selectedOperations.Clear();
+			var selectedOperations = new List<GOperation>();
 			foreach (ListItem item in listBoxOperations.SelectedItems)
 			{
 				selectedOperations.Add(item.Operation);
 			}
-			SelectedOperationsChanged?.Invoke(this, EventArgs.Empty);
+			viewState.SetSelection(selectedOperations);
 			selectionInProgress = false;
 		}
 

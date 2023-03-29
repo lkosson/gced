@@ -15,13 +15,12 @@ namespace GCEd
 			viewState = new ViewState();
 			viewState.OperationsChanged += ViewState_OperationsChanged;
 			canvas.ViewState = viewState;
-
+			operationsList.ViewState = viewState;
 			viewState.LoadProgram("test.nc");
 		}
 
 		private void ViewState_OperationsChanged()
 		{
-			operationsList.Operations = viewState.Operations;
 			var line = operationProperties.Operation?.Line;
 			if (line != null)
 			{
@@ -33,12 +32,6 @@ namespace GCEd
 		private void operationProperties_OperationUpdated(object sender, System.EventArgs e)
 		{
 			viewState.RunProgram();
-		}
-
-		private void operationsList_SelectedOperationsChanged(object sender, System.EventArgs e)
-		{
-			var operations = operationsList.SelectedOperations;
-			operationProperties.Operation = operations.FirstOrDefault();
 		}
 	}
 }

@@ -251,8 +251,8 @@ namespace GCEd
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			var operationsToSelect = new List<GOperation>();
-			var operationsToUnselect = new List<GOperation>();
+			var selectedOperations = new List<GOperation>();
+
 			if (interaction == Interaction.DragOrSelect)
 			{
 				foreach (var item in items)
@@ -260,13 +260,12 @@ namespace GCEd
 					if (item.Hovered && !item.Selected)
 					{
 						item.Selected = true;
-						operationsToSelect.Add(item.Operation);
+						selectedOperations.Add(item.Operation);
 						Invalidate(item);
 					}
 					else if (item.Selected && (ModifierKeys & Keys.Control) != Keys.Control)
 					{
 						item.Selected = false;
-						operationsToUnselect.Add(item.Operation);
 						Invalidate(item);
 					}
 				}
@@ -275,6 +274,7 @@ namespace GCEd
 			{
 				var append = (ModifierKeys & Keys.Control) == Keys.Control;
 				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
+				if (append) selectedOperations.AddRange(viewState.SelectedOperations);
 				foreach (var item in items)
 				{
 					if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) continue;
@@ -282,7 +282,7 @@ namespace GCEd
 					{
 						item.Hovered = false;
 						item.Selected = true;
-						operationsToSelect.Add(item.Operation);
+						selectedOperations.Add(item.Operation);
 						Invalidate(item);
 					}
 					else
@@ -290,17 +290,13 @@ namespace GCEd
 						if (!append && item.Selected)
 						{
 							item.Selected = false;
-							operationsToUnselect.Add(item.Operation);
 							Invalidate(item);
 						}
 					}
 				}
 			}
 
-			if (operationsToSelect.Any() || operationsToUnselect.Any())
-			{
-				viewState.UpdateSelection(operationsToSelect, operationsToUnselect);
-			}
+			viewState.SetSelection(selectedOperations);
 
 			interaction = Interaction.None;
 			base.OnMouseUp(e);
