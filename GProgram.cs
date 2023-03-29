@@ -17,7 +17,7 @@ namespace GCEd
 			Lines = new List<GLine>();
 		}
 
-		public void Read(StreamReader reader)
+		public void Load(StreamReader reader)
 		{
 			string? line;
 			Lines.Clear();
@@ -29,10 +29,10 @@ namespace GCEd
 			}
 		}
 
-		public void Read(string filename)
+		public void Load(string filename)
 		{
 			using var sr = new StreamReader(filename, Encoding.UTF8);
-			Read(sr);
+			Load(sr);
 		}
 
 		public List<GOperation> Run()

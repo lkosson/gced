@@ -6,27 +6,25 @@ namespace GCEd
 {
 	public partial class MainForm : Form
 	{
-		private GProgram program;
-		private IEnumerable<GOperation> operations;
+		private ViewState viewState;
 
 		public MainForm()
 		{
 			InitializeComponent();
 			DoubleBuffered = true;
-			program = new GProgram();
-			program.Read("test.nc");
-			RunProgram();
+			viewState = new ViewState();
+			viewState.OperationsChanged += ViewState_OperationsChanged;
+			viewState.LoadProgram("test.nc");
 		}
 
-		private void RunProgram()
+		private void ViewState_OperationsChanged()
 		{
-			operations = program.Run();
-			canvas.Operations = operations;
-			operationsList.Operations = operations;
+			canvas.Operations = viewState.Operations;
+			operationsList.Operations = viewState.Operations;
 			var line = operationProperties.Operation?.Line;
 			if (line != null)
 			{
-				var newOperation = operations.FirstOrDefault(operation => operation.Line == line);
+				var newOperation = viewState.Operations.FirstOrDefault(operation => operation.Line == line);
 				if (newOperation != null) operationProperties.Operation = newOperation;
 			}
 		}
@@ -40,7 +38,7 @@ namespace GCEd
 
 		private void operationProperties_OperationUpdated(object sender, System.EventArgs e)
 		{
-			RunProgram();
+			viewState.RunProgram();
 		}
 
 		private void operationsList_SelectedOperationsChanged(object sender, System.EventArgs e)
