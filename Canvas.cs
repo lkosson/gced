@@ -45,7 +45,7 @@ namespace GCEd
 		private IEnumerable<CanvasItem> items;
 		private Interaction interaction;
 
-		private enum Interaction { None, DragOrSelect, Drag }
+		private enum Interaction { None, DragOrSelect, Drag, DragSelect }
 
 		public Canvas()
 		{
@@ -264,6 +264,29 @@ namespace GCEd
 				}
 				if (selectionChanged) SelectedOperationsChanged?.Invoke(this, EventArgs.Empty);
 			}
+			if (interaction == Interaction.DragSelect)
+			{
+				var append = (ModifierKeys & Keys.Control) == Keys.Control;
+				foreach (var item in items)
+				{
+					var changed = false;
+					if (item.Hovered)
+					{
+						item.Hovered = false;
+						item.Selected = true;
+						changed = true;
+					}
+					else
+					{
+						if (!append && item.Selected)
+						{
+							item.Selected = false;
+							changed = true;
+						}
+					}
+					if (changed) Invalidate(item);
+				}
+			}
 			interaction = Interaction.None;
 			base.OnMouseUp(e);
 		}
@@ -273,7 +296,17 @@ namespace GCEd
 			base.OnMouseMove(e);
 			if (interaction == Interaction.DragOrSelect)
 			{
-				if (Math.Abs(e.X - mouseDragStart.X) > 3 || Math.Abs(e.Y - mouseDragStart.Y) > 3) interaction = Interaction.Drag;
+				if (Math.Abs(e.X - mouseDragStart.X) > 3 || Math.Abs(e.Y - mouseDragStart.Y) > 3)
+				{
+					if ((ModifierKeys & Keys.Shift) == Keys.Shift)
+					{
+						interaction = Interaction.DragSelect;
+					}
+					else
+					{
+						interaction = Interaction.Drag;
+					}
+				}
 			}
 
 			if (interaction == Interaction.Drag)
@@ -286,6 +319,18 @@ namespace GCEd
 
 				mouseDragStart = e.Location;
 				Invalidate();
+			}
+
+			if (interaction == Interaction.DragSelect)
+			{
+				var absSelectionRectangle = ViewToAbs(new Rectangle(mouseDragStart.X, mouseDragStart.Y, e.Location.X - mouseDragStart.X, e.Location.Y - mouseDragStart.Y));
+				foreach (var item in items)
+				{
+					var hovered = item.AbsBoundingBox.IntersectsWith(absSelectionRectangle);
+					if (hovered == item.Hovered) continue;
+					item.Hovered = hovered;
+					Invalidate(item);
+				}
 			}
 
 			if (interaction == Interaction.None)
