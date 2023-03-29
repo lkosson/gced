@@ -40,12 +40,12 @@ namespace GCEd
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
 		private Point mouseDragStart;
-		private MouseButtons mouseDragButton;
-		private bool mouseDragged;
 		private bool matrixUpdated;
 		private CanvasStyle style;
-
 		private IEnumerable<CanvasItem> items;
+		private Interaction interaction;
+
+		private enum Interaction { None, DragOrSelect, Drag }
 
 		public Canvas()
 		{
@@ -234,14 +234,17 @@ namespace GCEd
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			mouseDragStart = e.Location;
-			mouseDragButton = e.Button;
+			if (e.Button == MouseButtons.Left)
+			{
+				interaction = Interaction.DragOrSelect;
+				mouseDragStart = e.Location;
+			}
 			base.OnMouseDown(e);
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			if (!mouseDragged)
+			if (interaction == Interaction.DragOrSelect)
 			{
 				var selectionChanged = false;
 				foreach (var item in items)
@@ -261,15 +264,19 @@ namespace GCEd
 				}
 				if (selectionChanged) SelectedOperationsChanged?.Invoke(this, EventArgs.Empty);
 			}
-			mouseDragged = false;
-			mouseDragButton = MouseButtons.None;
+			interaction = Interaction.None;
 			base.OnMouseUp(e);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
-			if ((mouseDragButton & MouseButtons.Left) == MouseButtons.Left)
+			if (interaction == Interaction.DragOrSelect)
+			{
+				if (Math.Abs(e.X - mouseDragStart.X) > 3 || Math.Abs(e.Y - mouseDragStart.Y) > 3) interaction = Interaction.Drag;
+			}
+
+			if (interaction == Interaction.Drag)
 			{
 				var translateMatrix = new Matrix();
 				translateMatrix.Translate(e.X - mouseDragStart.X, e.Y - mouseDragStart.Y);
@@ -278,11 +285,10 @@ namespace GCEd
 				matrixUpdated = true;
 
 				mouseDragStart = e.Location;
-				mouseDragged = true;
 				Invalidate();
 			}
 
-			if (mouseDragButton == MouseButtons.None)
+			if (interaction == Interaction.None)
 			{
 				var absPos = ViewToAbs(e.Location);
 				var hoverDist = ViewToAbs(5);
