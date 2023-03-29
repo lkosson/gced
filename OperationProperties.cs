@@ -14,10 +14,21 @@ namespace GCEd
 	partial class OperationProperties : UserControl
 	{
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public GOperation? Operation { get => operation; set { operation = value; OnOperationChanged(); } }
+		public ViewState ViewState
+		{
+			get => viewState;
+			set
+			{
+				if (viewState != null)
+				{
+					viewState.SelectedOperationsChanged -= ViewState_SelectedOperationsChanged;
+				}
+				viewState = value;
+				viewState.SelectedOperationsChanged += ViewState_SelectedOperationsChanged;
+			}
+		}
 
-		public event EventHandler? OperationUpdated;
-
+		private ViewState viewState;
 		private GOperation? operation;
 		private TextBox? textBoxChangeInProgress;
 		private bool operationChangeInProgress;
@@ -27,13 +38,13 @@ namespace GCEd
 			InitializeComponent();
 		}
 
-		private void OnOperationChanged()
+		private void ViewState_SelectedOperationsChanged()
 		{
-			var hasOperation = Operation != null;
-			var isRapid = Operation != null && Operation.Line.Instruction == GInstruction.G0;
-			var isLine = Operation != null && Operation.Line.Instruction == GInstruction.G1;
-			var isArc = Operation != null && (Operation.Line.Instruction == GInstruction.G2 || Operation.Line.Instruction == GInstruction.G3);
-			var isAbsolute = Operation != null && Operation.Absolute;
+			var hasOperation = ViewState.LastSelectedOperation != null;
+			var isRapid = ViewState.LastSelectedOperation != null && ViewState.LastSelectedOperation.Line.Instruction == GInstruction.G0;
+			var isLine = ViewState.LastSelectedOperation != null && ViewState.LastSelectedOperation.Line.Instruction == GInstruction.G1;
+			var isArc = ViewState.LastSelectedOperation != null && (ViewState.LastSelectedOperation.Line.Instruction == GInstruction.G2 || ViewState.LastSelectedOperation.Line.Instruction == GInstruction.G3);
+			var isAbsolute = ViewState.LastSelectedOperation != null && ViewState.LastSelectedOperation.Absolute;
 			var isMove = isRapid || isLine || isArc;
 
 			operationChangeInProgress = true;
@@ -74,7 +85,7 @@ namespace GCEd
 			txtAbsCenterJ.ForeColor = SystemColors.GrayText;
 			txtAbsCenterK.ForeColor = SystemColors.GrayText;
 
-			if (Operation == null)
+			if (ViewState.LastSelectedOperation == null)
 			{
 				txtRelEndX.Text = "";
 				txtRelEndY.Text = "";
@@ -100,25 +111,25 @@ namespace GCEd
 			}
 			else
 			{
-				if (textBoxChangeInProgress != txtRelEndX) txtRelEndX.Text = Fmt(Operation.AbsXEnd - Operation.AbsXStart);
-				if (textBoxChangeInProgress != txtRelEndY) txtRelEndY.Text = Fmt(Operation.AbsYEnd - Operation.AbsYStart);
-				if (textBoxChangeInProgress != txtRelEndZ) txtRelEndZ.Text = Fmt(Operation.AbsZEnd - Operation.AbsZStart);
-				if (textBoxChangeInProgress != txtRelCenterI) txtRelCenterI.Text = Fmt(Operation.Line.I);
-				if (textBoxChangeInProgress != txtRelCenterJ) txtRelCenterJ.Text = Fmt(Operation.Line.J);
-				if (textBoxChangeInProgress != txtRelCenterK) txtRelCenterK.Text = Fmt(Operation.Line.K);
-				if (textBoxChangeInProgress != txtRelF) txtRelF.Text = Fmt(Operation.F);
-				if (textBoxChangeInProgress != txtRelS) txtRelS.Text = Fmt(Operation.S);
-				if (textBoxChangeInProgress != txtAbsStartX) txtAbsStartX.Text = Fmt(Operation.AbsXStart);
-				if (textBoxChangeInProgress != txtAbsStartY) txtAbsStartY.Text = Fmt(Operation.AbsYStart);
-				if (textBoxChangeInProgress != txtAbsStartZ) txtAbsStartZ.Text = Fmt(Operation.AbsZStart);
-				if (textBoxChangeInProgress != txtAbsEndX) txtAbsEndX.Text = Fmt(Operation.AbsXEnd);
-				if (textBoxChangeInProgress != txtAbsEndY) txtAbsEndY.Text = Fmt(Operation.AbsYEnd);
-				if (textBoxChangeInProgress != txtAbsEndZ) txtAbsEndZ.Text = Fmt(Operation.AbsZEnd);
-				if (textBoxChangeInProgress != txtAbsCenterI) txtAbsCenterI.Text = Operation.Line.I.HasValue ? Fmt(Operation.AbsI) : "";
-				if (textBoxChangeInProgress != txtAbsCenterJ) txtAbsCenterJ.Text = Operation.Line.J.HasValue ? Fmt(Operation.AbsJ) : "";
-				if (textBoxChangeInProgress != txtAbsCenterK) txtAbsCenterK.Text = Operation.Line.K.HasValue ? Fmt(Operation.AbsK) : "";
-				if (textBoxChangeInProgress != txtAbsF) txtAbsF.Text = Fmt(Operation.Line.F);
-				if (textBoxChangeInProgress != txtAbsS) txtAbsS.Text = Fmt(Operation.Line.S);
+				if (textBoxChangeInProgress != txtRelEndX) txtRelEndX.Text = Fmt(ViewState.LastSelectedOperation.AbsXEnd - ViewState.LastSelectedOperation.AbsXStart);
+				if (textBoxChangeInProgress != txtRelEndY) txtRelEndY.Text = Fmt(ViewState.LastSelectedOperation.AbsYEnd - ViewState.LastSelectedOperation.AbsYStart);
+				if (textBoxChangeInProgress != txtRelEndZ) txtRelEndZ.Text = Fmt(ViewState.LastSelectedOperation.AbsZEnd - ViewState.LastSelectedOperation.AbsZStart);
+				if (textBoxChangeInProgress != txtRelCenterI) txtRelCenterI.Text = Fmt(ViewState.LastSelectedOperation.Line.I);
+				if (textBoxChangeInProgress != txtRelCenterJ) txtRelCenterJ.Text = Fmt(ViewState.LastSelectedOperation.Line.J);
+				if (textBoxChangeInProgress != txtRelCenterK) txtRelCenterK.Text = Fmt(ViewState.LastSelectedOperation.Line.K);
+				if (textBoxChangeInProgress != txtRelF) txtRelF.Text = Fmt(ViewState.LastSelectedOperation.F);
+				if (textBoxChangeInProgress != txtRelS) txtRelS.Text = Fmt(ViewState.LastSelectedOperation.S);
+				if (textBoxChangeInProgress != txtAbsStartX) txtAbsStartX.Text = Fmt(ViewState.LastSelectedOperation.AbsXStart);
+				if (textBoxChangeInProgress != txtAbsStartY) txtAbsStartY.Text = Fmt(ViewState.LastSelectedOperation.AbsYStart);
+				if (textBoxChangeInProgress != txtAbsStartZ) txtAbsStartZ.Text = Fmt(ViewState.LastSelectedOperation.AbsZStart);
+				if (textBoxChangeInProgress != txtAbsEndX) txtAbsEndX.Text = Fmt(ViewState.LastSelectedOperation.AbsXEnd);
+				if (textBoxChangeInProgress != txtAbsEndY) txtAbsEndY.Text = Fmt(ViewState.LastSelectedOperation.AbsYEnd);
+				if (textBoxChangeInProgress != txtAbsEndZ) txtAbsEndZ.Text = Fmt(ViewState.LastSelectedOperation.AbsZEnd);
+				if (textBoxChangeInProgress != txtAbsCenterI) txtAbsCenterI.Text = ViewState.LastSelectedOperation.Line.I.HasValue ? Fmt(ViewState.LastSelectedOperation.AbsI) : "";
+				if (textBoxChangeInProgress != txtAbsCenterJ) txtAbsCenterJ.Text = ViewState.LastSelectedOperation.Line.J.HasValue ? Fmt(ViewState.LastSelectedOperation.AbsJ) : "";
+				if (textBoxChangeInProgress != txtAbsCenterK) txtAbsCenterK.Text = ViewState.LastSelectedOperation.Line.K.HasValue ? Fmt(ViewState.LastSelectedOperation.AbsK) : "";
+				if (textBoxChangeInProgress != txtAbsF) txtAbsF.Text = Fmt(ViewState.LastSelectedOperation.Line.F);
+				if (textBoxChangeInProgress != txtAbsS) txtAbsS.Text = Fmt(ViewState.LastSelectedOperation.Line.S);
 			}
 			operationChangeInProgress = false;
 		}
@@ -140,8 +151,7 @@ namespace GCEd
 				setter(null);
 				if (!operationChangeInProgress)
 				{
-					OperationUpdated?.Invoke(this, EventArgs.Empty);
-					OnOperationChanged();
+					ViewState.RunProgram();
 				}
 			}
 			else
@@ -152,8 +162,7 @@ namespace GCEd
 					setter(val);
 					if (!operationChangeInProgress)
 					{
-						OperationUpdated?.Invoke(this, EventArgs.Empty);
-						OnOperationChanged();
+						ViewState.RunProgram();
 					}
 				}
 				else
@@ -164,19 +173,19 @@ namespace GCEd
 			textBoxChangeInProgress = null;
 		}
 
-		private void txtRelEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.X = Operation!.Absolute ? (decimal)Operation!.AbsXStart + value : value);
-		private void txtRelEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Y = Operation!.Absolute ? (decimal)Operation!.AbsYStart + value : value);
-		private void txtRelEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Z = Operation!.Absolute ? (decimal)Operation!.AbsZStart + value : value);
-		private void txtRelCenterI_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.I = value);
-		private void txtRelCenterJ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.J = value);
-		private void txtRelCenterK_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.K = value);
-		private void txtAbsEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.X = value.HasValue ? Operation!.Absolute ? value.Value : value.Value - (decimal)Operation!.AbsXStart : null);
-		private void txtAbsEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Y = value.HasValue ? Operation!.Absolute ? value.Value : value.Value - (decimal)Operation!.AbsYStart : null);
-		private void txtAbsEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.Z = value.HasValue ? Operation!.Absolute ? value.Value : value.Value - (decimal)Operation!.AbsZStart : null);
-		private void txtAbsCenterI_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.I = value.HasValue ? value.Value - (decimal)Operation!.AbsXStart : null);
-		private void txtAbsCenterJ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.J = value.HasValue ? value.Value - (decimal)Operation!.AbsYStart : null);
-		private void txtAbsCenterK_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.K = value.HasValue ? value.Value - (decimal)Operation!.AbsZStart : null);
-		private void txtAbsF_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.F = value);
-		private void txtAbsS_TextChanged(object sender, EventArgs e) => SetVal(sender, value => Operation!.Line.S = value);
+		private void txtRelEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.X = ViewState.LastSelectedOperation!.Absolute ? (decimal)ViewState.LastSelectedOperation!.AbsXStart + value : value);
+		private void txtRelEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.Y = ViewState.LastSelectedOperation!.Absolute ? (decimal)ViewState.LastSelectedOperation!.AbsYStart + value : value);
+		private void txtRelEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.Z = ViewState.LastSelectedOperation!.Absolute ? (decimal)ViewState.LastSelectedOperation!.AbsZStart + value : value);
+		private void txtRelCenterI_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.I = value);
+		private void txtRelCenterJ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.J = value);
+		private void txtRelCenterK_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.K = value);
+		private void txtAbsEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.X = value.HasValue ? ViewState.LastSelectedOperation!.Absolute ? value.Value : value.Value - (decimal)ViewState.LastSelectedOperation!.AbsXStart : null);
+		private void txtAbsEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.Y = value.HasValue ? ViewState.LastSelectedOperation!.Absolute ? value.Value : value.Value - (decimal)ViewState.LastSelectedOperation!.AbsYStart : null);
+		private void txtAbsEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.Z = value.HasValue ? ViewState.LastSelectedOperation!.Absolute ? value.Value : value.Value - (decimal)ViewState.LastSelectedOperation!.AbsZStart : null);
+		private void txtAbsCenterI_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.I = value.HasValue ? value.Value - (decimal)ViewState.LastSelectedOperation!.AbsXStart : null);
+		private void txtAbsCenterJ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.J = value.HasValue ? value.Value - (decimal)ViewState.LastSelectedOperation!.AbsYStart : null);
+		private void txtAbsCenterK_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.K = value.HasValue ? value.Value - (decimal)ViewState.LastSelectedOperation!.AbsZStart : null);
+		private void txtAbsF_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.F = value);
+		private void txtAbsS_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.S = value);
 	}
 }

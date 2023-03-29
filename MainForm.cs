@@ -13,25 +13,10 @@ namespace GCEd
 			InitializeComponent();
 			DoubleBuffered = true;
 			viewState = new ViewState();
-			viewState.OperationsChanged += ViewState_OperationsChanged;
 			canvas.ViewState = viewState;
 			operationsList.ViewState = viewState;
+			operationProperties.ViewState = viewState;
 			viewState.LoadProgram("test.nc");
-		}
-
-		private void ViewState_OperationsChanged()
-		{
-			var line = operationProperties.Operation?.Line;
-			if (line != null)
-			{
-				var newOperation = viewState.Operations.FirstOrDefault(operation => operation.Line == line);
-				if (newOperation != null) operationProperties.Operation = newOperation;
-			}
-		}
-
-		private void operationProperties_OperationUpdated(object sender, System.EventArgs e)
-		{
-			viewState.RunProgram();
 		}
 	}
 }

@@ -12,6 +12,7 @@ namespace GCEd
 		public GProgram Program { get => program; }
 		public IEnumerable<GOperation> Operations { get => operations; }
 		public IReadOnlySet<GOperation> SelectedOperations { get => selectedOperations; }
+		public GOperation? LastSelectedOperation { get; private set; }
 
 		public event Action? OperationsChanged;
 		public event Action? SelectedOperationsChanged;
@@ -54,8 +55,8 @@ namespace GCEd
 			selectedOperations.Clear();
 			foreach (var operation in newSelection)
 				selectedOperations.Add(operation);
+			LastSelectedOperation = newSelection.LastOrDefault();
 			SelectedOperationsChanged?.Invoke();
 		}
-
 	}
 }

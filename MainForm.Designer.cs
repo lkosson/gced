@@ -51,7 +51,6 @@
 			this.operationProperties.Name = "operationProperties";
 			this.operationProperties.Size = new System.Drawing.Size(206, 334);
 			this.operationProperties.TabIndex = 1;
-			this.operationProperties.OperationUpdated += new System.EventHandler(this.operationProperties_OperationUpdated);
 			// 
 			// operationsList
 			// 
