@@ -267,8 +267,10 @@ namespace GCEd
 			if (interaction == Interaction.DragSelect)
 			{
 				var append = (ModifierKeys & Keys.Control) == Keys.Control;
+				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
 				foreach (var item in items)
 				{
+					if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) continue;
 					var changed = false;
 					if (item.Hovered)
 					{
@@ -324,8 +326,10 @@ namespace GCEd
 			if (interaction == Interaction.DragSelect)
 			{
 				var absSelectionRectangle = ViewToAbs(new Rectangle(mouseDragStart.X, mouseDragStart.Y, e.Location.X - mouseDragStart.X, e.Location.Y - mouseDragStart.Y));
+				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
 				foreach (var item in items)
 				{
+					if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) continue;
 					var hovered = item.AbsBoundingBox.IntersectsWith(absSelectionRectangle);
 					if (hovered == item.Hovered) continue;
 					item.Hovered = hovered;
