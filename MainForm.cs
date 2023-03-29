@@ -31,19 +31,6 @@ namespace GCEd
 			}
 		}
 
-		private void timerFPSCounter_Tick(object sender, System.EventArgs e)
-		{
-			if (canvas.FrameCount == 0) return;
-			Text = (canvas.PaintTime / canvas.FrameCount) + " ms";
-			if (canvas.PaintTime == 0) return;
-			Text += ", " + (1000 * canvas.FrameCount / canvas.PaintTime) + " fps";
-
-			Text += ", " + canvas.VisCount + " / " + canvas.ItemCount;
-
-			canvas.FrameCount = 0;
-			canvas.PaintTime = 0;
-		}
-
 		private void canvas_SelectedOperationsChanged(object sender, System.EventArgs e)
 		{
 			var operations = canvas.SelectedOperations;

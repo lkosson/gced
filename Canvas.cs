@@ -16,10 +16,7 @@ namespace GCEd
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IEnumerable<GOperation> Operations { get => items.Select(item => item.Operation); set { PopulateItems(value); PanZoomViewToFit(); } }
 
-		public int PaintTime { get; set; }
-		public int FrameCount { get; set; }
-		public int ItemCount { get; set; }
-		public int VisCount { get; set; }
+		public bool ShowFPS { get; set; } = true;
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IEnumerable<GOperation> SelectedOperations
@@ -124,6 +121,7 @@ namespace GCEd
 
 			if (DesignMode) return;
 
+			var gs = e.Graphics.Save();
 			e.Graphics.MultiplyTransform(viewMatrix);
 
 			if (matrixUpdated)
@@ -138,19 +136,24 @@ namespace GCEd
 
 			var absClipRect = ViewToAbs(viewClip);
 
-			ItemCount = 0;
-			VisCount = 0;
+			var itemCount = 0;
+			var visCount = 0;
 			foreach (var item in items)
 			{
-				ItemCount++;
+				itemCount++;
 				if (!item.AbsBoundingBox.IntersectsWith(absClipRect)) continue;
 				item.Draw(e.Graphics, style);
-				VisCount++;
+				visCount++;
 			}
+			e.Graphics.Restore(gs);
 
 			sw.Stop();
-			PaintTime += (int)sw.ElapsedMilliseconds;
-			FrameCount++;
+			var paintTime = (int)sw.ElapsedMilliseconds;
+
+			if (ShowFPS)
+			{
+				e.Graphics.DrawString($"{paintTime} ms\n{(paintTime == 0 ? 999 : 1000 / paintTime)} fps\n{itemCount} items\n{visCount} visible", Font, Brushes.Black, 0, 0);
+			}
 		}
 
 		private void Invalidate(CanvasItem item)
@@ -159,6 +162,7 @@ namespace GCEd
 			var viewBound = AbsToView(absBounds);
 			viewBound.Inflate(5, 5);
 			Invalidate(viewBound);
+			if (ShowFPS) Invalidate(new Rectangle(0, 0, 100, 100));
 		}
 
 		private float ViewToAbs(int dist)
