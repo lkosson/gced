@@ -42,7 +42,6 @@
 			this.canvas.Name = "canvas";
 			this.canvas.Size = new System.Drawing.Size(570, 514);
 			this.canvas.TabIndex = 0;
-			this.canvas.SelectedOperationsChanged += new System.EventHandler(this.canvas_SelectedOperationsChanged);
 			// 
 			// operationProperties
 			// 

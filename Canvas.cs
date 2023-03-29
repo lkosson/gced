@@ -14,29 +14,52 @@ namespace GCEd
 	partial class Canvas : UserControl
 	{
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IEnumerable<GOperation> Operations { get => items.Select(item => item.Operation); set { PopulateItems(value); PanZoomViewToFit(); } }
-
-		public bool ShowFPS { get; set; } = true;
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IEnumerable<GOperation> SelectedOperations
-		{ 
-			get => items.Where(item => item.Selected).Select(item => item.Operation).ToList();
+		public ViewState ViewState
+		{
+			get => viewState;
 			set
 			{
-				var newSelection = new HashSet<GOperation>(value, GOperation.ByGLineEqualityComparer);
-				foreach (var item in items)
+				if (viewState != null)
 				{
-					var selected = newSelection.Contains(item.Operation);
-					if (!(selected ^ item.Selected)) continue;
-					item.Selected = selected;
-					Invalidate(item);
+					viewState.OperationsChanged -= ViewState_OperationsChanged;
+					viewState.SelectedOperationsChanged -= ViewState_SelectedOperationsChanged;
 				}
+				viewState = value;
+				viewState.OperationsChanged += ViewState_OperationsChanged;
+				viewState.SelectedOperationsChanged += ViewState_SelectedOperationsChanged;
 			}
 		}
 
-		public event EventHandler? SelectedOperationsChanged;
+		private void ViewState_OperationsChanged()
+		{
+			var items = new List<CanvasItem>();
+			foreach (var operation in viewState.Operations)
+			{
+				CanvasItem item;
+				if (operation.Line.Instruction == GInstruction.G0 || operation.Line.Instruction == GInstruction.G1) item = new CanvasItemLine(operation);
+				else if (operation.Line.Instruction == GInstruction.G2 || operation.Line.Instruction == GInstruction.G3) item = new CanvasItemArc(operation);
+				else continue;
+				items.Add(item);
+			}
+			this.items = items;
+			PanZoomViewToFit();
+			Invalidate();
+		}
 
+		private void ViewState_SelectedOperationsChanged()
+		{
+			foreach (var item in items)
+			{
+				var selected = viewState.SelectedOperations.Contains(item.Operation);
+				if (!(selected ^ item.Selected)) continue;
+				item.Selected = selected;
+				Invalidate(item);
+			}
+		}
+
+		public bool ShowFPS { get; set; } = true;
+
+		private ViewState viewState;
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
 		private Point mouseDragStart;
@@ -54,22 +77,6 @@ namespace GCEd
 			inverseViewMatrix = new Matrix();
 			style = new CanvasStyle();
 			items = Enumerable.Empty<CanvasItem>();
-		}
-
-		private void PopulateItems(IEnumerable<GOperation> operations)
-		{
-			var selection = new HashSet<GOperation>(SelectedOperations, GOperation.ByGLineEqualityComparer);
-			var items = new List<CanvasItem>();
-			foreach (var operation in operations)
-			{
-				CanvasItem item;
-				if (operation.Line.Instruction == GInstruction.G0 || operation.Line.Instruction == GInstruction.G1) item = new CanvasItemLine(operation);
-				else if (operation.Line.Instruction == GInstruction.G2 || operation.Line.Instruction == GInstruction.G3) item = new CanvasItemArc(operation);
-				else continue;
-				if (selection.Contains(operation)) item.Selected = true;
-				items.Add(item);
-			}
-			this.items = items;
 		}
 
 		private void PanZoomViewToFit()
@@ -244,25 +251,25 @@ namespace GCEd
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
+			var operationsToSelect = new List<GOperation>();
+			var operationsToUnselect = new List<GOperation>();
 			if (interaction == Interaction.DragOrSelect)
 			{
-				var selectionChanged = false;
 				foreach (var item in items)
 				{
 					if (item.Hovered && !item.Selected)
 					{
 						item.Selected = true;
-						selectionChanged = true;
+						operationsToSelect.Add(item.Operation);
 						Invalidate(item);
 					}
 					else if (item.Selected && (ModifierKeys & Keys.Control) != Keys.Control)
 					{
 						item.Selected = false;
-						selectionChanged = true;
+						operationsToUnselect.Add(item.Operation);
 						Invalidate(item);
 					}
 				}
-				if (selectionChanged) SelectedOperationsChanged?.Invoke(this, EventArgs.Empty);
 			}
 			if (interaction == Interaction.DragSelect)
 			{
@@ -271,24 +278,30 @@ namespace GCEd
 				foreach (var item in items)
 				{
 					if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) continue;
-					var changed = false;
 					if (item.Hovered)
 					{
 						item.Hovered = false;
 						item.Selected = true;
-						changed = true;
+						operationsToSelect.Add(item.Operation);
+						Invalidate(item);
 					}
 					else
 					{
 						if (!append && item.Selected)
 						{
 							item.Selected = false;
-							changed = true;
+							operationsToUnselect.Add(item.Operation);
+							Invalidate(item);
 						}
 					}
-					if (changed) Invalidate(item);
 				}
 			}
+
+			if (operationsToSelect.Any() || operationsToUnselect.Any())
+			{
+				viewState.UpdateSelection(operationsToSelect, operationsToUnselect);
+			}
+
 			interaction = Interaction.None;
 			base.OnMouseUp(e);
 		}

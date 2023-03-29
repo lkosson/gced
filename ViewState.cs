@@ -11,9 +11,10 @@ namespace GCEd
 	{
 		public GProgram Program { get => program; }
 		public IEnumerable<GOperation> Operations { get => operations; }
-		public IEnumerable<GOperation> SelectedOperations { get => selectedOperations; }
+		public IReadOnlySet<GOperation> SelectedOperations { get => selectedOperations; }
 
 		public event Action? OperationsChanged;
+		public event Action? SelectedOperationsChanged;
 
 		private GProgram program;
 		private List<GOperation> operations;
@@ -23,7 +24,7 @@ namespace GCEd
 		{
 			program = new GProgram();
 			operations = new List<GOperation>();
-			selectedOperations = new HashSet<GOperation>();
+			selectedOperations = new HashSet<GOperation>(GOperation.ByGLineEqualityComparer);
 		}
 
 		public void LoadProgram(string file)
@@ -39,6 +40,21 @@ namespace GCEd
 			operations.Clear();
 			operations.AddRange(newOperations);
 			OperationsChanged?.Invoke();
+			var newSelection = new List<GOperation>();
+			foreach (var operation in operations)
+			{
+				if (selectedOperations.Contains(operation))
+					newSelection.Add(operation);
+			}
+			selectedOperations.Clear();
+			foreach (var operation in newSelection)
+				selectedOperations.Add(operation);
+			SelectedOperationsChanged?.Invoke();
+		}
+
+		public void UpdateSelection(IEnumerable<GOperation> operationsToSelect, IEnumerable<GOperation> operationsToUnselect)
+		{
+
 		}
 
 	}
