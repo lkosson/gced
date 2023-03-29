@@ -30,6 +30,30 @@ namespace GCEd
 			}
 		}
 
+		public bool ShowFPS { get; set; } = true;
+
+		private ViewState viewState;
+		private Matrix viewMatrix;
+		private Matrix inverseViewMatrix;
+		private Point mouseDragStart;
+		private bool matrixUpdated;
+		private CanvasStyle style;
+		private IEnumerable<CanvasItem> items;
+		private Interaction interaction;
+
+		private enum Interaction { None, DragOrSelect, Drag, DragSelect }
+
+		public Canvas()
+		{
+			DoubleBuffered = true;
+			viewState = new ViewState();
+			viewMatrix = new Matrix();
+			inverseViewMatrix = new Matrix();
+			style = new CanvasStyle();
+			items = Enumerable.Empty<CanvasItem>();
+		}
+
+
 		private void ViewState_OperationsChanged()
 		{
 			var items = new List<CanvasItem>();
@@ -55,28 +79,6 @@ namespace GCEd
 				item.Selected = selected;
 				Invalidate(item);
 			}
-		}
-
-		public bool ShowFPS { get; set; } = true;
-
-		private ViewState viewState;
-		private Matrix viewMatrix;
-		private Matrix inverseViewMatrix;
-		private Point mouseDragStart;
-		private bool matrixUpdated;
-		private CanvasStyle style;
-		private IEnumerable<CanvasItem> items;
-		private Interaction interaction;
-
-		private enum Interaction { None, DragOrSelect, Drag, DragSelect }
-
-		public Canvas()
-		{
-			DoubleBuffered = true;
-			viewMatrix = new Matrix();
-			inverseViewMatrix = new Matrix();
-			style = new CanvasStyle();
-			items = Enumerable.Empty<CanvasItem>();
 		}
 
 		private void PanZoomViewToFit()

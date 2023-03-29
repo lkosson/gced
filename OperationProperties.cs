@@ -29,12 +29,12 @@ namespace GCEd
 		}
 
 		private ViewState viewState;
-		private GOperation? operation;
 		private TextBox? textBoxChangeInProgress;
 		private bool operationChangeInProgress;
 
 		public OperationProperties()
 		{
+			viewState = new ViewState();
 			InitializeComponent();
 		}
 

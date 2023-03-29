@@ -29,6 +29,15 @@ namespace GCEd
 			}
 		}
 
+		private ViewState viewState;
+		private bool selectionInProgress;
+
+		public OperationsList()
+		{
+			viewState = new ViewState();
+			InitializeComponent();
+		}
+
 		private void ViewState_OperationsChanged()
 		{
 			selectionInProgress = true;
@@ -63,15 +72,6 @@ namespace GCEd
 			}
 			listBoxOperations.EndUpdate();
 			selectionInProgress = false;
-		}
-
-
-		private ViewState viewState;
-		private bool selectionInProgress;
-
-		public OperationsList()
-		{
-			InitializeComponent();
 		}
 
 		private void listBoxOperations_SelectedIndexChanged(object sender, EventArgs e)
