@@ -434,5 +434,25 @@ namespace GCEd
 				}
 			}
 		}
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.H)
+			{
+				PanZoomViewToFit();
+			}
+			else if (e.KeyCode == Keys.Delete)
+			{
+				var selectedOperations = new List<GOperation>();
+				foreach (var item in items)
+				{
+					if (!item.Selected) continue;
+					selectedOperations.Add(item.Operation);
+				}
+				viewState.DeleteOperations(selectedOperations);
+				e.Handled = true;
+			}
+			base.OnKeyDown(e);
+		}
 	}
 }
