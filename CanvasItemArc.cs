@@ -35,7 +35,27 @@ namespace GCEd
 			angle = startAngle;
 			sweep = endAngle - startAngle;
 			if (angle < 0) angle += 360;
-			AbsBoundingBox = new RectangleF(Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius);
+
+			var absMinX = Operation.AbsXStart;
+			var absMaxX = Operation.AbsXStart;
+			var absMinY = Operation.AbsYStart;
+			var absMaxY = Operation.AbsYStart;
+
+			if (Operation.AbsXEnd < absMinX) absMinX = Operation.AbsXEnd;
+			if (Operation.AbsXEnd > absMaxX) absMaxX = Operation.AbsXEnd;
+			if (Operation.AbsYEnd < absMinY) absMinY = Operation.AbsYEnd;
+			if (Operation.AbsYEnd > absMaxY) absMaxY = Operation.AbsYEnd;
+
+			var minAngle = sweep > 0 ? angle : angle + sweep;
+			var maxAngle = sweep > 0 ? angle + sweep : angle;
+			if (maxAngle >= 360) { maxAngle -= 360; minAngle -= 360; }
+
+			if (minAngle <= 0 && maxAngle > 0 && Operation.AbsI + radius > absMaxX) absMaxX = Operation.AbsI + radius;
+			if (minAngle <= 90 && maxAngle > 90 && Operation.AbsJ + radius > absMaxY) absMaxY = Operation.AbsJ + radius;
+			if (minAngle <= 180 && maxAngle > 180 && Operation.AbsI - radius < absMinX) absMinX = Operation.AbsI - radius;
+			if (minAngle <= 270 && maxAngle > 270 && Operation.AbsJ - radius < absMinY) absMinY = Operation.AbsJ - radius;
+
+			AbsBoundingBox = new RectangleF(absMinX, absMinY, absMaxX - absMinX, absMaxY - absMinY);
 		}
 
 		public override void ViewMatrixChanged(Matrix viewMatrix)
