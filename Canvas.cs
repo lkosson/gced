@@ -31,6 +31,8 @@ namespace GCEd
 		}
 
 		public bool ShowFPS { get; set; } = true;
+		public bool ShowMinorGrid { get; set; } = true;
+		public bool ShowMajorGrid { get; set; } = true;
 
 		private ViewState viewState;
 		private Matrix viewMatrix;
@@ -163,31 +165,10 @@ namespace GCEd
 
 			if (DesignMode) return;
 
-			var gs = e.Graphics.Save();
-			e.Graphics.MultiplyTransform(viewMatrix);
-
-			if (matrixUpdated)
-			{
-				inverseViewMatrix.Reset();
-				inverseViewMatrix.Multiply(viewMatrix);
-				inverseViewMatrix.Invert();
-				style.ViewMatrixChanged(viewMatrix);
-				foreach (var item in items) item.ViewMatrixChanged(viewMatrix);
-				matrixUpdated = false;
-			}
-
 			var absClipRect = ViewToAbs(viewClip);
-
-			var itemCount = 0;
-			var visCount = 0;
-			foreach (var item in items)
-			{
-				itemCount++;
-				if (!item.AbsBoundingBox.IntersectsWith(absClipRect)) continue;
-				item.Draw(e.Graphics, style);
-				visCount++;
-			}
-			e.Graphics.Restore(gs);
+			PropagateMatrixChange();
+			PaintGrid(e.Graphics, absClipRect);
+			var (itemCount, visCount) = PaintItems(e.Graphics, absClipRect);
 
 			sw.Stop();
 			var paintTime = (int)sw.ElapsedMilliseconds;
@@ -196,6 +177,58 @@ namespace GCEd
 			{
 				e.Graphics.DrawString($"{paintTime} ms\n{(paintTime == 0 ? 999 : 1000 / paintTime)} fps\n{itemCount} items\n{visCount} visible", Font, Brushes.Black, 0, 0);
 			}
+		}
+
+		private void PaintGrid(Graphics g, RectangleF absClipRect)
+		{
+			if (!ShowMajorGrid && !ShowMinorGrid) return;
+
+			var gs = g.Save();
+			g.MultiplyTransform(viewMatrix);
+
+			var absArea = ViewToAbs(ClientRectangle);
+			var vertGridStep = (float)Math.Pow(10, Math.Floor(Math.Log10(absArea.Width * 0.5)));
+			var vertGridStart = absArea.Left - (float)Math.IEEERemainder(absArea.Left, vertGridStep);
+			var vertGridEnd = absArea.Right - (float)Math.IEEERemainder(absArea.Right, vertGridStep) + vertGridStep;
+			for (var x = vertGridStart; x < vertGridEnd; x += vertGridStep)
+			{
+				g.DrawLine(style.MajorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
+			}
+
+			g.DrawLine(style.OriginGridPen, 0, absClipRect.Top, 0, absClipRect.Bottom);
+			g.DrawLine(style.OriginGridPen, absClipRect.Left, 0, absClipRect.Right, 0);
+
+			g.Restore(gs);
+		}
+
+		private void PropagateMatrixChange()
+		{
+			if (!matrixUpdated) return;
+			inverseViewMatrix.Reset();
+			inverseViewMatrix.Multiply(viewMatrix);
+			inverseViewMatrix.Invert();
+			style.ViewMatrixChanged(viewMatrix);
+			foreach (var item in items) item.ViewMatrixChanged(viewMatrix);
+			matrixUpdated = false;
+		}
+
+		private (int itemCount, int visCount) PaintItems(Graphics g, RectangleF absClipRect)
+		{
+			var gs = g.Save();
+			g.MultiplyTransform(viewMatrix);
+
+			var itemCount = 0;
+			var visCount = 0;
+			foreach (var item in items)
+			{
+				itemCount++;
+				if (!item.AbsBoundingBox.IntersectsWith(absClipRect)) continue;
+				item.Draw(g, style);
+				visCount++;
+			}
+			g.Restore(gs);
+
+			return (itemCount, visCount);
 		}
 
 		private void Invalidate(CanvasItem item)
@@ -440,6 +473,15 @@ namespace GCEd
 			if (e.KeyCode == Keys.H)
 			{
 				PanZoomViewToFit();
+			}
+			else if (e.KeyCode == Keys.F)
+			{
+				ShowFPS = !ShowFPS;
+				Invalidate();
+			}
+			else if (e.KeyCode == Keys.G)
+			{
+
 			}
 			else if (e.KeyCode == Keys.Delete)
 			{

@@ -17,9 +17,14 @@ namespace GCEd
 		public Pen HoveredIdlePen { get; private set; } = default!;
 		public Pen HoveredActivePen { get; private set; } = default!;
 		public Pen SelectedPen { get; private set; } = default!;
+		public Pen MinorGridPen { get; private set; } = default!;
+		public Pen MajorGridPen { get; private set; } = default!;
+		public Pen OriginGridPen { get; private set; } = default!;
 
 		public CanvasStyle()
 		{
+			using var matrix = new Matrix();
+			ViewMatrixChanged(matrix);
 		}
 
 		public virtual void ViewMatrixChanged(Matrix viewMatrix)
@@ -32,6 +37,10 @@ namespace GCEd
 			HoveredIdlePen = new Pen(Color.LightBlue, 3 / len);
 			HoveredActivePen = new Pen(Color.Blue, 3 / len);
 			SelectedPen = new Pen(Color.DarkGreen, 3 / len);
+
+			MinorGridPen = new Pen(Color.DarkGray, 1 / len) { DashStyle = DashStyle.Dot };
+			MajorGridPen = new Pen(Color.DarkGray, 1 / len) { DashStyle = DashStyle.Dash };
+			OriginGridPen = new Pen(Color.Black, 1 / len);
 
 			var arrowPath = new GraphicsPath();
 			arrowPath.AddLines(new[] { new PointF(0f, 0f), new PointF(1f, -2f), new PointF(-1f, -2f), new PointF(0f, 0f) });
@@ -52,6 +61,10 @@ namespace GCEd
 			HoveredIdlePen.Dispose();
 			HoveredActivePen.Dispose();
 			SelectedPen.Dispose();
+			MinorGridPen.Dispose();
+			MajorGridPen.Dispose();
+			OriginGridPen.Dispose();
 		}
 	}
 }
+
