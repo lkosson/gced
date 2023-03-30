@@ -281,10 +281,9 @@ namespace GCEd
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			var selectedOperations = new List<GOperation>();
-
 			if (interaction == Interaction.DragOrSelect)
 			{
+				var selectedOperations = new List<GOperation>();
 				foreach (var item in items)
 				{
 					if (item.Hovered && !item.Selected)
@@ -299,9 +298,11 @@ namespace GCEd
 						Invalidate(item);
 					}
 				}
+				viewState.SetSelection(selectedOperations);
 			}
 			if (interaction == Interaction.DragSelect)
 			{
+				var selectedOperations = new List<GOperation>();
 				var append = (ModifierKeys & Keys.Control) == Keys.Control;
 				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
 				if (append) selectedOperations.AddRange(viewState.SelectedOperations);
@@ -324,9 +325,8 @@ namespace GCEd
 						}
 					}
 				}
+				viewState.SetSelection(selectedOperations);
 			}
-
-			viewState.SetSelection(selectedOperations);
 
 			interaction = Interaction.None;
 			base.OnMouseUp(e);
