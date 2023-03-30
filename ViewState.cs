@@ -58,5 +58,12 @@ namespace GCEd
 			LastSelectedOperation = newSelection.LastOrDefault();
 			SelectedOperationsChanged?.Invoke();
 		}
+
+		public void DeleteOperations(IEnumerable<GOperation> operations)
+		{
+			var linesToDelete = new HashSet<GLine>(operations.Select(operation => operation.Line));
+			program.Lines.RemoveAll(line => linesToDelete.Contains(line));
+			RunProgram();
+		}
 	}
 }

@@ -87,6 +87,19 @@ namespace GCEd
 			selectionInProgress = false;
 		}
 
+		private void listBoxOperations_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Delete)
+			{
+				var selectedOperations = new List<GOperation>();
+				foreach (ListItem item in listBoxOperations.SelectedItems)
+				{
+					selectedOperations.Add(item.Operation);
+				}
+				viewState.DeleteOperations(selectedOperations);
+			}
+		}
+
 		private class ListItem
 		{
 			public GOperation Operation { get; set; }

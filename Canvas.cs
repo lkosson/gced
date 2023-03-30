@@ -53,6 +53,11 @@ namespace GCEd
 			items = Enumerable.Empty<CanvasItem>();
 		}
 
+		protected override void OnLoad(EventArgs e)
+		{
+			PanZoomViewToFit();
+			base.OnLoad(e);
+		}
 
 		private void ViewState_OperationsChanged()
 		{
@@ -66,7 +71,6 @@ namespace GCEd
 				items.Add(item);
 			}
 			this.items = items;
-			PanZoomViewToFit();
 			Invalidate();
 		}
 
@@ -79,6 +83,7 @@ namespace GCEd
 				item.Selected = selected;
 				Invalidate(item);
 			}
+			PanViewToSelection();
 		}
 
 		private void PanZoomViewToFit()
@@ -116,6 +121,34 @@ namespace GCEd
 
 			matrixUpdated = true;
 
+			Invalidate();
+		}
+
+		private void PanViewToSelection()
+		{
+			var absX1 = Single.MaxValue;
+			var absY1 = Single.MaxValue;
+			var absX2 = Single.MinValue;
+			var absY2 = Single.MinValue;
+
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				var bounding = item.AbsBoundingBox;
+				if (absX1 > bounding.Left) absX1 = bounding.Left;
+				if (absY1 > bounding.Top) absY1 = bounding.Top;
+				if (absX2 < bounding.Right) absX2 = bounding.Right;
+				if (absY2 < bounding.Bottom) absY2 = bounding.Bottom;
+			}
+
+			if (absX1 == Single.MaxValue) return;
+
+			var viewSelectedBounds = AbsToView(new RectangleF(absX1, absY1, absX2 - absX1, absY2 - absY1));
+			if (ClientRectangle.Contains(viewSelectedBounds)) return;
+
+			viewMatrix.Translate(-viewSelectedBounds.X + Width / 2 - viewSelectedBounds.Width / 2, -viewSelectedBounds.Y + Height / 2 - viewSelectedBounds.Height / 2, MatrixOrder.Append);
+
+			matrixUpdated = true;
 			Invalidate();
 		}
 
@@ -226,16 +259,11 @@ namespace GCEd
 		{
 			base.OnMouseWheel(e);
 
-			var scaleMatrix = new Matrix();
+			viewMatrix.Translate(-e.X, -e.Y, MatrixOrder.Append);
+			if (e.Delta > 0) viewMatrix.Scale(1.1f, 1.1f, MatrixOrder.Append);
+			else viewMatrix.Scale(1 / 1.1f, 1 / 1.1f, MatrixOrder.Append);
+			viewMatrix.Translate(e.X, e.Y, MatrixOrder.Append);
 
-			scaleMatrix.Translate(e.X, e.Y);
-			if (e.Delta > 0) scaleMatrix.Scale(1.1f, 1.1f);
-			else scaleMatrix.Scale(1 / 1.1f, 1 / 1.1f);
-			scaleMatrix.Translate(-e.X, -e.Y);
-
-			scaleMatrix.Multiply(viewMatrix);
-
-			viewMatrix = scaleMatrix;
 			matrixUpdated = true;
 
 			Invalidate();
@@ -324,10 +352,7 @@ namespace GCEd
 
 			if (interaction == Interaction.Drag)
 			{
-				var translateMatrix = new Matrix();
-				translateMatrix.Translate(e.X - mouseDragStart.X, e.Y - mouseDragStart.Y);
-				translateMatrix.Multiply(viewMatrix);
-				viewMatrix = translateMatrix;
+				viewMatrix.Translate(e.X - mouseDragStart.X, e.Y - mouseDragStart.Y, MatrixOrder.Append);
 				matrixUpdated = true;
 
 				mouseDragStart = e.Location;

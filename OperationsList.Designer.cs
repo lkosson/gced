@@ -44,6 +44,7 @@
 			this.listBoxOperations.Size = new System.Drawing.Size(348, 289);
 			this.listBoxOperations.TabIndex = 0;
 			this.listBoxOperations.SelectedIndexChanged += new System.EventHandler(this.listBoxOperations_SelectedIndexChanged);
+			this.listBoxOperations.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBoxOperations_KeyDown);
 			// 
 			// OperationsList
 			// 
