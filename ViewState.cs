@@ -77,15 +77,52 @@ namespace GCEd
 
 		public void ConvertToAbsolute(IEnumerable<GOperation> operations)
 		{
+			var linesToConvert = new HashSet<GLine>(operations.Where(operation => !operation.Absolute).Select(operation => operation.Line));
+			var lineNodesToConvert = new List<LinkedListNode<GLine>>();
+			for (var node = program.Lines.First; node != null; node = node.Next)
+			{
+				if (!linesToConvert.Contains(node.Value)) continue;
+				lineNodesToConvert.Add(node);
+			}
+			foreach (var node in lineNodesToConvert)
+			{
+				if (node.Previous != null && node.Previous.Value.Instruction == GInstruction.G91) program.Lines.Remove(node.Previous);
+				else if (node.Previous == null || node.Previous.Value.Instruction != GInstruction.G90) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G90 });
+
+				if (node.Next != null && node.Next.Value.Instruction == GInstruction.G90) program.Lines.Remove(node.Next);
+				else if (node.Next == null || node.Next.Value.Instruction != GInstruction.G91) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G91 });
+			}
 			foreach (var operation in operations)
 			{
-
+				operation.Line.X = (decimal)operation.AbsXEnd;
+				operation.Line.Y = (decimal)operation.AbsYEnd;
 			}
 			RunProgram();
 		}
 
 		public void ConvertToRelative(IEnumerable<GOperation> operations)
 		{
+			var linesToConvert = new HashSet<GLine>(operations.Where(operation => operation.Absolute).Select(operation => operation.Line));
+			var lineNodesToConvert = new List<LinkedListNode<GLine>>();
+			for (var node = program.Lines.First; node != null; node = node.Next)
+			{
+				if (!linesToConvert.Contains(node.Value)) continue;
+				lineNodesToConvert.Add(node);
+			}
+			foreach (var node in lineNodesToConvert)
+			{
+				if (node.Previous != null && node.Previous.Value.Instruction == GInstruction.G90) program.Lines.Remove(node.Previous);
+				else if (node.Previous == null || node.Previous.Value.Instruction != GInstruction.G91) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G91 });
+
+				if (node.Next != null && node.Next.Value.Instruction == GInstruction.G91) program.Lines.Remove(node.Next);
+				else if (node.Next == null || node.Next.Value.Instruction != GInstruction.G90) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G90 });
+			}
+			foreach (var operation in operations)
+			{
+				operation.Line.X = (decimal)(operation.AbsXEnd - operation.AbsXStart);
+				operation.Line.Y = (decimal)(operation.AbsYEnd - operation.AbsYStart);
+			}
+			RunProgram();
 		}
 	}
 }
