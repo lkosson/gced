@@ -33,6 +33,7 @@ namespace GCEd
 		public bool ShowFPS { get; set; } = true;
 		public bool ShowMinorGrid { get; set; } = true;
 		public bool ShowMajorGrid { get; set; } = true;
+		public bool ShowOriginGrid { get; set; } = true;
 
 		private ViewState viewState;
 		private Matrix viewMatrix;
@@ -181,28 +182,45 @@ namespace GCEd
 
 		private void PaintGrid(Graphics g, RectangleF absClipRect)
 		{
-			if (!ShowMajorGrid && !ShowMinorGrid) return;
+			if (!ShowMajorGrid && !ShowMinorGrid && !ShowOriginGrid) return;
 
 			var gs = g.Save();
 			g.SmoothingMode = SmoothingMode.None;
 			g.MultiplyTransform(viewMatrix);
 
+			var absMinimalSpacing = ViewToAbs(10);
+			var absStepMinor = (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(absMinimalSpacing)));
+			var absStepMajor = absStepMinor * 10;
+
 			var absArea = ViewToAbs(ClientRectangle);
-			var vertGridStepMajor = (float)Math.Pow(10, Math.Floor(Math.Log10(absArea.Width * 2)));
-			var vertGridStepMinor = vertGridStepMajor / 10;
-			var vertGridStart = absArea.Left - absArea.Left % vertGridStepMajor - (absArea.Left < 0 ? vertGridStepMajor : 0);
-			var vertGridEnd = absArea.Right - absArea.Right % vertGridStepMajor + (absArea.Right < 0 ? vertGridStepMajor : 0) + vertGridStepMajor;
-			for (var x = vertGridStart; x < vertGridEnd; x += vertGridStepMinor)
+			var vertGridStart = absArea.Left - absArea.Left % absStepMajor - (absArea.Left < 0 ? absStepMajor : 0);
+			var vertGridEnd = absArea.Right - absArea.Right % absStepMajor + (absArea.Right < 0 ? absStepMajor : 0) + absStepMajor;
+			var horizGridStart = absArea.Top - absArea.Top % absStepMajor - (absArea.Top < 0 ? absStepMajor : 0);
+			var horizGridEnd = absArea.Bottom - absArea.Bottom % absStepMajor + (absArea.Bottom < 0 ? absStepMajor : 0) + absStepMajor;
+
+			if (ShowMinorGrid)
 			{
-				g.DrawLine(style.MinorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
-			}
-			for (var x = vertGridStart; x < vertGridEnd; x += vertGridStepMajor)
-			{
-				g.DrawLine(style.MajorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
+				for (var x = vertGridStart; x < vertGridEnd; x += absStepMinor)
+					g.DrawLine(style.MinorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
+
+				for (var y = horizGridStart; y < horizGridEnd; y += absStepMinor)
+					g.DrawLine(style.MinorGridPen, absClipRect.Left, y, absClipRect.Right, y);
 			}
 
-			g.DrawLine(style.OriginGridPen, 0, absClipRect.Top, 0, absClipRect.Bottom);
-			g.DrawLine(style.OriginGridPen, absClipRect.Left, 0, absClipRect.Right, 0);
+			if (ShowMajorGrid)
+			{
+				for (var x = vertGridStart; x < vertGridEnd; x += absStepMajor)
+					g.DrawLine(style.MajorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
+
+				for (var y = horizGridStart; y < horizGridEnd; y += absStepMajor)
+					g.DrawLine(style.MajorGridPen, absClipRect.Left, y, absClipRect.Right, y);
+			}
+
+			if (ShowOriginGrid)
+			{
+				g.DrawLine(style.OriginGridPen, 0, absClipRect.Top, 0, absClipRect.Bottom);
+				g.DrawLine(style.OriginGridPen, absClipRect.Left, 0, absClipRect.Right, 0);
+			}
 
 			g.Restore(gs);
 		}
@@ -487,7 +505,16 @@ namespace GCEd
 			}
 			else if (e.KeyCode == Keys.G)
 			{
-
+				if (ShowMinorGrid)
+				{
+					ShowMinorGrid = false;
+					ShowMajorGrid = false;
+					ShowOriginGrid = false;
+				}
+				else if (!ShowOriginGrid) ShowOriginGrid = true;
+				else if (!ShowMajorGrid) ShowMajorGrid = true;
+				else ShowMinorGrid = true;
+				Invalidate();
 			}
 			else if (e.KeyCode == Keys.Delete)
 			{
