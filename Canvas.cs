@@ -31,6 +31,8 @@ namespace GCEd
 		}
 
 		public bool ShowFPS { get; set; } = true;
+		public bool ShowCursorCoords { get; set; } = true;
+		public bool ShowItemCoords { get; set; } = true;
 		public bool ShowMinorGrid { get; set; } = true;
 		public bool ShowMajorGrid { get; set; } = true;
 		public bool ShowOriginGrid { get; set; } = true;
@@ -176,7 +178,12 @@ namespace GCEd
 
 			if (ShowFPS)
 			{
-				e.Graphics.DrawString($"{paintTime} ms\n{(paintTime == 0 ? 999 : 1000 / paintTime)} fps\n{itemCount} items\n{visCount} visible", Font, Brushes.Black, 0, 0);
+				e.Graphics.DrawString($"{paintTime} ms\n{(paintTime == 0 ? 999 : 1000 / paintTime)} fps\n{itemCount} items\n{visCount} visible", Font, style.TextBrush, 0, 0);
+			}
+			if (ShowCursorCoords)
+			{
+				var absMouse = ViewToAbs(MousePosition);
+				e.Graphics.DrawString($"X={absMouse.X:0.000}, Y={absMouse.Y:0.000}", Font, style.TextBrush, 0, Height - 20);
 			}
 		}
 
