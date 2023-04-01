@@ -31,9 +31,9 @@ namespace GCEd
 
 		public virtual void ViewMatrixChanged(Matrix viewMatrix)
 		{
-			var probe = new[] { new Point(1, 0) };
+			var probe = new[] { new Point(100, 0) };
 			viewMatrix.VectorTransformPoints(probe);
-			var len = Math.Max(probe[0].X, 0.0001f);
+			var len = Math.Max(probe[0].X / 100f, 0.0001f);
 			var hoveredStrokeColor = Color.FromArgb(0xE5, 0xF5, 0xFF);
 			var selectedStrokeColor = Color.FromArgb(0xF5, 0xFA, 0xFF);
 			var strokeColor = Color.FromArgb(0xA5, 0xCA, 0xFF);

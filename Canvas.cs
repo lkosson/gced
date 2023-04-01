@@ -278,7 +278,7 @@ namespace GCEd
 		{
 			var absBounds = item.AbsBoundingBox;
 			var viewBound = AbsToView(absBounds);
-			viewBound.Inflate(5, 5);
+			viewBound.Inflate(10, 10);
 			Invalidate(viewBound);
 			if (ShowFPS) Invalidate(new Rectangle(0, 0, 100, 100));
 		}
