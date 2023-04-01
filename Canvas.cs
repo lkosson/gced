@@ -164,7 +164,7 @@ namespace GCEd
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 			var viewClip = e.ClipRectangle;
 			viewClip.Inflate(1, 1);
-			e.Graphics.FillRectangle(Brushes.LightGray, viewClip.Left, viewClip.Top, viewClip.Width, viewClip.Height);
+			e.Graphics.FillRectangle(style.BackgroundBrush, viewClip.Left, viewClip.Top, viewClip.Width, viewClip.Height);
 
 			if (DesignMode) return;
 
