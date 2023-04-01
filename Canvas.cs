@@ -165,8 +165,8 @@ namespace GCEd
 
 			if (DesignMode) return;
 
-			var absClipRect = ViewToAbs(viewClip);
 			PropagateMatrixChange();
+			var absClipRect = ViewToAbs(viewClip);
 			PaintGrid(e.Graphics, absClipRect);
 			var (itemCount, visCount) = PaintItems(e.Graphics, absClipRect);
 
@@ -184,13 +184,19 @@ namespace GCEd
 			if (!ShowMajorGrid && !ShowMinorGrid) return;
 
 			var gs = g.Save();
+			g.SmoothingMode = SmoothingMode.None;
 			g.MultiplyTransform(viewMatrix);
 
 			var absArea = ViewToAbs(ClientRectangle);
-			var vertGridStep = (float)Math.Pow(10, Math.Floor(Math.Log10(absArea.Width * 0.5)));
-			var vertGridStart = absArea.Left - (float)Math.IEEERemainder(absArea.Left, vertGridStep);
-			var vertGridEnd = absArea.Right - (float)Math.IEEERemainder(absArea.Right, vertGridStep) + vertGridStep;
-			for (var x = vertGridStart; x < vertGridEnd; x += vertGridStep)
+			var vertGridStepMajor = (float)Math.Pow(10, Math.Floor(Math.Log10(absArea.Width * 2)));
+			var vertGridStepMinor = vertGridStepMajor / 10;
+			var vertGridStart = absArea.Left - absArea.Left % vertGridStepMajor - (absArea.Left < 0 ? vertGridStepMajor : 0);
+			var vertGridEnd = absArea.Right - absArea.Right % vertGridStepMajor + (absArea.Right < 0 ? vertGridStepMajor : 0) + vertGridStepMajor;
+			for (var x = vertGridStart; x < vertGridEnd; x += vertGridStepMinor)
+			{
+				g.DrawLine(style.MinorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
+			}
+			for (var x = vertGridStart; x < vertGridEnd; x += vertGridStepMajor)
 			{
 				g.DrawLine(style.MajorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
 			}

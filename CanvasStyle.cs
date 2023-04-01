@@ -38,8 +38,8 @@ namespace GCEd
 			HoveredActivePen = new Pen(Color.Blue, 3 / len);
 			SelectedPen = new Pen(Color.DarkGreen, 3 / len);
 
-			MinorGridPen = new Pen(Color.DarkGray, 1 / len) { DashStyle = DashStyle.Dot };
-			MajorGridPen = new Pen(Color.DarkGray, 1 / len) { DashStyle = DashStyle.Dash };
+			MinorGridPen = new Pen(Color.DarkGray, 1 / len) { DashStyle = DashStyle.Dot, DashPattern = new[] { 2f, 2f } };
+			MajorGridPen = new Pen(Color.Black, 1 / len) { DashStyle = DashStyle.Dot, DashPattern = new[] { 2f, 2f } };
 			OriginGridPen = new Pen(Color.Black, 1 / len);
 
 			var arrowPath = new GraphicsPath();
