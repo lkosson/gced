@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -180,10 +181,21 @@ namespace GCEd
 			{
 				e.Graphics.DrawString($"{paintTime} ms\n{(paintTime == 0 ? 999 : 1000 / paintTime)} fps\n{itemCount} items\n{visCount} visible", Font, style.TextBrush, 0, 0);
 			}
-			if (ShowCursorCoords)
+
+			if (ShowCursorCoords || ShowItemCoords)
 			{
-				var absMouse = ViewToAbs(MousePosition);
-				e.Graphics.DrawString($"X={absMouse.X:0.000}, Y={absMouse.Y:0.000}", Font, style.TextBrush, 0, Height - 20);
+				var absMouse = ViewToAbs(PointToClient(MousePosition));
+				var coords = "";
+				if (ShowCursorCoords) coords += $"X={absMouse.X.ToString("0.000", CultureInfo.InvariantCulture)}, Y={absMouse.Y.ToString("0.000", CultureInfo.InvariantCulture)}";
+				if (ShowCursorCoords && ShowItemCoords) coords += "\n";
+				if (ShowItemCoords && ViewState.LastSelectedOperation != null)
+					coords += ViewState.LastSelectedOperation.Line.Instruction
+						+ " X=" + ViewState.LastSelectedOperation.AbsXStart.ToString("0.000", CultureInfo.InvariantCulture)
+						+ ", Y=" + ViewState.LastSelectedOperation.AbsYStart.ToString("0.000", CultureInfo.InvariantCulture)
+						+ " - X=" + ViewState.LastSelectedOperation.AbsXEnd.ToString("0.000", CultureInfo.InvariantCulture)
+						+ ", Y=" + ViewState.LastSelectedOperation.AbsYEnd.ToString("0.000", CultureInfo.InvariantCulture);
+				var bounds = e.Graphics.MeasureString(coords, Font);
+				e.Graphics.DrawString(coords, Font, style.TextBrush, 0, Height - bounds.Height);
 			}
 		}
 
@@ -497,11 +509,21 @@ namespace GCEd
 					Invalidate(bestItem);
 				}
 			}
+
+			if (ShowCursorCoords)
+			{
+				Invalidate(new Rectangle(0, Height - 40, 500, 40));
+			}
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.H)
+			if (e.KeyCode == Keys.C)
+			{
+				ShowCursorCoords = !ShowCursorCoords;
+				if (!ShowCursorCoords) ShowItemCoords = !ShowItemCoords;
+			}
+			else if (e.KeyCode == Keys.H)
 			{
 				PanZoomViewToFit();
 			}
