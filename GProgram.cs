@@ -10,11 +10,11 @@ namespace GCEd
 {
 	class GProgram
 	{
-		public List<GLine> Lines { get; }
+		public LinkedList<GLine> Lines { get; }
 
 		public GProgram()
 		{
-			Lines = new List<GLine>();
+			Lines = new LinkedList<GLine>();
 		}
 
 		public void Load(StreamReader reader)
@@ -25,7 +25,7 @@ namespace GCEd
 			{
 				var gline = new GLine();
 				gline.Parse(line);
-				Lines.Add(gline);
+				Lines.AddLast(gline);
 			}
 		}
 

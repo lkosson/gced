@@ -48,6 +48,7 @@ namespace GCEd
 		private Interaction interaction;
 
 		private enum Interaction { None, DragOrSelect, Drag, DragSelect }
+		private IEnumerable<GOperation> SelectedOperations => items.Where(item => item.Selected).Select(item => item.Operation);
 
 		public Canvas()
 		{
@@ -545,15 +546,19 @@ namespace GCEd
 				else ShowMinorGrid = true;
 				Invalidate();
 			}
+			else if (e.KeyCode == Keys.A)
+			{
+				viewState.ConvertToAbsolute(SelectedOperations);
+				e.Handled = true;
+			}
+			else if (e.KeyCode == Keys.R)
+			{
+				viewState.ConvertToRelative(SelectedOperations);
+				e.Handled = true;
+			}
 			else if (e.KeyCode == Keys.Delete)
 			{
-				var selectedOperations = new List<GOperation>();
-				foreach (var item in items)
-				{
-					if (!item.Selected) continue;
-					selectedOperations.Add(item.Operation);
-				}
-				viewState.DeleteOperations(selectedOperations);
+				viewState.DeleteOperations(SelectedOperations);
 				e.Handled = true;
 			}
 			base.OnKeyDown(e);

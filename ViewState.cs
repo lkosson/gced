@@ -62,8 +62,30 @@ namespace GCEd
 		public void DeleteOperations(IEnumerable<GOperation> operations)
 		{
 			var linesToDelete = new HashSet<GLine>(operations.Select(operation => operation.Line));
-			program.Lines.RemoveAll(line => linesToDelete.Contains(line));
+			var lineNodesToDelete = new List<LinkedListNode<GLine>>();
+			for (var node = program.Lines.First; node != null; node = node.Next)
+			{
+				if (!linesToDelete.Contains(node.Value)) continue;
+				lineNodesToDelete.Add(node);
+			}
+			foreach (var node in lineNodesToDelete)
+			{
+				program.Lines.Remove(node);
+			}
 			RunProgram();
+		}
+
+		public void ConvertToAbsolute(IEnumerable<GOperation> operations)
+		{
+			foreach (var operation in operations)
+			{
+
+			}
+			RunProgram();
+		}
+
+		public void ConvertToRelative(IEnumerable<GOperation> operations)
+		{
 		}
 	}
 }
