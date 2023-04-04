@@ -41,6 +41,7 @@ namespace GCEd
 		private void ViewState_OperationsChanged()
 		{
 			selectionInProgress = true;
+			var topIndex = listBoxOperations.TopIndex;
 			var selectedItem = (ListItem)listBoxOperations.SelectedItem;
 			var items = viewState.Operations.Select(operation => new ListItem(operation)).Cast<object>().ToArray();
 			listBoxOperations.BeginUpdate();
@@ -52,6 +53,8 @@ namespace GCEd
 				if (newSelectedItem != null) listBoxOperations.SelectedItem = newSelectedItem;
 			}
 			listBoxOperations.EndUpdate();
+			if (topIndex < items.Length) listBoxOperations.TopIndex = topIndex;
+			else listBoxOperations.TopIndex = items.Length;
 			selectionInProgress = false;
 		}
 
