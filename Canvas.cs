@@ -546,7 +546,7 @@ namespace GCEd
 				else ShowMinorGrid = true;
 				Invalidate();
 			}
-			else if (e.KeyCode == Keys.A)
+			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None)
 			{
 				viewState.ConvertToAbsolute(SelectedOperations);
 				e.Handled = true;
@@ -560,6 +560,19 @@ namespace GCEd
 			{
 				viewState.DeleteOperations(SelectedOperations);
 				e.Handled = true;
+			}
+			else if (e.KeyCode == Keys.A && (ModifierKeys & Keys.Control) == Keys.Control)
+			{
+				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
+				var selectedOperations = new List<GOperation>();
+				foreach (var item in items)
+				{
+					if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) continue;
+					item.Selected = true;
+					Invalidate(item);
+					selectedOperations.Add(item.Operation);
+				}
+				viewState.SetSelection(selectedOperations);
 			}
 			base.OnKeyDown(e);
 		}
