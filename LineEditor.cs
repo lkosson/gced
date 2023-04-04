@@ -52,6 +52,7 @@ namespace GCEd
 
 		private void textBoxLine_KeyDown(object sender, KeyEventArgs e)
 		{
+			if (textBoxLine.ReadOnly) return;
 			if (e.KeyCode == Keys.Enter)
 			{
 				var operation = ViewState.LastSelectedOperation;
@@ -71,6 +72,12 @@ namespace GCEd
 					textBoxLine.Select(newLine.ErrorPosition, 0);
 				}
 				e.Handled = true;
+			}
+			else if (e.KeyCode == Keys.Escape)
+			{
+				var operation = ViewState.LastSelectedOperation;
+				if (operation == null) return;
+				textBoxLine.Text = operation.Line.ToString();
 			}
 		}
 	}
