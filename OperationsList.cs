@@ -81,12 +81,15 @@ namespace GCEd
 		{
 			if (selectionInProgress) return;
 			selectionInProgress = true;
+			var allVisible = true;
 			var selectedOperations = new List<GOperation>();
 			foreach (ListItem item in listBoxOperations.SelectedItems)
 			{
 				selectedOperations.Add(item.Operation);
+				allVisible &= item.Operation.Line.Instruction == GInstruction.G0 || item.Operation.Line.Instruction == GInstruction.G1 || item.Operation.Line.Instruction == GInstruction.G2 || item.Operation.Line.Instruction == GInstruction.G3;
 			}
 			viewState.SetSelection(selectedOperations);
+			if (allVisible) viewState.FocusCanvas();
 			selectionInProgress = false;
 		}
 
