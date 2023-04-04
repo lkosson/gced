@@ -83,7 +83,7 @@
 			Controls.Add(operationProperties);
 			Controls.Add(canvas);
 			Name = "MainForm";
-			Text = "MainForm";
+			Text = "GCEd";
 			ResumeLayout(false);
 		}
 
