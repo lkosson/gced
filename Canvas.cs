@@ -268,11 +268,14 @@ namespace GCEd
 			var gs = g.Save();
 			g.MultiplyTransform(viewMatrix);
 
+			var pixelSize = ViewToAbs(1);
+
 			var itemCount = 0;
 			var visCount = 0;
 			foreach (var item in items)
 			{
 				itemCount++;
+				if (item.AbsBoundingBox.Width < pixelSize && item.AbsBoundingBox.Height < pixelSize) continue;
 				if (!item.AbsBoundingBox.IntersectsWith(absClipRect)) continue;
 				item.Draw(g, style);
 				visCount++;
