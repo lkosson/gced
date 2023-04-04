@@ -187,6 +187,13 @@ namespace GCEd
 
 			return sb.ToString();
 		}
+
+		public GLine Clone()
+		{
+			var newLine = new GLine();
+			newLine.Parse(ToString());
+			return newLine;
+		}
 	}
 
 	enum GInstruction

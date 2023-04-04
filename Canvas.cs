@@ -555,16 +555,19 @@ namespace GCEd
 			}
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None)
 			{
+				viewState.SaveUndoState();
 				viewState.ConvertToAbsolute(SelectedOperations);
 				e.Handled = true;
 			}
 			else if (e.KeyCode == Keys.R)
 			{
+				viewState.SaveUndoState();
 				viewState.ConvertToRelative(SelectedOperations);
 				e.Handled = true;
 			}
 			else if (e.KeyCode == Keys.Delete)
 			{
+				viewState.SaveUndoState();
 				viewState.DeleteOperations(SelectedOperations);
 				e.Handled = true;
 			}
@@ -580,6 +583,10 @@ namespace GCEd
 					selectedOperations.Add(item.Operation);
 				}
 				viewState.SetSelection(selectedOperations);
+			}
+			else if (e.KeyCode == Keys.Z && ModifierKeys == Keys.Control)
+			{
+				viewState.Undo();
 			}
 			base.OnKeyDown(e);
 		}

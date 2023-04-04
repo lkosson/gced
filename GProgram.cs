@@ -47,5 +47,13 @@ namespace GCEd
 			}
 			return result;
 		}
+
+		public GProgram Clone()
+		{
+			var newProgram = new GProgram();
+			foreach (var line in Lines)
+				newProgram.Lines.AddLast(line.Clone());
+			return newProgram;
+		}
 	}
 }

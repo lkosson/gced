@@ -60,6 +60,7 @@ namespace GCEd
 				newLine.Parse(textBoxLine.Text);
 				if (String.IsNullOrEmpty(newLine.Error))
 				{
+					viewState.SaveUndoState();
 					operation.Line.Parse(textBoxLine.Text);
 					ViewState.RunProgram();
 					ViewState.FocusCanvas();

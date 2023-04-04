@@ -21,9 +21,11 @@ namespace GCEd
 		private GProgram program;
 		private List<GOperation> operations;
 		private HashSet<GOperation> selectedOperations;
+		private List<GProgram> undoBuffer;
 
 		public ViewState()
 		{
+			undoBuffer = new List<GProgram>();
 			program = new GProgram();
 			operations = new List<GOperation>();
 			selectedOperations = new HashSet<GOperation>(GOperation.ByGLineEqualityComparer);
@@ -129,6 +131,19 @@ namespace GCEd
 		public void FocusCanvas()
 		{
 			CanvasFocused?.Invoke();
+		}
+
+		public void SaveUndoState()
+		{
+			undoBuffer.Add(program.Clone());
+		}
+
+		public void Undo()
+		{
+			if (undoBuffer.Count == 0) return;
+			program = undoBuffer[undoBuffer.Count - 1];
+			undoBuffer.RemoveAt(undoBuffer.Count - 1);
+			RunProgram();
 		}
 	}
 }

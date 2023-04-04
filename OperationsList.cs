@@ -96,6 +96,7 @@ namespace GCEd
 				{
 					selectedOperations.Add(item.Operation);
 				}
+				viewState.SaveUndoState();
 				viewState.DeleteOperations(selectedOperations);
 				e.Handled = true;
 			}
