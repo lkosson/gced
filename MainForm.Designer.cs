@@ -28,51 +28,63 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.canvas = new GCEd.Canvas();
-			this.operationProperties = new GCEd.OperationProperties();
-			this.operationsList = new GCEd.OperationsList();
-			this.SuspendLayout();
+			canvas = new Canvas();
+			operationProperties = new OperationProperties();
+			operationsList = new OperationsList();
+			lineEditor = new LineEditor();
+			SuspendLayout();
 			// 
 			// canvas
 			// 
-			this.canvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.canvas.Location = new System.Drawing.Point(12, 12);
-			this.canvas.Name = "canvas";
-			this.canvas.Size = new System.Drawing.Size(570, 514);
-			this.canvas.TabIndex = 0;
+			canvas.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			canvas.Location = new System.Drawing.Point(12, 12);
+			canvas.Name = "canvas";
+			canvas.ShowCursorCoords = true;
+			canvas.ShowFPS = true;
+			canvas.ShowItemCoords = true;
+			canvas.ShowMajorGrid = true;
+			canvas.ShowMinorGrid = true;
+			canvas.ShowOriginGrid = true;
+			canvas.Size = new System.Drawing.Size(570, 514);
+			canvas.TabIndex = 0;
 			// 
 			// operationProperties
 			// 
-			this.operationProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.operationProperties.Location = new System.Drawing.Point(585, 12);
-			this.operationProperties.Margin = new System.Windows.Forms.Padding(0);
-			this.operationProperties.Name = "operationProperties";
-			this.operationProperties.Size = new System.Drawing.Size(206, 334);
-			this.operationProperties.TabIndex = 1;
+			operationProperties.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			operationProperties.Location = new System.Drawing.Point(585, 12);
+			operationProperties.Margin = new System.Windows.Forms.Padding(0);
+			operationProperties.Name = "operationProperties";
+			operationProperties.Size = new System.Drawing.Size(206, 334);
+			operationProperties.TabIndex = 1;
 			// 
 			// operationsList
 			// 
-			this.operationsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.operationsList.Location = new System.Drawing.Point(591, 349);
-			this.operationsList.Name = "operationsList";
-			this.operationsList.Size = new System.Drawing.Size(200, 177);
-			this.operationsList.TabIndex = 2;
+			operationsList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			operationsList.Location = new System.Drawing.Point(591, 387);
+			operationsList.Name = "operationsList";
+			operationsList.Size = new System.Drawing.Size(200, 139);
+			operationsList.TabIndex = 2;
+			// 
+			// lineEditor
+			// 
+			lineEditor.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			lineEditor.Location = new System.Drawing.Point(591, 351);
+			lineEditor.Name = "lineEditor";
+			lineEditor.Size = new System.Drawing.Size(200, 30);
+			lineEditor.TabIndex = 3;
 			// 
 			// MainForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 538);
-			this.Controls.Add(this.operationsList);
-			this.Controls.Add(this.operationProperties);
-			this.Controls.Add(this.canvas);
-			this.Name = "MainForm";
-			this.Text = "MainForm";
-			this.ResumeLayout(false);
-
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			ClientSize = new System.Drawing.Size(800, 538);
+			Controls.Add(lineEditor);
+			Controls.Add(operationsList);
+			Controls.Add(operationProperties);
+			Controls.Add(canvas);
+			Name = "MainForm";
+			Text = "MainForm";
+			ResumeLayout(false);
 		}
 
 		#endregion
@@ -80,5 +92,6 @@
 		private Canvas canvas;
 		private OperationProperties operationProperties;
 		private OperationsList operationsList;
+		private LineEditor lineEditor;
 	}
 }

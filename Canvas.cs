@@ -24,10 +24,12 @@ namespace GCEd
 				{
 					viewState.OperationsChanged -= ViewState_OperationsChanged;
 					viewState.SelectedOperationsChanged -= ViewState_SelectedOperationsChanged;
+					viewState.CanvasFocused -= ViewState_CanvasFocused;
 				}
 				viewState = value;
 				viewState.OperationsChanged += ViewState_OperationsChanged;
 				viewState.SelectedOperationsChanged += ViewState_SelectedOperationsChanged;
+				viewState.CanvasFocused += ViewState_CanvasFocused;
 			}
 		}
 
@@ -91,6 +93,11 @@ namespace GCEd
 				Invalidate(item);
 			}
 			PanViewToSelection();
+		}
+
+		private void ViewState_CanvasFocused()
+		{
+			Focus();
 		}
 
 		private void PanZoomViewToFit()

@@ -16,6 +16,7 @@ namespace GCEd
 			canvas.ViewState = viewState;
 			operationsList.ViewState = viewState;
 			operationProperties.ViewState = viewState;
+			lineEditor.ViewState = viewState;
 			viewState.LoadProgram("test.nc");
 		}
 	}

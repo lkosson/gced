@@ -16,6 +16,7 @@ namespace GCEd
 
 		public event Action? OperationsChanged;
 		public event Action? SelectedOperationsChanged;
+		public event Action? CanvasFocused;
 
 		private GProgram program;
 		private List<GOperation> operations;
@@ -123,6 +124,11 @@ namespace GCEd
 				operation.Line.Y = (decimal)(operation.AbsYEnd - operation.AbsYStart);
 			}
 			RunProgram();
+		}
+
+		public void FocusCanvas()
+		{
+			CanvasFocused?.Invoke();
 		}
 	}
 }

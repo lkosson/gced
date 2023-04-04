@@ -15,6 +15,7 @@ namespace GCEd
 		public string RawText { get; set; }
 		public string Comment { get; set; }
 		public string? Error { get; set; }
+		public int ErrorPosition { get; set; }
 		public decimal? X { get; set; }
 		public decimal? Y { get; set; }
 		public decimal? Z { get; set; }
@@ -47,7 +48,7 @@ namespace GCEd
 			Instruction = GInstruction.Empty;
 			RawText = text;
 			Comment = "";
-			Error = "";
+			Error = null;
 			X = Y = Z = I = J = K = F = S = null;
 			char? currentField = null;
 			int? valueStart = null;
@@ -62,7 +63,8 @@ namespace GCEd
 						if (!valueStart.HasValue)
 						{
 							Instruction = GInstruction.Invalid;
-							Error = $"{i}: Field '{currentField}' don't have a value.";
+							Error = $"Field '{currentField}' don't have a value.";
+							ErrorPosition = i;
 							return;
 						}
 
@@ -70,7 +72,8 @@ namespace GCEd
 						if (!Decimal.TryParse(stringValue, NumberStyles.Integer | NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value))
 						{
 							Instruction = GInstruction.Invalid;
-							Error = $"{i}: Invalid value '{stringValue}' in '{currentField}' field.";
+							Error = $"Invalid value '{stringValue}' in '{currentField}' field.";
+							ErrorPosition = i;
 							return;
 						}
 
@@ -87,7 +90,8 @@ namespace GCEd
 						else
 						{
 							Instruction = GInstruction.Invalid;
-							Error = $"{i}: Unknown field '{currentField}'.";
+							Error = $"Unknown field '{currentField}'.";
+							ErrorPosition = i;
 							return;
 						}
 
@@ -108,7 +112,8 @@ namespace GCEd
 					if (currentField.HasValue)
 					{
 						Instruction = GInstruction.Invalid;
-						Error = $"{i}: Invalid character '{ch}' in '{currentField}' field.";
+						Error = $"Invalid character '{ch}' in '{currentField}' field.";
+						ErrorPosition = i;
 						return;
 					}
 
@@ -120,7 +125,8 @@ namespace GCEd
 					if (!currentField.HasValue)
 					{
 						Instruction = GInstruction.Invalid;
-						Error = $"{i}: Unexpected digit '{ch}' outside of a field.";
+						Error = $"Unexpected digit '{ch}' outside of a field.";
+						ErrorPosition = i;
 						return;
 					}
 
@@ -135,7 +141,8 @@ namespace GCEd
 					if (!currentField.HasValue)
 					{
 						Instruction = GInstruction.Invalid;
-						Error = $"{i}: Unexpected character '{ch}' outside of a field.";
+						Error = $"Unexpected character '{ch}' outside of a field.";
+						ErrorPosition = i;
 						return;
 					}
 
@@ -144,7 +151,8 @@ namespace GCEd
 						if ((ch == '-' && i != valueStart.Value + 1) || (ch == '.' && hasDecimalPoint))
 						{
 							Instruction = GInstruction.Invalid;
-							Error = $"{i}: Unexpected character '{ch}' in numeric constant.";
+							Error = $"Unexpected character '{ch}' in numeric constant.";
+							ErrorPosition = i;
 							return;
 						}
 					}
