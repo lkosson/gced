@@ -588,6 +588,10 @@ namespace GCEd
 			{
 				viewState.Undo();
 			}
+			else if (e.KeyCode == Keys.I)
+			{
+				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift);
+			}
 			base.OnKeyDown(e);
 		}
 	}

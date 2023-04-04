@@ -145,5 +145,25 @@ namespace GCEd
 			undoBuffer.RemoveAt(undoBuffer.Count - 1);
 			RunProgram();
 		}
+
+		public void AppendNewLine(GOperation? baseOperation, bool before = false)
+		{
+			if (baseOperation == null)
+			{
+				if (program.Lines.Count == 0 || before) program.Lines.AddFirst(new GLine());
+				else program.Lines.AddLast(new GLine());
+			}
+			else
+			{
+				for (var node = program.Lines.First; node != null; node = node.Next)
+				{
+					if (node.Value != baseOperation.Line) continue;
+					if (before) program.Lines.AddBefore(node, new GLine());
+					else program.Lines.AddAfter(node, new GLine());
+					break;
+				}
+			}
+			RunProgram();
+		}
 	}
 }

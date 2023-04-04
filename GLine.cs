@@ -172,6 +172,7 @@ namespace GCEd
 			if (Instruction == GInstruction.Invalid) return "\"" + RawText + "\"";
 			if (Instruction == GInstruction.Unknown) return "\"" + RawText + "\"";
 			if (Instruction == GInstruction.Comment) return RawText;
+			if (Instruction == GInstruction.Empty) return "";
 
 			var sb = new StringBuilder();
 			sb.Append(Instruction.ToString());

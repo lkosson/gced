@@ -113,6 +113,7 @@ namespace GCEd
 
 			public override string ToString()
 			{
+				if (Operation.Line.Instruction == GInstruction.Empty) return "(empty)";
 				return Operation.Line.ToString();
 			}
 		}
