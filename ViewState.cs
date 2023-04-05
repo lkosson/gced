@@ -17,6 +17,7 @@ namespace GCEd
 		public event Action? OperationsChanged;
 		public event Action? SelectedOperationsChanged;
 		public event Action? CanvasFocused;
+		public event Action? LineEditorFocused;
 
 		private GProgram program;
 		private List<GOperation> operations;
@@ -148,22 +149,26 @@ namespace GCEd
 
 		public void AppendNewLine(GOperation? baseOperation, bool before = false)
 		{
+			var line = new GLine();
 			if (baseOperation == null)
 			{
-				if (program.Lines.Count == 0 || before) program.Lines.AddFirst(new GLine());
-				else program.Lines.AddLast(new GLine());
+				if (program.Lines.Count == 0 || before) program.Lines.AddFirst(line);
+				else program.Lines.AddLast(line);
 			}
 			else
 			{
 				for (var node = program.Lines.First; node != null; node = node.Next)
 				{
 					if (node.Value != baseOperation.Line) continue;
-					if (before) program.Lines.AddBefore(node, new GLine());
-					else program.Lines.AddAfter(node, new GLine());
+					if (before) program.Lines.AddBefore(node, line);
+					else program.Lines.AddAfter(node, line);
 					break;
 				}
 			}
 			RunProgram();
+			var newOperation = operations.First(operation => operation.Line == line);
+			SetSelection(new[] { newOperation });
+			LineEditorFocused?.Invoke();
 		}
 	}
 }

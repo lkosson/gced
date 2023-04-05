@@ -21,9 +21,11 @@ namespace GCEd
 				if (viewState != null)
 				{
 					viewState.SelectedOperationsChanged -= ViewState_SelectedOperationsChanged;
+					viewState.LineEditorFocused -= ViewState_LineEditorFocused;
 				}
 				viewState = value;
 				viewState.SelectedOperationsChanged += ViewState_SelectedOperationsChanged;
+				viewState.LineEditorFocused += ViewState_LineEditorFocused;
 			}
 		}
 
@@ -48,6 +50,11 @@ namespace GCEd
 				textBoxLine.Text = operation.Line.ToString();
 				textBoxLine.ReadOnly = false;
 			}
+		}
+
+		private void ViewState_LineEditorFocused()
+		{
+			Focus();
 		}
 
 		private void textBoxLine_KeyDown(object sender, KeyEventArgs e)
