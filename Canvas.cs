@@ -379,169 +379,149 @@ namespace GCEd
 			Invalidate();
 		}
 
-		protected override void OnMouseDown(MouseEventArgs e)
+		private void StartMouseDrag()
 		{
-			if (e.Button == MouseButtons.Left && interaction == Interaction.None)
-			{
-				interaction = Interaction.Select;
-				mouseDragStart = e.Location;
-			}
-			if (e.Button == MouseButtons.Middle)
-			{
-				if (interaction == Interaction.None) interaction = Interaction.Drag;
-				else if (interaction == Interaction.EndMove) interaction = Interaction.DragEndMove;
-				else if (interaction == Interaction.OffsetMove) interaction = Interaction.DragOffsetMove;
-				mouseDragStart = e.Location;
-			}
-			base.OnMouseDown(e);
+			if (interaction == Interaction.None) interaction = Interaction.Drag;
+			else if (interaction == Interaction.EndMove) interaction = Interaction.DragEndMove;
+			else if (interaction == Interaction.OffsetMove) interaction = Interaction.DragOffsetMove;
+			mouseDragStart = PointToClient(MousePosition);
 		}
 
-		protected override void OnMouseUp(MouseEventArgs e)
+		private void UpdateMouseDrag(Point mouseLocation)
 		{
-			if (interaction == Interaction.Select)
-			{
-				var selectedOperations = new List<GOperation>();
-				var append = (ModifierKeys & Keys.Control) == Keys.Control;
-				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
-				if (append) selectedOperations.AddRange(viewState.SelectedOperations);
-				foreach (var item in items)
-				{
-					if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) continue;
-					if (item.Hovered)
-					{
-						item.Hovered = false;
-						item.Selected = true;
-						selectedOperations.Add(item.Operation);
-					}
-					else
-					{
-						if (!append && item.Selected)
-						{
-							item.Selected = false;
-						}
-					}
-				}
-				viewState.SetSelection(selectedOperations);
-				interaction = Interaction.None;
-				Invalidate();
-			}
+			viewMatrix.Translate(mouseLocation.X - mouseDragStart.X, mouseLocation.Y - mouseDragStart.Y, MatrixOrder.Append);
+			matrixUpdated = true;
 
-			if (interaction == Interaction.EndMove)
-			{
-				var absPos = SnapToGrid(default, ViewToAbs(e.Location));
-				foreach (var item in items)
-				{
-					if (!item.Selected) continue;
-					item.Operation.Line.X = (decimal)(item.Operation.Absolute ? absPos.X : absPos.X - item.Operation.AbsXStart);
-					item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? absPos.Y : absPos.Y - item.Operation.AbsYStart);
-					item.OperationChanged();
-				}
-				viewState.RunProgram();
-				interaction = Interaction.None;
-			}
-
-			if (interaction == Interaction.Drag)
-			{
-				interaction = Interaction.None;
-			}
-
-			if (interaction == Interaction.DragEndMove)
-			{
-				interaction = Interaction.EndMove;
-			}
-
-			if (interaction == Interaction.DragOffsetMove)
-			{
-				interaction = Interaction.OffsetMove;
-			}
-			base.OnMouseUp(e);
+			Cursor = Cursors.SizeAll;
+			mouseDragStart = mouseLocation;
+			Invalidate();
 		}
 
-		protected override void OnMouseMove(MouseEventArgs e)
+		private void FinishMouseDrag()
 		{
-			base.OnMouseMove(e);
+			if (interaction == Interaction.Drag) interaction = Interaction.None;
+			if (interaction == Interaction.DragEndMove) interaction = Interaction.EndMove;
+			if (interaction == Interaction.DragOffsetMove) interaction = Interaction.OffsetMove;
+		}
 
-			if (interaction == Interaction.Drag || interaction == Interaction.DragEndMove || interaction == Interaction.DragOffsetMove)
+		private void StartMouseSelect()
+		{
+			interaction = Interaction.Select;
+			mouseDragStart = PointToClient(MousePosition);
+		}
+
+		private void UpdateMouseSelect(Point mouseLocation)
+		{
+			var viewSelectionRectangle = new Rectangle(mouseDragStart.X, mouseDragStart.Y, mouseLocation.X - mouseDragStart.X, mouseLocation.Y - mouseDragStart.Y);
+			var absSelectionRectangle = ViewToAbs(viewSelectionRectangle);
+			var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
+			foreach (var item in items)
 			{
-				viewMatrix.Translate(e.X - mouseDragStart.X, e.Y - mouseDragStart.Y, MatrixOrder.Append);
-				matrixUpdated = true;
-
-				Cursor = Cursors.SizeAll;
-				mouseDragStart = e.Location;
-				Invalidate();
+				var hovered = item.AbsBoundingBox.IntersectsWith(absSelectionRectangle);
+				if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) hovered = false;
+				if (hovered == item.Hovered) continue;
+				item.Hovered = hovered;
 			}
+			Invalidate();
+		}
 
-			if (interaction == Interaction.Select)
+		private void FinishMouseSelect()
+		{
+			var selectedOperations = new List<GOperation>();
+			var append = (ModifierKeys & Keys.Control) == Keys.Control;
+			var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
+			if (append) selectedOperations.AddRange(viewState.SelectedOperations);
+			foreach (var item in items)
 			{
-				var viewSelectionRectangle = new Rectangle(mouseDragStart.X, mouseDragStart.Y, e.Location.X - mouseDragStart.X, e.Location.Y - mouseDragStart.Y);
-				var absSelectionRectangle = ViewToAbs(viewSelectionRectangle);
-				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
-				foreach (var item in items)
+				if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) continue;
+				if (item.Hovered)
 				{
-					var hovered = item.AbsBoundingBox.IntersectsWith(absSelectionRectangle);
-					if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) hovered = false;
-					if (hovered == item.Hovered) continue;
-					item.Hovered = hovered;
+					item.Hovered = false;
+					item.Selected = true;
+					selectedOperations.Add(item.Operation);
 				}
-				Invalidate();
-			}
-
-			if (interaction == Interaction.EndMove)
-			{
-				var absPos = SnapToGrid(default, ViewToAbs(e.Location));
-				foreach (var item in items)
+				else
 				{
-					if (!item.Selected) continue;
-					item.Operation.AbsXEnd = absPos.X;
-					item.Operation.AbsYEnd = absPos.Y;
-					item.OperationChanged();
-				}
-				Invalidate();
-			}
-
-			if (interaction == Interaction.None)
-			{
-				var absPos = ViewToAbs(e.Location);
-				var hoverDist = ViewToAbs(5);
-				var bestItem = (CanvasItem?)null;
-				var bestDistance = Single.MaxValue;
-
-				foreach (var item in items)
-				{
-					var absInflatedBounds = item.AbsBoundingBox;
-					absInflatedBounds.Inflate(hoverDist, hoverDist);
-					var hovered = false;
-					var distance = Single.MaxValue;
-					if (absInflatedBounds.Left <= absPos.X && absInflatedBounds.Right >= absPos.X && absInflatedBounds.Top <= absPos.Y && absInflatedBounds.Bottom >= absPos.Y)
+					if (!append && item.Selected)
 					{
-						distance = item.Distance(absPos);
-						if (distance < hoverDist) hovered = true;
+						item.Selected = false;
 					}
-					if (hovered)
+				}
+			}
+			viewState.SetSelection(selectedOperations);
+			interaction = Interaction.None;
+			Invalidate();
+		}
+
+		private void StartMouseEndMove()
+		{
+			interaction = Interaction.EndMove;
+		}
+
+		private void UpdateMouseEndMove(Point mouseLocation)
+		{
+			var absPos = SnapToGrid(default, ViewToAbs(mouseLocation));
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.AbsXEnd = absPos.X;
+				item.Operation.AbsYEnd = absPos.Y;
+				item.OperationChanged();
+			}
+
+			Invalidate();
+		}
+
+		private void FinishMouseEndMove()
+		{
+			var absPos = SnapToGrid(default, ViewToAbs(PointToClient(MousePosition)));
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.Line.X = (decimal)(item.Operation.Absolute ? absPos.X : absPos.X - item.Operation.AbsXStart);
+				item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? absPos.Y : absPos.Y - item.Operation.AbsYStart);
+				item.OperationChanged();
+			}
+
+			viewState.RunProgram();
+			interaction = Interaction.None;
+			Invalidate();
+		}
+
+		private void UpdateMouseHover(Point mouseLocation)
+		{
+			var absPos = ViewToAbs(mouseLocation);
+			var hoverDist = ViewToAbs(5);
+			var bestItem = (CanvasItem?)null;
+			var bestDistance = Single.MaxValue;
+
+			foreach (var item in items)
+			{
+				var absInflatedBounds = item.AbsBoundingBox;
+				absInflatedBounds.Inflate(hoverDist, hoverDist);
+				var hovered = false;
+				var distance = Single.MaxValue;
+				if (absInflatedBounds.Left <= absPos.X && absInflatedBounds.Right >= absPos.X && absInflatedBounds.Top <= absPos.Y && absInflatedBounds.Bottom >= absPos.Y)
+				{
+					distance = item.Distance(absPos);
+					if (distance < hoverDist) hovered = true;
+				}
+				if (hovered)
+				{
+					if (bestItem == null)
 					{
-						if (bestItem == null)
+						bestItem = item;
+						bestDistance = distance;
+					}
+					else if (bestDistance > distance)
+					{
+						if (bestItem.Hovered)
 						{
-							bestItem = item;
-							bestDistance = distance;
+							bestItem.Hovered = false;
+							Invalidate(bestItem);
 						}
-						else if (bestDistance > distance)
-						{
-							if (bestItem.Hovered)
-							{
-								bestItem.Hovered = false;
-								Invalidate(bestItem);
-							}
-							bestDistance = distance;
-							bestItem = item;
-						}
-						else
-						{
-							if (item.Hovered)
-							{
-								item.Hovered = false;
-								Invalidate(item);
-							}
-						}
+						bestDistance = distance;
+						bestItem = item;
 					}
 					else
 					{
@@ -552,20 +532,50 @@ namespace GCEd
 						}
 					}
 				}
-
-				if (bestItem != null && !bestItem.Hovered)
+				else
 				{
-					bestItem.Hovered = true;
-					Invalidate(bestItem);
+					if (item.Hovered)
+					{
+						item.Hovered = false;
+						Invalidate(item);
+					}
 				}
-
-				Cursor = bestItem == null ? Cursors.Arrow : Cursors.Hand;
 			}
 
-			if (ShowCursorCoords)
+			if (bestItem != null && !bestItem.Hovered)
 			{
-				Invalidate(new Rectangle(0, Height - 40, 500, 40));
+				bestItem.Hovered = true;
+				Invalidate(bestItem);
 			}
+
+			Cursor = bestItem == null ? Cursors.Arrow : Cursors.Hand;
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left && interaction == Interaction.None) StartMouseSelect();
+			if (e.Button == MouseButtons.Middle) StartMouseDrag();
+			base.OnMouseDown(e);
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			if (interaction == Interaction.Select) FinishMouseSelect();
+			if (interaction == Interaction.EndMove) FinishMouseEndMove();
+			if (interaction == Interaction.Drag) FinishMouseDrag();
+			if (interaction == Interaction.DragEndMove) FinishMouseDrag();
+			if (interaction == Interaction.DragOffsetMove) FinishMouseDrag();
+			base.OnMouseUp(e);
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (interaction == Interaction.Drag || interaction == Interaction.DragEndMove || interaction == Interaction.DragOffsetMove) UpdateMouseDrag(e.Location);
+			if (interaction == Interaction.Select) UpdateMouseSelect(e.Location);
+			if (interaction == Interaction.EndMove) UpdateMouseEndMove(e.Location);
+			if (interaction == Interaction.None) UpdateMouseHover(e.Location);
+			if (ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
+			base.OnMouseMove(e);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -638,17 +648,19 @@ namespace GCEd
 			}
 			else if (e.KeyCode == Keys.E)
 			{
-				interaction = Interaction.EndMove;
+				StartMouseEndMove();
 			}
 			else if (e.KeyCode == Keys.D0)
 			{
 				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G0 });
-				interaction = Interaction.EndMove;
+				StartMouseEndMove();
+				UpdateMouseEndMove(PointToClient(MousePosition));
 			}
 			else if (e.KeyCode == Keys.D1)
 			{
 				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G1 });
-				interaction = Interaction.EndMove;
+				StartMouseEndMove();
+				UpdateMouseEndMove(PointToClient(MousePosition));
 			}
 			base.OnKeyDown(e);
 		}
