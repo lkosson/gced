@@ -32,7 +32,10 @@ namespace GCEd
 			{
 				if (instruction < GInstruction.G0) continue;
 				var str = instruction.ToString();
-				instructions[(str[0], Decimal.Parse(str.Substring(1), CultureInfo.InvariantCulture))] = instruction;
+				var ch = str[0];
+				var num = Decimal.Parse(str.Substring(1), CultureInfo.InvariantCulture);
+				instructions[(Char.ToUpper(str[0]), num)] = instruction;
+				instructions[(Char.ToLower(str[0]), num)] = instruction;
 			}
 		}
 
@@ -117,7 +120,7 @@ namespace GCEd
 						return;
 					}
 
-					currentField = ch;
+					currentField = Char.ToUpper(ch);
 					valueStart = null;
 				}
 				else if (Char.IsDigit(ch))
