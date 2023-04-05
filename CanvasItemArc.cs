@@ -65,7 +65,7 @@ namespace GCEd
 
 		public override void Draw(Graphics g, CanvasStyle style)
 		{
-			var pen = Selected ? style.SelectedPen
+			var pen = Selected ? style.SelectedActivePen
 				: Hovered ? style.HoveredActivePen
 				: style.ActivePen;
 

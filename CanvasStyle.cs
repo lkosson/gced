@@ -17,7 +17,8 @@ namespace GCEd
 		public Pen ActivePen { get; private set; } = default!;
 		public Pen HoveredIdlePen { get; private set; } = default!;
 		public Pen HoveredActivePen { get; private set; } = default!;
-		public Pen SelectedPen { get; private set; } = default!;
+		public Pen SelectedIdlePen { get; private set; } = default!;
+		public Pen SelectedActivePen { get; private set; } = default!;
 		public Pen MinorGridPen { get; private set; } = default!;
 		public Pen MajorGridPen { get; private set; } = default!;
 		public Pen OriginGridPen { get; private set; } = default!;
@@ -38,14 +39,14 @@ namespace GCEd
 			viewMatrix.VectorTransformPoints(probe);
 			var len = Math.Max(probe[0].X / 100f, 0.0001f);
 			PixelSize = 1 / len;
-			var hoveredStrokeColor = Color.FromArgb(0xE5, 0xF5, 0xFF);
 			var selectedStrokeColor = Color.FromArgb(0xF5, 0xFA, 0xFF);
 			var strokeColor = Color.FromArgb(0xA5, 0xCA, 0xFF);
 			IdlePen = new Pen(strokeColor, PixelSize) { DashStyle = DashStyle.Dash, DashPattern = new[] { 10f, 10f } };
 			ActivePen = new Pen(strokeColor, 3 * PixelSize);
-			HoveredIdlePen = new Pen(hoveredStrokeColor, 2 * PixelSize);
-			HoveredActivePen = new Pen(hoveredStrokeColor, 4 * PixelSize);
-			SelectedPen = new Pen(selectedStrokeColor, 4 * PixelSize);
+			HoveredIdlePen = new Pen(strokeColor, 4 * PixelSize) { DashStyle = DashStyle.Dash, DashPattern = new[] { 2.5f, 2.5f } };
+			HoveredActivePen = new Pen(strokeColor, 4 * PixelSize);
+			SelectedIdlePen = new Pen(selectedStrokeColor, 4 * PixelSize) { DashStyle = DashStyle.Dash, DashPattern = new[] { 2.5f, 2.5f } };
+			SelectedActivePen = new Pen(selectedStrokeColor, 4 * PixelSize);
 
 			MinorGridPen = new Pen(Color.FromArgb(0x30, 0x60, 0xA0), PixelSize);
 			MajorGridPen = new Pen(Color.FromArgb(0x60, 0xA0, 0xD0), PixelSize);
@@ -63,11 +64,13 @@ namespace GCEd
 			HoveredActivePen.CustomStartCap = startCap;
 			HoveredIdlePen.CustomEndCap = endCap;
 			HoveredIdlePen.CustomStartCap = startCap;
-			SelectedPen.CustomEndCap = endCap;
-			SelectedPen.CustomStartCap = startCap;
+			SelectedIdlePen.CustomEndCap = endCap;
+			SelectedIdlePen.CustomStartCap = startCap;
+			SelectedActivePen.CustomEndCap = endCap;
+			SelectedActivePen.CustomStartCap = startCap;
 			SelectionPen = new Pen(Color.FromArgb(0xAF, 0xCF, 0xFF), PixelSize);
 
-			TextBrush = new SolidBrush(hoveredStrokeColor);
+			TextBrush = new SolidBrush(Color.FromArgb(0xE5, 0xF5, 0xFF));
 			BackgroundBrush = new SolidBrush(Color.FromArgb(0x20, 0x4A, 0x7F));
 			SelectionBrush = new SolidBrush(Color.FromArgb(0x40, 0xE0, 0xEA, 0xF5));
 		}
@@ -78,7 +81,8 @@ namespace GCEd
 			ActivePen.Dispose();
 			HoveredIdlePen.Dispose();
 			HoveredActivePen.Dispose();
-			SelectedPen.Dispose();
+			SelectedIdlePen.Dispose();
+			SelectedActivePen.Dispose();
 			MinorGridPen.Dispose();
 			MajorGridPen.Dispose();
 			OriginGridPen.Dispose();

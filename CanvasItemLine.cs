@@ -29,7 +29,7 @@ namespace GCEd
 
 		public override void Draw(Graphics g, CanvasStyle style)
 		{
-			var pen = Selected ? style.SelectedPen
+			var pen = Selected ? (Operation.Line.Instruction == GInstruction.G0 ? style.SelectedIdlePen : style.SelectedActivePen)
 				: Hovered ? (Operation.Line.Instruction == GInstruction.G0 ? style.HoveredIdlePen : style.HoveredActivePen)
 				: Operation.Line.Instruction == GInstruction.G0 ? style.IdlePen
 				: style.ActivePen;
