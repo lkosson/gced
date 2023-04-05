@@ -442,6 +442,7 @@ namespace GCEd
 				viewMatrix.Translate(e.X - mouseDragStart.X, e.Y - mouseDragStart.Y, MatrixOrder.Append);
 				matrixUpdated = true;
 
+				Cursor = Cursors.SizeAll;
 				mouseDragStart = e.Location;
 				Invalidate();
 			}
@@ -519,6 +520,8 @@ namespace GCEd
 					bestItem.Hovered = true;
 					Invalidate(bestItem);
 				}
+
+				Cursor = bestItem == null ? Cursors.Arrow : Cursors.Hand;
 			}
 
 			if (ShowCursorCoords)
