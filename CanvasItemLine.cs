@@ -15,16 +15,16 @@ namespace GCEd
 		public CanvasItemLine(GOperation operation)
 			 : base(operation)
 		{
+		}
+
+		public override void OperationChanged()
+		{
+			base.OperationChanged();
 			var x1 = Math.Min(Operation.AbsXStart, Operation.AbsXEnd);
 			var y1 = Math.Min(Operation.AbsYStart, Operation.AbsYEnd);
 			var x2 = Math.Max(Operation.AbsXStart, Operation.AbsXEnd);
 			var y2 = Math.Max(Operation.AbsYStart, Operation.AbsYEnd);
 			AbsBoundingBox = new RectangleF(x1, y1, x2 - x1, y2 - y1);
-		}
-
-		public override void ViewMatrixChanged(Matrix viewMatrix)
-		{
-			base.ViewMatrixChanged(viewMatrix);
 		}
 
 		public override void Draw(Graphics g, CanvasStyle style)

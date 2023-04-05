@@ -21,6 +21,11 @@ namespace GCEd
 		public CanvasItemArc(GOperation operation)
 			 : base(operation)
 		{
+		}
+
+		public override void OperationChanged()
+		{
+			base.OperationChanged();
 			var startDeltaX = Operation.AbsXStart - Operation.AbsI;
 			var startDeltaY = Operation.AbsYStart - Operation.AbsJ;
 			var endDeltaX = Operation.AbsXEnd - Operation.AbsI;
@@ -56,11 +61,6 @@ namespace GCEd
 			if (minAngle <= 270 && maxAngle > 270 && Operation.AbsJ - radius < absMinY) absMinY = Operation.AbsJ - radius;
 
 			AbsBoundingBox = new RectangleF(absMinX, absMinY, absMaxX - absMinX, absMaxY - absMinY);
-		}
-
-		public override void ViewMatrixChanged(Matrix viewMatrix)
-		{
-			base.ViewMatrixChanged(viewMatrix);
 		}
 
 		public override void Draw(Graphics g, CanvasStyle style)

@@ -346,6 +346,7 @@ namespace GCEd
 
 		private PointF SnapToGrid(PointF origin, PointF point)
 		{
+			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return point;
 			var step = GridMinorStep;
 			return new PointF((float)Math.Floor((point.X + step / 2) / step) * step, (float)Math.Floor((point.Y + step / 2) / step) * step);
 		}
@@ -420,6 +421,7 @@ namespace GCEd
 					if (!item.Selected) continue;
 					item.Operation.Line.X = (decimal)(item.Operation.Absolute ? absPos.X : absPos.X - item.Operation.AbsXStart);
 					item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? absPos.Y : absPos.Y - item.Operation.AbsYStart);
+					item.OperationChanged();
 				}
 				viewState.RunProgram();
 				interaction = Interaction.None;
@@ -478,6 +480,7 @@ namespace GCEd
 					if (!item.Selected) continue;
 					item.Operation.AbsXEnd = absPos.X;
 					item.Operation.AbsYEnd = absPos.Y;
+					item.OperationChanged();
 				}
 				Invalidate();
 			}

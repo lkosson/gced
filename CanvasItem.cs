@@ -20,6 +20,11 @@ namespace GCEd
 		public CanvasItem(GOperation operation)
 		{
 			Operation = operation;
+			OperationChanged();
+		}
+
+		public virtual void OperationChanged()
+		{
 		}
 
 		public virtual void ViewMatrixChanged(Matrix viewMatrix)
