@@ -84,6 +84,7 @@
 			Controls.Add(canvas);
 			Name = "MainForm";
 			Text = "GCEd";
+			WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			ResumeLayout(false);
 		}
 
