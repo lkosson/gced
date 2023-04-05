@@ -184,6 +184,7 @@ namespace GCEd
 			var absClipRect = ViewToAbs(viewClip);
 			PaintGrid(e.Graphics, absClipRect);
 			var (itemCount, visCount) = PaintItems(e.Graphics, absClipRect);
+			PaintSelection(e.Graphics);
 
 			sw.Stop();
 			var paintTime = (int)sw.ElapsedMilliseconds;
@@ -252,6 +253,19 @@ namespace GCEd
 			}
 
 			g.Restore(gs);
+		}
+
+		private void PaintSelection(Graphics g)
+		{
+			if (interaction != Interaction.Select) return;
+
+			var mousePosition = PointToClient(MousePosition);
+			var viewSelectionRectangle = new Rectangle(mouseDragStart.X, mouseDragStart.Y, mousePosition.X - mouseDragStart.X, mousePosition.Y - mouseDragStart.Y);
+			if (viewSelectionRectangle.Width < 0) viewSelectionRectangle = new Rectangle(viewSelectionRectangle.X + viewSelectionRectangle.Width, viewSelectionRectangle.Y, -viewSelectionRectangle.Width, viewSelectionRectangle.Height);
+			if (viewSelectionRectangle.Height < 0) viewSelectionRectangle = new Rectangle(viewSelectionRectangle.X, viewSelectionRectangle.Y + viewSelectionRectangle.Height, viewSelectionRectangle.Width, -viewSelectionRectangle.Height);
+
+			g.FillRectangle(style.SelectionBrush, viewSelectionRectangle);
+			g.DrawRectangle(style.SelectionPen, viewSelectionRectangle);
 		}
 
 		private void PropagateMatrixChange()
@@ -398,19 +412,18 @@ namespace GCEd
 						item.Hovered = false;
 						item.Selected = true;
 						selectedOperations.Add(item.Operation);
-						Invalidate(item);
 					}
 					else
 					{
 						if (!append && item.Selected)
 						{
 							item.Selected = false;
-							Invalidate(item);
 						}
 					}
 				}
 				viewState.SetSelection(selectedOperations);
 				interaction = Interaction.None;
+				Invalidate();
 			}
 
 			if (interaction == Interaction.EndMove)
@@ -460,7 +473,8 @@ namespace GCEd
 
 			if (interaction == Interaction.Select)
 			{
-				var absSelectionRectangle = ViewToAbs(new Rectangle(mouseDragStart.X, mouseDragStart.Y, e.Location.X - mouseDragStart.X, e.Location.Y - mouseDragStart.Y));
+				var viewSelectionRectangle = new Rectangle(mouseDragStart.X, mouseDragStart.Y, e.Location.X - mouseDragStart.X, e.Location.Y - mouseDragStart.Y);
+				var absSelectionRectangle = ViewToAbs(viewSelectionRectangle);
 				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
 				foreach (var item in items)
 				{
@@ -468,8 +482,8 @@ namespace GCEd
 					var hovered = item.AbsBoundingBox.IntersectsWith(absSelectionRectangle);
 					if (hovered == item.Hovered) continue;
 					item.Hovered = hovered;
-					Invalidate(item);
 				}
+				Invalidate();
 			}
 
 			if (interaction == Interaction.EndMove)

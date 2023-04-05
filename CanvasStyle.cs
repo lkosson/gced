@@ -21,8 +21,10 @@ namespace GCEd
 		public Pen MinorGridPen { get; private set; } = default!;
 		public Pen MajorGridPen { get; private set; } = default!;
 		public Pen OriginGridPen { get; private set; } = default!;
+		public Pen SelectionPen { get; private set; } = default!;
 		public Brush TextBrush { get; private set; } = default!;
 		public Brush BackgroundBrush { get; private set; } = default!;
+		public Brush SelectionBrush { get; private set; } = default!;
 
 		public CanvasStyle()
 		{
@@ -63,9 +65,11 @@ namespace GCEd
 			HoveredIdlePen.CustomStartCap = startCap;
 			SelectedPen.CustomEndCap = endCap;
 			SelectedPen.CustomStartCap = startCap;
+			SelectionPen = new Pen(Color.FromArgb(0xAF, 0xCF, 0xFF), PixelSize);
 
 			TextBrush = new SolidBrush(hoveredStrokeColor);
 			BackgroundBrush = new SolidBrush(Color.FromArgb(0x20, 0x4A, 0x7F));
+			SelectionBrush = new SolidBrush(Color.FromArgb(0x40, 0xE0, 0xEA, 0xF5));
 		}
 
 		public virtual void Dispose()
@@ -78,8 +82,10 @@ namespace GCEd
 			MinorGridPen.Dispose();
 			MajorGridPen.Dispose();
 			OriginGridPen.Dispose();
+			SelectionPen.Dispose();
 			TextBrush.Dispose();
 			BackgroundBrush.Dispose();
+			SelectionBrush.Dispose();
 		}
 	}
 }
