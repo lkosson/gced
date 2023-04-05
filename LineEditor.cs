@@ -79,6 +79,7 @@ namespace GCEd
 					textBoxLine.Select(newLine.ErrorPosition, 0);
 				}
 				e.Handled = true;
+				e.SuppressKeyPress = true;
 			}
 			else if (e.KeyCode == Keys.Escape)
 			{
