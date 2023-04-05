@@ -474,12 +474,66 @@ namespace GCEd
 
 		private void FinishMouseEndMove()
 		{
+			var needsOffset = false;
 			var absPos = SnapToGrid(default, ViewToAbs(PointToClient(MousePosition)));
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
 				item.Operation.Line.X = (decimal)(item.Operation.Absolute ? absPos.X : absPos.X - item.Operation.AbsXStart);
 				item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? absPos.Y : absPos.Y - item.Operation.AbsYStart);
+				if ((item.Operation.Line.Instruction == GInstruction.G2 || item.Operation.Line.Instruction == GInstruction.G3)
+					&& (item.Operation.Line.I == 0 && item.Operation.Line.J == 0)) needsOffset = true;
+				item.OperationChanged();
+			}
+
+			viewState.RunProgram();
+			if (needsOffset) StartMouseOffsetMove();
+			else interaction = Interaction.None;
+			Invalidate();
+		}
+
+		private void StartMouseOffsetMove()
+		{
+			var newSelection = new List<GOperation>();
+			var skipped = false;
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				if (item.Operation.Line.Instruction != GInstruction.G2 && item.Operation.Line.Instruction != GInstruction.G3)
+				{
+					skipped = true;
+					continue;
+				}
+				newSelection.Add(item.Operation);
+				break;
+			}
+			if (!newSelection.Any()) return;
+			if (skipped) ViewState.SetSelection(newSelection);
+			interaction = Interaction.OffsetMove;
+		}
+
+		private void UpdateMouseOffsetMove(Point mouseLocation)
+		{
+			var absPos = SnapToGrid(default, ViewToAbs(mouseLocation));
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.AbsI = absPos.X;
+				item.Operation.AbsJ = absPos.Y;
+				item.OperationChanged();
+			}
+
+			Invalidate();
+		}
+
+		private void FinishMouseOffsetMove()
+		{
+			var absPos = SnapToGrid(default, ViewToAbs(PointToClient(MousePosition)));
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.Line.I = (decimal)(absPos.X - item.Operation.AbsXStart);
+				item.Operation.Line.J = (decimal)(absPos.Y - item.Operation.AbsYStart);
 				item.OperationChanged();
 			}
 
@@ -562,6 +616,7 @@ namespace GCEd
 		{
 			if (interaction == Interaction.Select) FinishMouseSelect();
 			if (interaction == Interaction.EndMove) FinishMouseEndMove();
+			if (interaction == Interaction.OffsetMove) FinishMouseOffsetMove();
 			if (interaction == Interaction.Drag) FinishMouseDrag();
 			if (interaction == Interaction.DragEndMove) FinishMouseDrag();
 			if (interaction == Interaction.DragOffsetMove) FinishMouseDrag();
@@ -573,6 +628,7 @@ namespace GCEd
 			if (interaction == Interaction.Drag || interaction == Interaction.DragEndMove || interaction == Interaction.DragOffsetMove) UpdateMouseDrag(e.Location);
 			if (interaction == Interaction.Select) UpdateMouseSelect(e.Location);
 			if (interaction == Interaction.EndMove) UpdateMouseEndMove(e.Location);
+			if (interaction == Interaction.OffsetMove) UpdateMouseOffsetMove(e.Location);
 			if (interaction == Interaction.None) UpdateMouseHover(e.Location);
 			if (ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
 			base.OnMouseMove(e);
@@ -650,6 +706,10 @@ namespace GCEd
 			{
 				StartMouseEndMove();
 			}
+			else if (e.KeyCode == Keys.O)
+			{
+				StartMouseOffsetMove();
+			}
 			else if (e.KeyCode == Keys.D0)
 			{
 				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G0 });
@@ -659,6 +719,12 @@ namespace GCEd
 			else if (e.KeyCode == Keys.D1)
 			{
 				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G1 });
+				StartMouseEndMove();
+				UpdateMouseEndMove(PointToClient(MousePosition));
+			}
+			else if (e.KeyCode == Keys.D2)
+			{
+				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G2 });
 				StartMouseEndMove();
 				UpdateMouseEndMove(PointToClient(MousePosition));
 			}
