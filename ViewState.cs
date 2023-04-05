@@ -147,9 +147,9 @@ namespace GCEd
 			RunProgram();
 		}
 
-		public void AppendNewLine(GOperation? baseOperation, bool before = false)
+		public void AppendNewLine(GOperation? baseOperation, bool before = false, GLine? line = null)
 		{
-			var line = new GLine();
+			if (line == null) line = new GLine();
 			if (baseOperation == null)
 			{
 				if (program.Lines.Count == 0 || before) program.Lines.AddFirst(line);

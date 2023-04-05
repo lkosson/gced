@@ -640,6 +640,16 @@ namespace GCEd
 			{
 				interaction = Interaction.EndMove;
 			}
+			else if (e.KeyCode == Keys.D0)
+			{
+				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G0 });
+				interaction = Interaction.EndMove;
+			}
+			else if (e.KeyCode == Keys.D1)
+			{
+				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G1 });
+				interaction = Interaction.EndMove;
+			}
 			base.OnKeyDown(e);
 		}
 	}
