@@ -43,7 +43,7 @@ namespace GCEd
 			var hasOperation = ViewState.LastSelectedOperation != null;
 			var isRapid = ViewState.LastSelectedOperation != null && ViewState.LastSelectedOperation.Line.Instruction == GInstruction.G0;
 			var isLine = ViewState.LastSelectedOperation != null && ViewState.LastSelectedOperation.Line.Instruction == GInstruction.G1;
-			var isArc = ViewState.LastSelectedOperation != null && (ViewState.LastSelectedOperation.Line.Instruction == GInstruction.G2 || ViewState.LastSelectedOperation.Line.Instruction == GInstruction.G3);
+			var isArc = ViewState.LastSelectedOperation != null && ViewState.LastSelectedOperation.Line.IsArc;
 			var isAbsolute = ViewState.LastSelectedOperation != null && ViewState.LastSelectedOperation.Absolute;
 			var isMove = isRapid || isLine || isArc;
 

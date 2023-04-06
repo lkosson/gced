@@ -77,8 +77,8 @@ namespace GCEd
 			foreach (var operation in viewState.Operations)
 			{
 				CanvasItem item;
-				if (operation.Line.Instruction == GInstruction.G0 || operation.Line.Instruction == GInstruction.G1) item = new CanvasItemLine(operation);
-				else if (operation.Line.Instruction == GInstruction.G2 || operation.Line.Instruction == GInstruction.G3) item = new CanvasItemArc(operation);
+				if (operation.Line.IsLine) item = new CanvasItemLine(operation);
+				else if (operation.Line.IsArc) item = new CanvasItemArc(operation);
 				else continue;
 				items.Add(item);
 			}
@@ -480,8 +480,7 @@ namespace GCEd
 				if (!item.Selected) continue;
 				item.Operation.Line.X = (decimal)(item.Operation.Absolute ? item.Operation.AbsXEnd : item.Operation.AbsXEnd - item.Operation.AbsXStart);
 				item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? item.Operation.AbsYEnd : item.Operation.AbsYEnd - item.Operation.AbsYStart);
-				if ((item.Operation.Line.Instruction == GInstruction.G2 || item.Operation.Line.Instruction == GInstruction.G3)
-					&& (!item.Operation.Line.I.HasValue || !item.Operation.Line.J.HasValue)) needsOffset = true;
+				if (item.Operation.Line.IsArc && (!item.Operation.Line.I.HasValue || !item.Operation.Line.J.HasValue)) needsOffset = true;
 				item.OperationChanged();
 			}
 
@@ -498,7 +497,7 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				if (item.Operation.Line.Instruction != GInstruction.G2 && item.Operation.Line.Instruction != GInstruction.G3)
+				if (!item.Operation.Line.IsArc)
 				{
 					skipped = true;
 					continue;
