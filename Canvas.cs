@@ -475,12 +475,11 @@ namespace GCEd
 		private void FinishMouseEndMove()
 		{
 			var needsOffset = false;
-			var absPos = SnapToGrid(default, ViewToAbs(PointToClient(MousePosition)));
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				item.Operation.Line.X = (decimal)(item.Operation.Absolute ? absPos.X : absPos.X - item.Operation.AbsXStart);
-				item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? absPos.Y : absPos.Y - item.Operation.AbsYStart);
+				item.Operation.Line.X = (decimal)(item.Operation.Absolute ? item.Operation.AbsXEnd : item.Operation.AbsXEnd - item.Operation.AbsXStart);
+				item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? item.Operation.AbsYEnd : item.Operation.AbsYEnd - item.Operation.AbsYStart);
 				if ((item.Operation.Line.Instruction == GInstruction.G2 || item.Operation.Line.Instruction == GInstruction.G3)
 					&& (!item.Operation.Line.I.HasValue || !item.Operation.Line.J.HasValue)) needsOffset = true;
 				item.OperationChanged();
@@ -518,8 +517,11 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				item.Operation.AbsI = absPos.X;
-				item.Operation.AbsJ = absPos.Y;
+
+				var offset = CanvasItemArc.OffsetFromThreePoints(new PointF(item.Operation.AbsXStart, item.Operation.AbsYStart), new PointF(item.Operation.AbsXEnd, item.Operation.AbsYEnd), absPos);
+
+				item.Operation.AbsI = offset.X;
+				item.Operation.AbsJ = offset.Y;
 				item.OperationChanged();
 			}
 
@@ -528,12 +530,11 @@ namespace GCEd
 
 		private void FinishMouseOffsetMove()
 		{
-			var absPos = SnapToGrid(default, ViewToAbs(PointToClient(MousePosition)));
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				item.Operation.Line.I = (decimal)(absPos.X - item.Operation.AbsXStart);
-				item.Operation.Line.J = (decimal)(absPos.Y - item.Operation.AbsYStart);
+				item.Operation.Line.I = (decimal)(item.Operation.AbsI - item.Operation.AbsXStart);
+				item.Operation.Line.J = (decimal)(item.Operation.AbsJ - item.Operation.AbsYStart);
 				item.OperationChanged();
 			}
 
