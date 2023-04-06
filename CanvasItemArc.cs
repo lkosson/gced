@@ -69,7 +69,8 @@ namespace GCEd
 				: Hovered ? style.HoveredActivePen
 				: style.ActivePen;
 
-			g.DrawArc(pen, Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius, angle, sweep);
+			if (radius == 0) g.DrawLine(pen, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsXEnd, Operation.AbsYEnd);
+			else g.DrawArc(pen, Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius, angle, sweep);
 		}
 
 		public override float Distance(PointF p)

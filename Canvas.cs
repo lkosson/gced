@@ -482,7 +482,7 @@ namespace GCEd
 				item.Operation.Line.X = (decimal)(item.Operation.Absolute ? absPos.X : absPos.X - item.Operation.AbsXStart);
 				item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? absPos.Y : absPos.Y - item.Operation.AbsYStart);
 				if ((item.Operation.Line.Instruction == GInstruction.G2 || item.Operation.Line.Instruction == GInstruction.G3)
-					&& (item.Operation.Line.I == 0 && item.Operation.Line.J == 0)) needsOffset = true;
+					&& (!item.Operation.Line.I.HasValue || !item.Operation.Line.J.HasValue)) needsOffset = true;
 				item.OperationChanged();
 			}
 
@@ -608,28 +608,28 @@ namespace GCEd
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left && interaction == Interaction.None) StartMouseSelect();
-			if (e.Button == MouseButtons.Middle) StartMouseDrag();
+			else if (e.Button == MouseButtons.Middle) StartMouseDrag();
 			base.OnMouseDown(e);
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			if (interaction == Interaction.Select) FinishMouseSelect();
-			if (interaction == Interaction.EndMove) FinishMouseEndMove();
-			if (interaction == Interaction.OffsetMove) FinishMouseOffsetMove();
-			if (interaction == Interaction.Drag) FinishMouseDrag();
-			if (interaction == Interaction.DragEndMove) FinishMouseDrag();
-			if (interaction == Interaction.DragOffsetMove) FinishMouseDrag();
+			else if (interaction == Interaction.EndMove) FinishMouseEndMove();
+			else if (interaction == Interaction.OffsetMove) FinishMouseOffsetMove();
+			else if (interaction == Interaction.Drag) FinishMouseDrag();
+			else if (interaction == Interaction.DragEndMove) FinishMouseDrag();
+			else if (interaction == Interaction.DragOffsetMove) FinishMouseDrag();
 			base.OnMouseUp(e);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			if (interaction == Interaction.Drag || interaction == Interaction.DragEndMove || interaction == Interaction.DragOffsetMove) UpdateMouseDrag(e.Location);
-			if (interaction == Interaction.Select) UpdateMouseSelect(e.Location);
-			if (interaction == Interaction.EndMove) UpdateMouseEndMove(e.Location);
-			if (interaction == Interaction.OffsetMove) UpdateMouseOffsetMove(e.Location);
-			if (interaction == Interaction.None) UpdateMouseHover(e.Location);
+			else if (interaction == Interaction.Select) UpdateMouseSelect(e.Location);
+			else if (interaction == Interaction.EndMove) UpdateMouseEndMove(e.Location);
+			else if (interaction == Interaction.OffsetMove) UpdateMouseOffsetMove(e.Location);
+			else if (interaction == Interaction.None) UpdateMouseHover(e.Location);
 			if (ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
 			base.OnMouseMove(e);
 		}
@@ -725,6 +725,12 @@ namespace GCEd
 			else if (e.KeyCode == Keys.D2)
 			{
 				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G2 });
+				StartMouseEndMove();
+				UpdateMouseEndMove(PointToClient(MousePosition));
+			}
+			else if (e.KeyCode == Keys.D3)
+			{
+				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G3 });
 				StartMouseEndMove();
 				UpdateMouseEndMove(PointToClient(MousePosition));
 			}
