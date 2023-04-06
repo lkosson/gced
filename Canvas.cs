@@ -513,11 +513,14 @@ namespace GCEd
 		private void UpdateMouseOffsetMove(Point mouseLocation)
 		{
 			var absPos = ViewToAbs(mouseLocation);
+			var byThreePoints = (ModifierKeys & Keys.Alt) != Keys.Alt;
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
 
-				var offset = SnapToGrid(default, CanvasItemArc.OffsetFromThreePoints(new PointF(item.Operation.AbsXStart, item.Operation.AbsYStart), new PointF(item.Operation.AbsXEnd, item.Operation.AbsYEnd), absPos));
+				var offset =
+					byThreePoints ? SnapToGrid(default, Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, absPos))
+					: SnapToGrid(default, Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, absPos));
 
 				item.Operation.AbsI = offset.X;
 				item.Operation.AbsJ = offset.Y;

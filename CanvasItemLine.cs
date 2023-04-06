@@ -39,9 +39,7 @@ namespace GCEd
 		public override float Distance(PointF p)
 		{
 			if (AbsBoundingBox == default) return base.Distance(p);
-
-			return (float)(Math.Abs((Operation.AbsXEnd - Operation.AbsXStart) * (Operation.AbsYStart - p.Y) - (Operation.AbsXStart - p.X) * (Operation.AbsYEnd - Operation.AbsYStart))
-				/ Math.Sqrt((Operation.AbsXEnd - Operation.AbsXStart) * (Operation.AbsXEnd - Operation.AbsXStart) + (Operation.AbsYEnd - Operation.AbsYStart) * (Operation.AbsYEnd - Operation.AbsYStart)));
+			return Geometry.DistanceBetweenLineAndPoint(Operation.AbsStart, Operation.AbsEnd, p);
 		}
 
 		public override void Dispose()

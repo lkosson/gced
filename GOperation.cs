@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
@@ -31,6 +32,10 @@ namespace GCEd
 		public decimal S { get; set; }
 		public bool Active { get; set; }
 		public bool Absolute { get; set; }
+
+		public PointF AbsStart => new PointF(AbsXStart, AbsYStart);
+		public PointF AbsEnd => new PointF(AbsXEnd, AbsYEnd);
+		public PointF AbsOffset => new PointF(AbsI, AbsJ);
 
 		public GOperation(GLine line)
 		{
