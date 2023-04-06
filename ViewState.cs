@@ -168,7 +168,7 @@ namespace GCEd
 			RunProgram();
 			var newOperation = operations.First(operation => operation.Line == line);
 			SetSelection(new[] { newOperation });
-			LineEditorFocused?.Invoke();
+			//LineEditorFocused?.Invoke();
 		}
 	}
 }

@@ -606,6 +606,30 @@ namespace GCEd
 			Cursor = bestItem == null ? Cursors.Arrow : Cursors.Hand;
 		}
 
+		private void AbortMove()
+		{
+			var operationsToDelete = new List<GOperation>();
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				if (!item.Operation.Line.IsVisible) continue;
+				if (!item.Operation.Line.IsEmpty) continue;
+				operationsToDelete.Add(item.Operation);
+			}
+
+			var previousOperation = items.Reverse().Select(item => item.Operation).SkipWhile(operation => !operationsToDelete.Contains(operation)).Skip(1).FirstOrDefault();
+			viewState.DeleteOperations(operationsToDelete);
+			if (previousOperation != null) viewState.SetSelection(new[] { previousOperation });
+			viewState.RunProgram();
+			interaction = Interaction.None;
+			Invalidate();
+		}
+
+		private void Abort()
+		{
+			if (interaction == Interaction.EndMove || interaction == Interaction.OffsetMove) AbortMove();
+		}
+
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left && interaction == Interaction.None) StartMouseSelect();
@@ -734,6 +758,10 @@ namespace GCEd
 				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G3 });
 				StartMouseEndMove();
 				UpdateMouseEndMove(PointToClient(MousePosition));
+			}
+			else if (e.KeyCode == Keys.Escape)
+			{
+				Abort();
 			}
 			base.OnKeyDown(e);
 		}

@@ -25,6 +25,11 @@ namespace GCEd
 		public decimal? F { get; set; }
 		public decimal? S { get; set; }
 
+		public bool IsLine => Instruction == GInstruction.G0 || Instruction == GInstruction.G1;
+		public bool IsArc => Instruction == GInstruction.G2 || Instruction == GInstruction.G3;
+		public bool IsVisible => IsLine || IsArc;
+		public bool IsEmpty => !X.HasValue && !Y.HasValue && !Z.HasValue && !I.HasValue && !J.HasValue && !K.HasValue && !F.HasValue && !S.HasValue;
+
 		static GLine()
 		{
 			instructions = new Dictionary<(char, decimal), GInstruction>();
