@@ -503,6 +503,7 @@ namespace GCEd
 
 		public void StartMouseEndMove()
 		{
+			if (!viewState.SelectedOperations.Any()) return;
 			interaction = Interaction.EndMove;
 			UpdateMouseEndMove(PointToClient(MousePosition));
 		}
@@ -541,6 +542,7 @@ namespace GCEd
 
 		private void StartMouseOffsetMove()
 		{
+			if (!viewState.SelectedOperations.Any()) return;
 			var newSelection = new List<GOperation>();
 			var skipped = false;
 			foreach (var item in items)
