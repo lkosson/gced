@@ -636,6 +636,7 @@ namespace GCEd
 		{
 			if (e.Button == MouseButtons.Left && interaction == Interaction.None) StartMouseSelect();
 			else if (e.Button == MouseButtons.Middle) StartMouseDrag();
+			else if (e.Button == MouseButtons.Right) viewState.SetSelection(Enumerable.Empty<GOperation>());
 			base.OnMouseDown(e);
 		}
 
