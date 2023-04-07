@@ -89,30 +89,38 @@ namespace GCEd
 
 		private void AddG0()
 		{
+			canvas.SuspendPanningToSelection();
 			viewState.SaveUndoState();
 			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G0 });
 			canvas.StartMouseEndMove();
+			canvas.ResumePanningToSelection();
 		}
 
 		private void AddG1()
 		{
+			canvas.SuspendPanningToSelection();
 			viewState.SaveUndoState();
 			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G1 });
 			canvas.StartMouseEndMove();
+			canvas.ResumePanningToSelection();
 		}
 
 		private void AddG2()
 		{
+			canvas.SuspendPanningToSelection();
 			viewState.SaveUndoState();
 			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G2 });
 			canvas.StartMouseEndMove();
+			canvas.ResumePanningToSelection();
 		}
 
 		private void AddG3()
 		{
+			canvas.SuspendPanningToSelection();
 			viewState.SaveUndoState();
 			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G3 });
 			canvas.StartMouseEndMove();
+			canvas.ResumePanningToSelection();
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)

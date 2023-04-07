@@ -48,6 +48,7 @@ namespace GCEd
 		private CanvasStyle style;
 		private IEnumerable<CanvasItem> items;
 		private Interaction interaction;
+		private bool panningToSelectionSuspended;
 
 		private enum Interaction { None, Select, Drag, EndMove, OffsetMove, DragEndMove, DragOffsetMove }
 
@@ -138,8 +139,9 @@ namespace GCEd
 			Invalidate();
 		}
 
-		private void PanViewToSelection()
+		public void PanViewToSelection()
 		{
+			if (panningToSelectionSuspended) return;
 			var absX1 = Single.MaxValue;
 			var absY1 = Single.MaxValue;
 			var absX2 = Single.MinValue;
@@ -158,12 +160,22 @@ namespace GCEd
 			if (absX1 == Single.MaxValue) return;
 
 			var viewSelectedBounds = AbsToView(new RectangleF(absX1, absY1, absX2 - absX1, absY2 - absY1));
-			if (ClientRectangle.Contains(viewSelectedBounds)) return;
+			if (ClientRectangle.IntersectsWith(viewSelectedBounds)) return;
 
 			viewMatrix.Translate(-viewSelectedBounds.X + Width / 2 - viewSelectedBounds.Width / 2, -viewSelectedBounds.Y + Height / 2 - viewSelectedBounds.Height / 2, MatrixOrder.Append);
 
 			matrixUpdated = true;
 			Invalidate();
+		}
+
+		public void SuspendPanningToSelection()
+		{
+			panningToSelectionSuspended = true;
+		}
+
+		public void ResumePanningToSelection()
+		{
+			panningToSelectionSuspended = false;
 		}
 
 		private void AddBackground()
@@ -396,6 +408,7 @@ namespace GCEd
 		private PointF SnapToGrid(PointF origin, PointF point)
 		{
 			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return point;
+			if (!ShowMinorGrid) return point;
 			var step = GridMinorStep;
 			return new PointF((float)Math.Floor((point.X + step / 2) / step) * step, (float)Math.Floor((point.Y + step / 2) / step) * step);
 		}
