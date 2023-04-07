@@ -61,5 +61,14 @@ namespace GCEd
 			if (distance1 < distance2) return closest1;
 			return closest2;
 		}
+
+		public static PointF ConstrainToCircle(PointF center, PointF circlePoint, PointF pointToConstrain)
+		{
+			var directionX = center.X - pointToConstrain.X;
+			var directionY = center.Y - pointToConstrain.Y;
+			var radius = (float)Math.Sqrt((center.X - circlePoint.X) * (center.X - circlePoint.X) + (center.Y - circlePoint.Y) * (center.Y - circlePoint.Y));
+			var distance = (float)Math.Sqrt(directionX * directionX + directionY * directionY);
+			return new PointF(center.X - directionX * radius / distance, center.Y - directionY * radius / distance);
+		}
 	}
 }

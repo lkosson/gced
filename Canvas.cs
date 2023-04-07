@@ -514,6 +514,7 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
+				if (item.Operation.Line.IsArc && item.Operation.Line.I.HasValue && item.Operation.Line.J.HasValue) absPos = Geometry.ConstrainToCircle(new PointF(item.Operation.AbsI, item.Operation.AbsJ), item.Operation.AbsStart, absPos);
 				item.Operation.AbsXEnd = absPos.X;
 				item.Operation.AbsYEnd = absPos.Y;
 				item.OperationChanged();
