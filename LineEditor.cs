@@ -64,8 +64,7 @@ namespace GCEd
 			{
 				var operation = ViewState.LastSelectedOperation;
 				if (operation == null) return;
-				var newLine = new GLine();
-				newLine.Parse(textBoxLine.Text);
+				var newLine = new GLine(textBoxLine.Text);
 				if (String.IsNullOrEmpty(newLine.Error))
 				{
 					viewState.SaveUndoState();

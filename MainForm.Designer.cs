@@ -32,6 +32,8 @@
 			operationProperties = new OperationProperties();
 			operationsList = new OperationsList();
 			lineEditor = new LineEditor();
+			openFileDialog = new System.Windows.Forms.OpenFileDialog();
+			saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			SuspendLayout();
 			// 
 			// canvas
@@ -73,6 +75,16 @@
 			lineEditor.Size = new System.Drawing.Size(200, 30);
 			lineEditor.TabIndex = 3;
 			// 
+			// openFileDialog
+			// 
+			openFileDialog.Filter = "G-Code files (*.nc, *.gcode)|*.nc;*.gcode|All files|*.*";
+			openFileDialog.RestoreDirectory = true;
+			// 
+			// saveFileDialog
+			// 
+			saveFileDialog.Filter = "G-Code files (*.nc, *.gcode)|*.nc;*.gcode|All files|*.*";
+			saveFileDialog.RestoreDirectory = true;
+			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -94,5 +106,7 @@
 		private OperationProperties operationProperties;
 		private OperationsList operationsList;
 		private LineEditor lineEditor;
+		private System.Windows.Forms.OpenFileDialog openFileDialog;
+		private System.Windows.Forms.SaveFileDialog saveFileDialog;
 	}
 }

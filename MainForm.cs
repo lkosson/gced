@@ -21,6 +21,29 @@ namespace GCEd
 			KeyPreview = true;
 		}
 
+		private void NewFile()
+		{
+			viewState.NewProgram();
+		}
+
+		private void SaveFile()
+		{
+			if (viewState.CurrentFile == null) SaveFileAs();
+			else viewState.SaveProgram(viewState.CurrentFile);
+		}
+
+		private void SaveFileAs()
+		{
+			if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+			viewState.SaveProgram(saveFileDialog.FileName);
+		}
+
+		private void OpenFile()
+		{
+			if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+			viewState.LoadProgram(openFileDialog.FileName);
+		}
+
 		private void SelectAll()
 		{
 			var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
@@ -96,24 +119,12 @@ namespace GCEd
 		{
 			e.Handled = true;
 			var editorFocused = ActiveControl is LineEditor || ActiveControl is OperationProperties;
-			if (e.KeyCode == Keys.N && ModifierKeys == Keys.Control)
-			{
-
-			}
-			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.Control)
-			{
-			}
-			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Control)
-			{
-
-			}
-			else if (e.KeyCode == Keys.Menu)
-			{
-			}
-			else if (editorFocused)
-			{
-				e.Handled = false;
-			}
+			if (e.KeyCode == Keys.N && ModifierKeys == Keys.Control) NewFile();
+			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.Control) OpenFile();
+			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Control) SaveFile();
+			else if (e.KeyCode == Keys.S && ModifierKeys == (Keys.Control | Keys.Alt)) SaveFileAs();
+			else if (e.KeyCode == Keys.Menu) { }
+			else if (editorFocused) { e.Handled = false; }
 			else if (e.KeyCode == Keys.A && (ModifierKeys & Keys.Control) == Keys.Control) SelectAll();
 			else if (e.KeyCode == Keys.Z && ModifierKeys == Keys.Control) Undo();
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None) ConvertToAbsolute();
@@ -124,10 +135,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.D1) AddG1();
 			else if (e.KeyCode == Keys.D2) AddG2();
 			else if (e.KeyCode == Keys.D3) AddG3();
-			else
-			{
-				e.Handled = false;
-			}
+			else { e.Handled = false; }
 
 			base.OnKeyDown(e);
 		}

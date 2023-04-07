@@ -13,6 +13,7 @@ namespace GCEd
 		public IEnumerable<GOperation> Operations { get => operations; }
 		public IReadOnlySet<GOperation> SelectedOperations { get => selectedOperations; }
 		public GOperation? LastSelectedOperation { get; private set; }
+		public string? CurrentFile { get; set; }
 
 		public event Action? OperationsChanged;
 		public event Action? SelectedOperationsChanged;
@@ -32,11 +33,26 @@ namespace GCEd
 			selectedOperations = new HashSet<GOperation>(GOperation.ByGLineEqualityComparer);
 		}
 
+		public void NewProgram()
+		{
+			CurrentFile = null;
+			program = new GProgram();
+			program.New();
+			RunProgram();
+		}
+
 		public void LoadProgram(string file)
 		{
 			program = new GProgram();
 			program.Load(file);
 			RunProgram();
+			CurrentFile = file;
+		}
+
+		public void SaveProgram(string file)
+		{
+			program.Save(file);
+			CurrentFile = file;
 		}
 
 		public void RunProgram()

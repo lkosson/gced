@@ -17,15 +17,22 @@ namespace GCEd
 			Lines = new LinkedList<GLine>();
 		}
 
+		public void New()
+		{
+			Lines.Clear();
+			Lines.AddLast(new GLine("G17 ; Set XY plane"));
+			Lines.AddLast(new GLine("G21 ; Set unit to mm"));
+			Lines.AddLast(new GLine("G90 ; Set absolute positioning"));
+			Lines.AddLast(new GLine("G53 ; Set work offset"));
+		}
+
 		public void Load(StreamReader reader)
 		{
 			string? line;
 			Lines.Clear();
 			while ((line = reader.ReadLine()) != null)
 			{
-				var gline = new GLine();
-				gline.Parse(line);
-				Lines.AddLast(gline);
+				Lines.AddLast(new GLine(line));
 			}
 		}
 
@@ -33,6 +40,20 @@ namespace GCEd
 		{
 			using var sr = new StreamReader(filename, Encoding.UTF8);
 			Load(sr);
+		}
+
+		public void Save(StreamWriter writer)
+		{
+			foreach (var line in Lines)
+			{
+				writer.WriteLine(line.ToString());
+			}
+		}
+
+		public void Save(string filename)
+		{
+			using var sw = new StreamWriter(filename, false, Encoding.UTF8);
+			Save(sw);
 		}
 
 		public List<GOperation> Run()

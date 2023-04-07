@@ -51,6 +51,12 @@ namespace GCEd
 			Comment = "";
 		}
 
+		public GLine(string text)
+			: this()
+		{
+			Parse(text);
+		}
+
 		public void Parse(string text)
 		{
 			Instruction = GInstruction.Empty;
@@ -177,8 +183,8 @@ namespace GCEd
 
 		public override string ToString()
 		{
-			if (Instruction == GInstruction.Invalid) return "\"" + RawText + "\"";
-			if (Instruction == GInstruction.Unknown) return "\"" + RawText + "\"";
+			if (Instruction == GInstruction.Invalid) return "(" + RawText + ")";
+			if (Instruction == GInstruction.Unknown) return RawText;
 			if (Instruction == GInstruction.Comment) return RawText;
 			if (Instruction == GInstruction.Empty) return "";
 
@@ -197,12 +203,7 @@ namespace GCEd
 			return sb.ToString();
 		}
 
-		public GLine Clone()
-		{
-			var newLine = new GLine();
-			newLine.Parse(ToString());
-			return newLine;
-		}
+		public GLine Clone() => new GLine(ToString());
 	}
 
 	enum GInstruction
