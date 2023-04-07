@@ -23,18 +23,18 @@ namespace GCEd
 		public static PointF CircleCenterFromThreePoints(PointF p1, PointF p2, PointF p3)
 		{
 			// https://math.stackexchange.com/questions/213658/
-			var m11 = p1.X * p1.X + p1.Y * p1.Y;
-			var m12 = p1.X;
-			var m13 = p1.Y;
-			var m14 = 1f;
-			var m21 = p2.X * p2.X + p2.Y * p2.Y;
-			var m22 = p2.X;
-			var m23 = p2.Y;
-			var m24 = 1f;
-			var m31 = p3.X * p3.X + p3.Y * p3.Y;
-			var m32 = p3.X;
-			var m33 = p3.Y;
-			var m34 = 1f;
+			double m11 = p1.X * p1.X + p1.Y * p1.Y;
+			double m12 = p1.X;
+			double m13 = p1.Y;
+			double m14 = 1f;
+			double m21 = p2.X * p2.X + p2.Y * p2.Y;
+			double m22 = p2.X;
+			double m23 = p2.Y;
+			double m24 = 1f;
+			double m31 = p3.X * p3.X + p3.Y * p3.Y;
+			double m32 = p3.X;
+			double m33 = p3.Y;
+			double m34 = 1f;
 
 			var d11 = m12 * m23 * m34 + m13 * m24 * m32 + m14 * m22 * m33 - m14 * m23 * m32 - m12 * m24 * m33 - m13 * m22 * m34;
 			var d12 = m11 * m23 * m34 + m13 * m24 * m31 + m14 * m21 * m33 - m14 * m23 * m31 - m11 * m24 * m33 - m13 * m21 * m34;
@@ -44,7 +44,7 @@ namespace GCEd
 			var x0 = 0.5f * d12 / d11;
 			var y0 = -0.5f * d13 / d11;
 
-			return new PointF(x0, y0);
+			return new PointF((float)x0, (float)y0);
 		}
 
 		public static PointF ClosestPointOnNormal(PointF lineStart, PointF lineEnd, PointF point)
