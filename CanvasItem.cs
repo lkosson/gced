@@ -43,5 +43,13 @@ namespace GCEd
 		public virtual void Dispose()
 		{
 		}
+
+		public static CanvasItem? FromOperation(GOperation operation)
+		{
+			if (operation.Line.IsLine) return new CanvasItemLine(operation);
+			else if (operation.Line.IsArc) return new CanvasItemArc(operation);
+			else if (operation.Line.Instruction == GInstruction.Directive && operation.Line.Comment == "background") return new CanvasItemBackground(operation);
+			else return null;
+		}
 	}
 }

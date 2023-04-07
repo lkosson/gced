@@ -75,10 +75,8 @@ namespace GCEd
 			var items = new List<CanvasItem>();
 			foreach (var operation in viewState.Operations)
 			{
-				CanvasItem item;
-				if (operation.Line.IsLine) item = new CanvasItemLine(operation);
-				else if (operation.Line.IsArc) item = new CanvasItemArc(operation);
-				else continue;
+				var item = CanvasItem.FromOperation(operation);
+				if (item == null) continue;
 				items.Add(item);
 			}
 			this.items = items;
@@ -168,6 +166,15 @@ namespace GCEd
 			Invalidate();
 		}
 
+		private void AddBackground()
+		{
+			using var openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "Images (*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.jpeg;*.png;*.gif|All files|*.*";
+			openFileDialog.RestoreDirectory = true;
+			if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+			viewState.AppendNewLine(null, true, new GLine(";.background X0 Y0 I100 J100 S100 P\"" + openFileDialog.FileName + "\""));
+		}
+
 		private void ToggleGrid()
 		{
 			if (ShowMinorGrid)
@@ -200,6 +207,7 @@ namespace GCEd
 			var sw = Stopwatch.StartNew();
 
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
 			var viewClip = e.ClipRectangle;
 			viewClip.Inflate(1, 1);
 			e.Graphics.FillRectangle(style.BackgroundBrush, viewClip.Left, viewClip.Top, viewClip.Width, viewClip.Height);
@@ -698,6 +706,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.E) StartMouseEndMove();
 			else if (e.KeyCode == Keys.O) StartMouseOffsetMove();
 			else if (e.KeyCode == Keys.Escape) Abort();
+			else if (e.KeyCode == Keys.B) AddBackground();
 
 			base.OnKeyDown(e);
 		}

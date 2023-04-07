@@ -48,6 +48,10 @@ namespace GCEd
 			AbsYStart = (float)context.Y;
 			AbsZStart = (float)context.Z;
 
+			AbsI = AbsXStart + (float)context.ToMM(Line.I.GetValueOrDefault());
+			AbsJ = AbsYStart + (float)context.ToMM(Line.J.GetValueOrDefault());
+			AbsK = AbsZStart + (float)context.ToMM(Line.K.GetValueOrDefault());
+
 			if (Line.Instruction == GInstruction.G0
 				|| Line.Instruction == GInstruction.G1
 				|| Line.Instruction == GInstruction.G2
@@ -71,10 +75,6 @@ namespace GCEd
 					if (Line.Y.HasValue) context.Y += context.ToMM(Line.Y.Value);
 					if (Line.Z.HasValue) context.Z += context.ToMM(Line.Z.Value);
 				}
-
-				AbsI = AbsXStart + (float)context.ToMM(Line.I.GetValueOrDefault());
-				AbsJ = AbsYStart + (float)context.ToMM(Line.J.GetValueOrDefault());
-				AbsK = AbsZStart + (float)context.ToMM(Line.K.GetValueOrDefault());
 			}
 			else if (Line.Instruction == GInstruction.G20)
 			{

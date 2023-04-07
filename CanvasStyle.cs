@@ -12,7 +12,7 @@ namespace GCEd
 {
 	class CanvasStyle : IDisposable
 	{
-		public float PixelSize;
+		public float PixelSize { get; private set; }
 		public Pen IdlePen { get; private set; } = default!;
 		public Pen ActivePen { get; private set; } = default!;
 		public Pen HoveredIdlePen { get; private set; } = default!;
