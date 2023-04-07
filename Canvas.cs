@@ -573,6 +573,13 @@ namespace GCEd
 					byThreePoints ? Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, SnapToGrid(default, absPos))
 					: SnapToGrid(default, Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, absPos));
 
+				if (byThreePoints)
+				{
+					var side = (item.Operation.AbsXEnd - item.Operation.AbsXStart) * (absPos.Y - item.Operation.AbsYStart)
+						- (item.Operation.AbsYEnd - item.Operation.AbsYStart) * (absPos.X - item.Operation.AbsXStart);
+					item.Operation.Line.Instruction = side > 0 ? GInstruction.G2 : GInstruction.G3;
+				}
+
 				item.Operation.AbsI = offset.X;
 				item.Operation.AbsJ = offset.Y;
 				item.OperationChanged();
