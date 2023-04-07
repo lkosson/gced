@@ -519,7 +519,7 @@ namespace GCEd
 				if (!item.Selected) continue;
 
 				var offset =
-					byThreePoints ? SnapToGrid(default, Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, absPos))
+					byThreePoints ? Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, SnapToGrid(default, absPos))
 					: SnapToGrid(default, Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, absPos));
 
 				item.Operation.AbsI = offset.X;
@@ -728,6 +728,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.I)
 			{
 				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift);
+				viewState.FocusLineEditor();
 			}
 			else if (e.KeyCode == Keys.E)
 			{
@@ -764,6 +765,10 @@ namespace GCEd
 			else if (e.KeyCode == Keys.Escape)
 			{
 				Abort();
+			}
+			else if (e.KeyCode == Keys.Menu)
+			{
+				e.Handled = true;
 			}
 			base.OnKeyDown(e);
 		}

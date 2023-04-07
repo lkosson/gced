@@ -134,6 +134,11 @@ namespace GCEd
 			CanvasFocused?.Invoke();
 		}
 
+		public void FocusLineEditor()
+		{
+			LineEditorFocused?.Invoke();
+		}
+
 		public void SaveUndoState()
 		{
 			undoBuffer.Add(program.Clone());
@@ -168,7 +173,6 @@ namespace GCEd
 			RunProgram();
 			var newOperation = operations.First(operation => operation.Line == line);
 			SetSelection(new[] { newOperation });
-			//LineEditorFocused?.Invoke();
 		}
 	}
 }
