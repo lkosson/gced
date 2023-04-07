@@ -53,7 +53,10 @@ namespace GCEd
 
 				scaledImage = new Bitmap(scaledWidth, scaledHeight, PixelFormat.Format32bppPArgb);
 				using var sg = Graphics.FromImage(scaledImage);
-				sg.DrawImage(originalImage, 0, scaledImage.Height, scaledImage.Width, -scaledImage.Height);
+				using var ia = new ImageAttributes();
+				ia.SetColorMatrix(new ColorMatrix { [3, 3] = (float)Operation.Line.S.GetValueOrDefault(100) / 100f });
+				sg.InterpolationMode = InterpolationMode.HighQualityBicubic;
+				sg.DrawImage(originalImage, new Rectangle(0, 0, scaledImage.Width, scaledImage.Height), 0, originalImage.Height, originalImage.Width, -originalImage.Height, GraphicsUnit.Pixel, ia);
 			}
 			g.DrawImage(scaledImage, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsI - Operation.AbsXStart, Operation.AbsJ - Operation.AbsYStart);
 		}

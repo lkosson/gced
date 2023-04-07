@@ -206,6 +206,7 @@ namespace GCEd
 		{
 			var sw = Stopwatch.StartNew();
 
+			e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			var viewClip = e.ClipRectangle;
