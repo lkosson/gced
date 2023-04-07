@@ -24,6 +24,7 @@ namespace GCEd
 		public decimal? K { get; set; }
 		public decimal? F { get; set; }
 		public decimal? S { get; set; }
+		public string? P { get; set; }
 
 		public bool IsLine => Instruction == GInstruction.G0 || Instruction == GInstruction.G1;
 		public bool IsArc => Instruction == GInstruction.G2 || Instruction == GInstruction.G3;
@@ -64,13 +65,31 @@ namespace GCEd
 			Comment = "";
 			Error = null;
 			X = Y = Z = I = J = K = F = S = null;
+			P = null;
 			char? currentField = null;
 			int? valueStart = null;
 			bool hasDecimalPoint = false;
+			bool isQuoted = false;
+			bool wasQuoted = false;
 			for (var i = 0; i <= text.Length; i++)
 			{
 				var ch = i == text.Length ? '\0' : text[i];
-				if (Char.IsWhiteSpace(ch) || ch == ';' || ch == '(' || ch == '\0')
+				if (isQuoted)
+				{
+					if (ch == '\0')
+					{
+						Instruction = GInstruction.Invalid;
+						Error = $"Unclosed quote.";
+						ErrorPosition = valueStart.GetValueOrDefault(i);
+						return;
+					}
+					if (ch == '"')
+					{
+						isQuoted = false;
+						wasQuoted = true;
+					}
+				}
+				else if (Char.IsWhiteSpace(ch) || ch == ';' || ch == '(' || ch == '\0')
 				{
 					if (currentField.HasValue)
 					{
@@ -82,8 +101,8 @@ namespace GCEd
 							return;
 						}
 
-						var stringValue = text[valueStart.Value..i];
-						if (!Decimal.TryParse(stringValue, NumberStyles.Integer | NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value))
+						var stringValue = text[valueStart.Value..(wasQuoted ? i - 1 : i)];
+						if (!Decimal.TryParse(stringValue, NumberStyles.Integer | NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value) && currentField != 'P')
 						{
 							Instruction = GInstruction.Invalid;
 							Error = $"Invalid value '{stringValue}' in '{currentField}' field.";
@@ -99,6 +118,7 @@ namespace GCEd
 						else if (currentField == 'K') K = value;
 						else if (currentField == 'F') F = value;
 						else if (currentField == 'S') S = value;
+						else if (currentField == 'P') P = stringValue;
 						else if (instructions.TryGetValue((currentField.Value, value), out var instruction)) Instruction = instruction;
 						else if (currentField == 'G' || currentField == 'M') Instruction = GInstruction.Unknown;
 						else
@@ -110,13 +130,23 @@ namespace GCEd
 						}
 
 						currentField = null;
+						wasQuoted = false;
 					}
 
 					if (ch == ';' || ch == '(')
 					{
-						if (Instruction == GInstruction.Empty) Instruction = GInstruction.Comment;
-						Comment = text[i..];
-						break;
+						if (i == 0 && text.Length > 2 && ch == ';' && text[1] == '.' && text.Contains(' '))
+						{
+							i = text.IndexOf(' ');
+							Instruction = GInstruction.Directive;
+							Comment = text[2..i];
+						}
+						else
+						{
+							if (Instruction == GInstruction.Empty) Instruction = GInstruction.Comment;
+							Comment = text[i..];
+							break;
+						}
 					}
 
 					if (ch == '\0') break;
@@ -178,6 +208,35 @@ namespace GCEd
 
 					if (ch == '.') hasDecimalPoint = true;
 				}
+				else if (ch == '"')
+				{
+					if (!currentField.HasValue)
+					{
+						Instruction = GInstruction.Invalid;
+						Error = $"Unexpected quote character outside of a field.";
+						ErrorPosition = i;
+						return;
+					}
+
+					if (valueStart.HasValue)
+					{
+						Instruction = GInstruction.Invalid;
+						Error = $"Unexpected quote character.";
+						ErrorPosition = i;
+						return;
+					}
+
+					if (wasQuoted)
+					{
+						Instruction = GInstruction.Invalid;
+						Error = $"Unexpected additional quote.";
+						ErrorPosition = i;
+						return;
+					}
+
+					isQuoted = true;
+					valueStart = i + 1;
+				}
 			}
 		}
 
@@ -189,7 +248,13 @@ namespace GCEd
 			if (Instruction == GInstruction.Empty) return "";
 
 			var sb = new StringBuilder();
-			sb.Append(Instruction.ToString());
+			if (Instruction == GInstruction.Directive)
+			{
+				sb.Append(";.");
+				sb.Append(Comment);
+			}
+			else sb.Append(Instruction.ToString());
+
 			if (X.HasValue) { sb.Append(" X"); sb.Append(X.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
 			if (Y.HasValue) { sb.Append(" Y"); sb.Append(Y.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
 			if (Z.HasValue) { sb.Append(" Z"); sb.Append(Z.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
@@ -198,7 +263,8 @@ namespace GCEd
 			if (K.HasValue) { sb.Append(" K"); sb.Append(K.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
 			if (F.HasValue) { sb.Append(" F"); sb.Append(F.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
 			if (S.HasValue) { sb.Append(" S"); sb.Append(S.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
-			if (!String.IsNullOrEmpty(Comment)) { sb.Append(" "); sb.Append(Comment); }
+			if (P != null) { sb.Append(" P\""); sb.Append(P); sb.Append("\""); }
+			if (!String.IsNullOrEmpty(Comment) && Instruction != GInstruction.Directive) { sb.Append(" "); sb.Append(Comment); }
 
 			return sb.ToString();
 		}
@@ -212,6 +278,7 @@ namespace GCEd
 		Unknown,
 		Invalid,
 		Comment,
+		Directive,
 
 		/// <summary>
 		/// Rapid move
