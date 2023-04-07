@@ -50,7 +50,6 @@ namespace GCEd
 		private Interaction interaction;
 
 		private enum Interaction { None, Select, Drag, EndMove, OffsetMove, DragEndMove, DragOffsetMove }
-		private IEnumerable<GOperation> SelectedOperations => items.Where(item => item.Selected).Select(item => item.Operation);
 
 		private float GridMinorStep => (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
 		private float GridMajorStep => GridMinorStep * 10;
@@ -166,6 +165,33 @@ namespace GCEd
 			viewMatrix.Translate(-viewSelectedBounds.X + Width / 2 - viewSelectedBounds.Width / 2, -viewSelectedBounds.Y + Height / 2 - viewSelectedBounds.Height / 2, MatrixOrder.Append);
 
 			matrixUpdated = true;
+			Invalidate();
+		}
+
+		private void ToggleGrid()
+		{
+			if (ShowMinorGrid)
+			{
+				ShowMinorGrid = false;
+				ShowMajorGrid = false;
+				ShowOriginGrid = false;
+			}
+			else if (!ShowOriginGrid) ShowOriginGrid = true;
+			else if (!ShowMajorGrid) ShowMajorGrid = true;
+			else ShowMinorGrid = true;
+			Invalidate();
+		}
+
+		private void ToggleFPS()
+		{
+			ShowFPS = !ShowFPS;
+			Invalidate();
+		}
+
+		private void ToggleCoords()
+		{
+			ShowCursorCoords = !ShowCursorCoords;
+			if (!ShowCursorCoords) ShowItemCoords = !ShowItemCoords;
 			Invalidate();
 		}
 
@@ -453,9 +479,10 @@ namespace GCEd
 			Invalidate();
 		}
 
-		private void StartMouseEndMove()
+		public void StartMouseEndMove()
 		{
 			interaction = Interaction.EndMove;
+			UpdateMouseEndMove(PointToClient(MousePosition));
 		}
 
 		private void UpdateMouseEndMove(Point mouseLocation)
@@ -664,113 +691,14 @@ namespace GCEd
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.C)
-			{
-				ShowCursorCoords = !ShowCursorCoords;
-				if (!ShowCursorCoords) ShowItemCoords = !ShowItemCoords;
-			}
-			else if (e.KeyCode == Keys.H)
-			{
-				PanZoomViewToFit();
-			}
-			else if (e.KeyCode == Keys.F)
-			{
-				ShowFPS = !ShowFPS;
-				Invalidate();
-			}
-			else if (e.KeyCode == Keys.G)
-			{
-				if (ShowMinorGrid)
-				{
-					ShowMinorGrid = false;
-					ShowMajorGrid = false;
-					ShowOriginGrid = false;
-				}
-				else if (!ShowOriginGrid) ShowOriginGrid = true;
-				else if (!ShowMajorGrid) ShowMajorGrid = true;
-				else ShowMinorGrid = true;
-				Invalidate();
-			}
-			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None)
-			{
-				viewState.SaveUndoState();
-				viewState.ConvertToAbsolute(SelectedOperations);
-				e.Handled = true;
-			}
-			else if (e.KeyCode == Keys.R)
-			{
-				viewState.SaveUndoState();
-				viewState.ConvertToRelative(SelectedOperations);
-				e.Handled = true;
-			}
-			else if (e.KeyCode == Keys.Delete)
-			{
-				viewState.SaveUndoState();
-				viewState.DeleteOperations(SelectedOperations);
-				e.Handled = true;
-			}
-			else if (e.KeyCode == Keys.A && (ModifierKeys & Keys.Control) == Keys.Control)
-			{
-				var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
-				var selectedOperations = new List<GOperation>();
-				foreach (var item in items)
-				{
-					if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) continue;
-					item.Selected = true;
-					Invalidate(item);
-					selectedOperations.Add(item.Operation);
-				}
-				viewState.SetSelection(selectedOperations);
-			}
-			else if (e.KeyCode == Keys.Z && ModifierKeys == Keys.Control)
-			{
-				viewState.Undo();
-			}
-			else if (e.KeyCode == Keys.I)
-			{
-				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift);
-				viewState.FocusLineEditor();
-			}
-			else if (e.KeyCode == Keys.E)
-			{
-				StartMouseEndMove();
-			}
-			else if (e.KeyCode == Keys.O)
-			{
-				StartMouseOffsetMove();
-			}
-			else if (e.KeyCode == Keys.D0)
-			{
-				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G0 });
-				StartMouseEndMove();
-				UpdateMouseEndMove(PointToClient(MousePosition));
-			}
-			else if (e.KeyCode == Keys.D1)
-			{
-				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G1 });
-				StartMouseEndMove();
-				UpdateMouseEndMove(PointToClient(MousePosition));
-			}
-			else if (e.KeyCode == Keys.D2)
-			{
-				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G2 });
-				StartMouseEndMove();
-				UpdateMouseEndMove(PointToClient(MousePosition));
-			}
-			else if (e.KeyCode == Keys.D3)
-			{
-				viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G3 });
-				StartMouseEndMove();
-				UpdateMouseEndMove(PointToClient(MousePosition));
-			}
-			else if (e.KeyCode == Keys.Escape)
-			{
-				Abort();
-			}
-			else if (e.KeyCode == Keys.Menu)
-			{
-				e.Handled = true;
-			}
+			if (e.KeyCode == Keys.C) ToggleCoords();
+			else if (e.KeyCode == Keys.H) PanZoomViewToFit();
+			else if (e.KeyCode == Keys.F) ToggleFPS();
+			else if (e.KeyCode == Keys.G) ToggleGrid();
+			else if (e.KeyCode == Keys.E) StartMouseEndMove();
+			else if (e.KeyCode == Keys.O) StartMouseOffsetMove();
+			else if (e.KeyCode == Keys.Escape) Abort();
+
 			base.OnKeyDown(e);
 		}
 	}
