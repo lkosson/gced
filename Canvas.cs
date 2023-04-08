@@ -40,6 +40,7 @@ namespace GCEd
 		public bool ShowMajorGrid { get; set; } = true;
 		public bool ShowOriginGrid { get; set; } = true;
 		public bool SnapToGrid { get; set; } = false;
+		public bool SnapToItems { get; set; } = true;
 
 		private ViewState viewState;
 		private Matrix viewMatrix;
@@ -206,6 +207,11 @@ namespace GCEd
 		private void ToggleSnapToGrid()
 		{
 			SnapToGrid = !SnapToGrid;
+		}
+
+		private void ToggleSnapToItems()
+		{
+			SnapToItems = !SnapToItems;
 		}
 
 		private void ToggleFPS()
@@ -433,6 +439,20 @@ namespace GCEd
 				{
 					bestYHint = hint.Y;
 					bestYHintDistance = hintYDistance;
+				}
+			}
+
+			if (SnapToItems)
+			{
+				foreach (var item in items)
+				{
+					if (item.Selected) continue;
+					var distance = Geometry.LineLength(item.Operation.AbsEnd, point);
+					if (distance > bestXHintDistance && distance > bestYHintDistance) continue;
+					bestXHint = item.Operation.AbsXEnd;
+					bestYHint = item.Operation.AbsYEnd;
+					bestXHintDistance = distance;
+					bestYHintDistance = distance;
 				}
 			}
 
@@ -766,6 +786,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) ToggleFPS();
 			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) ToggleGrid();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
+			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
 			else if (e.KeyCode == Keys.E && ModifierKeys == Keys.None) StartMouseEndMove();
 			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) StartMouseOffsetMove();
 			else if (e.KeyCode == Keys.Escape) Abort();
