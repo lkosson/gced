@@ -39,6 +39,7 @@ namespace GCEd
 		public bool ShowMinorGrid { get; set; } = true;
 		public bool ShowMajorGrid { get; set; } = true;
 		public bool ShowOriginGrid { get; set; } = true;
+		public bool SnapToGrid { get; set; } = false;
 
 		private ViewState viewState;
 		private Matrix viewMatrix;
@@ -54,6 +55,7 @@ namespace GCEd
 
 		private float GridMinorStep => (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
 		private float GridMajorStep => GridMinorStep * 10;
+		private float HintSnapDistance => 2;
 
 		public Canvas()
 		{
@@ -199,6 +201,11 @@ namespace GCEd
 			else if (!ShowMajorGrid) ShowMajorGrid = true;
 			else ShowMinorGrid = true;
 			Invalidate();
+		}
+
+		private void ToggleSnapToGrid()
+		{
+			SnapToGrid = !SnapToGrid;
 		}
 
 		private void ToggleFPS()
@@ -405,10 +412,34 @@ namespace GCEd
 			return new Rectangle(viewX1, viewY1, viewX2 - viewX1, viewY2 - viewY1);
 		}
 
-		private PointF SnapToGrid(PointF origin, PointF point)
+		private PointF Snap(PointF point, params PointF[] hints)
 		{
 			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return point;
-			if (!ShowMinorGrid) return point;
+
+			var bestXHintDistance = HintSnapDistance;
+			var bestYHintDistance = HintSnapDistance;
+			var bestXHint = Single.NaN;
+			var bestYHint = Single.NaN;
+			foreach (var hint in hints)
+			{
+				var hintXDistance = Math.Abs(hint.X - point.X);
+				var hintYDistance = Math.Abs(hint.Y - point.Y);
+				if (hintXDistance < bestXHintDistance)
+				{
+					bestXHint = hint.X;
+					bestXHintDistance = hintXDistance;
+				}
+				if (hintYDistance < bestYHintDistance)
+				{
+					bestYHint = hint.Y;
+					bestYHintDistance = hintYDistance;
+				}
+			}
+
+			if (!Single.IsNaN(bestXHint)) point = new PointF(bestXHint, point.Y);
+			if (!Single.IsNaN(bestYHint)) point = new PointF(point.X, bestYHint);
+
+			if (!SnapToGrid) return point;
 			var step = GridMinorStep;
 			return new PointF((float)Math.Floor((point.X + step / 2) / step) * step, (float)Math.Floor((point.Y + step / 2) / step) * step);
 		}
@@ -511,7 +542,13 @@ namespace GCEd
 
 		private void UpdateMouseEndMove(Point mouseLocation)
 		{
-			var absPos = SnapToGrid(default, ViewToAbs(mouseLocation));
+			var hints = new List<PointF>();
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				hints.Add(item.Operation.AbsStart);
+			}
+			var absPos = Snap(ViewToAbs(mouseLocation), hints.ToArray());
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
@@ -572,8 +609,8 @@ namespace GCEd
 				if (!item.Selected) continue;
 
 				var offset =
-					byThreePoints ? Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, SnapToGrid(default, absPos))
-					: SnapToGrid(default, Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, absPos));
+					byThreePoints ? Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, Snap(absPos, item.Operation.AbsStart, item.Operation.AbsEnd))
+					: Snap(Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, absPos), item.Operation.AbsStart, item.Operation.AbsEnd);
 
 				if (byThreePoints)
 				{
@@ -724,14 +761,15 @@ namespace GCEd
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.C) ToggleCoords();
-			else if (e.KeyCode == Keys.H) PanZoomViewToFit();
-			else if (e.KeyCode == Keys.F) ToggleFPS();
-			else if (e.KeyCode == Keys.G) ToggleGrid();
-			else if (e.KeyCode == Keys.E) StartMouseEndMove();
-			else if (e.KeyCode == Keys.O) StartMouseOffsetMove();
+			if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) ToggleCoords();
+			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.None) PanZoomViewToFit();
+			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) ToggleFPS();
+			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) ToggleGrid();
+			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
+			else if (e.KeyCode == Keys.E && ModifierKeys == Keys.None) StartMouseEndMove();
+			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) StartMouseOffsetMove();
 			else if (e.KeyCode == Keys.Escape) Abort();
-			else if (e.KeyCode == Keys.B) AddBackground();
+			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.None) AddBackground();
 
 			base.OnKeyDown(e);
 		}
