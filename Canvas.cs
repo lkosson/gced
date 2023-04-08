@@ -467,6 +467,7 @@ namespace GCEd
 			{
 				var hovered = item.AbsBoundingBox.IntersectsWith(absSelectionRectangle);
 				if (skipRapid && item.Operation.Line.Instruction == GInstruction.G0) hovered = false;
+				if (item.Operation.Line.Instruction == GInstruction.Directive) hovered = false;
 				if (hovered == item.Hovered) continue;
 				item.Hovered = hovered;
 			}
