@@ -13,22 +13,32 @@ namespace GCEd
 {
 	class CanvasItemBackground : CanvasItem
 	{
-		private Image originalImage;
-		private Image scaledImage;
+		private Image originalImage = default!;
+		private Image scaledImage = default!;
 		private float scale;
+		private float width;
+		private float height;
 
 		public CanvasItemBackground(GOperation operation)
 			 : base(operation)
 		{
-			if (!String.IsNullOrEmpty(operation.Line.P)) originalImage = Bitmap.FromFile(operation.Line.P);
-			else originalImage = new Bitmap(1, 1);
-			scaledImage = new Bitmap(1, 1);
 		}
 
 		public override void OperationChanged()
 		{
 			base.OperationChanged();
-			AbsBoundingBox = new RectangleF(Operation.AbsXStart, Operation.AbsYStart, Operation.AbsI - Operation.AbsXStart, Operation.AbsJ - Operation.AbsYStart);
+
+			if (!String.IsNullOrEmpty(Operation.Line.P)) originalImage = Bitmap.FromFile(Operation.Line.P);
+			else originalImage = new Bitmap(1, 1);
+			scaledImage = new Bitmap(1, 1);
+
+			if (Operation.Line.I.HasValue) width = (float)Operation.Line.I.Value;
+			else if (Operation.Line.J.HasValue) width = originalImage.Width * (float)Operation.Line.J / originalImage.Height;
+			else width = originalImage.Width / originalImage.HorizontalResolution * 25.4f;
+
+			if (Operation.Line.J.HasValue) height = (float)Operation.Line.J.Value;
+			else height = originalImage.Height * width / originalImage.Width;
+			AbsBoundingBox = new RectangleF(Operation.AbsXStart, Operation.AbsYStart, width, height);
 		}
 
 		public override void ViewMatrixChanged(Matrix viewMatrix)
@@ -42,8 +52,8 @@ namespace GCEd
 			{
 				scale = style.PixelSize;
 				if (scaledImage != null) scaledImage.Dispose();
-				var scaledWidth = (int)(Operation.AbsI / scale);
-				var scaledHeight = (int)(Operation.AbsJ / scale);
+				var scaledWidth = (int)(width / scale);
+				var scaledHeight = (int)(height / scale);
 
 				if (scaledWidth > originalImage.Width || scaledHeight > originalImage.Height)
 				{
@@ -58,7 +68,7 @@ namespace GCEd
 				sg.InterpolationMode = InterpolationMode.HighQualityBicubic;
 				sg.DrawImage(originalImage, new Rectangle(0, 0, scaledImage.Width, scaledImage.Height), 0, originalImage.Height, originalImage.Width, -originalImage.Height, GraphicsUnit.Pixel, ia);
 			}
-			g.DrawImage(scaledImage, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsI - Operation.AbsXStart, Operation.AbsJ - Operation.AbsYStart);
+			g.DrawImage(scaledImage, Operation.AbsXStart + (float)Operation.Line.X.GetValueOrDefault(), Operation.AbsYStart + (float)Operation.Line.Y.GetValueOrDefault(), width - Operation.AbsXStart, height - Operation.AbsYStart);
 		}
 
 		public override void Dispose()
