@@ -38,7 +38,7 @@ namespace GCEd
 
 			if (Operation.Line.J.HasValue) height = (float)Operation.Line.J.Value;
 			else height = originalImage.Height * width / originalImage.Width;
-			AbsBoundingBox = new RectangleF(Operation.AbsXStart, Operation.AbsYStart, width, height);
+			AbsBoundingBox = new RectangleF((float)Operation.Line.X.GetValueOrDefault(), (float)Operation.Line.Y.GetValueOrDefault(), width, height);
 		}
 
 		public override void ViewMatrixChanged(Matrix viewMatrix)
@@ -68,7 +68,7 @@ namespace GCEd
 				sg.InterpolationMode = InterpolationMode.HighQualityBicubic;
 				sg.DrawImage(originalImage, new Rectangle(0, 0, scaledImage.Width, scaledImage.Height), 0, originalImage.Height, originalImage.Width, -originalImage.Height, GraphicsUnit.Pixel, ia);
 			}
-			g.DrawImage(scaledImage, Operation.AbsXStart + (float)Operation.Line.X.GetValueOrDefault(), Operation.AbsYStart + (float)Operation.Line.Y.GetValueOrDefault(), width - Operation.AbsXStart, height - Operation.AbsYStart);
+			g.DrawImage(scaledImage, (float)Operation.Line.X.GetValueOrDefault(), (float)Operation.Line.Y.GetValueOrDefault(), width, height);
 		}
 
 		public override void Dispose()
