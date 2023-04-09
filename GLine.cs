@@ -255,14 +255,14 @@ namespace GCEd
 			}
 			else sb.Append(Instruction.ToString());
 
-			if (X.HasValue) { sb.Append(" X"); sb.Append(X.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
-			if (Y.HasValue) { sb.Append(" Y"); sb.Append(Y.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
-			if (Z.HasValue) { sb.Append(" Z"); sb.Append(Z.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
-			if (I.HasValue) { sb.Append(" I"); sb.Append(I.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
-			if (J.HasValue) { sb.Append(" J"); sb.Append(J.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
-			if (K.HasValue) { sb.Append(" K"); sb.Append(K.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
-			if (F.HasValue) { sb.Append(" F"); sb.Append(F.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
-			if (S.HasValue) { sb.Append(" S"); sb.Append(S.Value.ToString("0.0", CultureInfo.InvariantCulture)); }
+			if (X.HasValue) { sb.Append(" X"); sb.Append(X.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
+			if (Y.HasValue) { sb.Append(" Y"); sb.Append(Y.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
+			if (Z.HasValue) { sb.Append(" Z"); sb.Append(Z.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
+			if (I.HasValue) { sb.Append(" I"); sb.Append(I.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
+			if (J.HasValue) { sb.Append(" J"); sb.Append(J.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
+			if (K.HasValue) { sb.Append(" K"); sb.Append(K.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
+			if (F.HasValue) { sb.Append(" F"); sb.Append(F.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
+			if (S.HasValue) { sb.Append(" S"); sb.Append(S.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
 			if (P != null) { sb.Append(" P\""); sb.Append(P); sb.Append("\""); }
 			if (!String.IsNullOrEmpty(Comment) && Instruction != GInstruction.Directive) { sb.Append(" "); sb.Append(Comment); }
 

@@ -24,6 +24,9 @@ namespace GCEd
 			Lines.AddLast(new GLine("G21 ; Set unit to mm"));
 			Lines.AddLast(new GLine("G90 ; Set absolute positioning"));
 			Lines.AddLast(new GLine("G53 ; Set work offset"));
+			Lines.AddLast(new GLine("G0 Z0 S0 F1000 ; Reset position, feed and power"));
+			Lines.AddLast(new GLine("M4 ; Start laser, dynamic power"));
+			Lines.AddLast(new GLine("M5 ; Stop laser"));
 		}
 
 		public void Load(StreamReader reader)
