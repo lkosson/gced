@@ -38,7 +38,7 @@
 			textBoxWidth = new System.Windows.Forms.TextBox();
 			textBoxHeight = new System.Windows.Forms.TextBox();
 			buttonFont = new System.Windows.Forms.Button();
-			panelPreview = new System.Windows.Forms.Panel();
+			panelPreview = new DoubleBufferedPanel();
 			flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			buttonOK = new System.Windows.Forms.Button();
 			buttonCancel = new System.Windows.Forms.Button();
@@ -127,6 +127,7 @@
 			textBoxText.Name = "textBoxText";
 			textBoxText.Size = new System.Drawing.Size(745, 54);
 			textBoxText.TabIndex = 1;
+			textBoxText.TextChanged += textBoxText_TextChanged;
 			// 
 			// textBoxFont
 			// 
@@ -135,6 +136,7 @@
 			textBoxFont.Name = "textBoxFont";
 			textBoxFont.Size = new System.Drawing.Size(713, 23);
 			textBoxFont.TabIndex = 2;
+			textBoxFont.TextChanged += textBoxFont_TextChanged;
 			// 
 			// textBoxWidth
 			// 
@@ -143,6 +145,7 @@
 			textBoxWidth.Name = "textBoxWidth";
 			textBoxWidth.Size = new System.Drawing.Size(49, 23);
 			textBoxWidth.TabIndex = 3;
+			textBoxWidth.TextChanged += textBoxWidth_TextChanged;
 			// 
 			// textBoxHeight
 			// 
@@ -151,6 +154,7 @@
 			textBoxHeight.Name = "textBoxHeight";
 			textBoxHeight.Size = new System.Drawing.Size(49, 23);
 			textBoxHeight.TabIndex = 4;
+			textBoxHeight.TextChanged += textBoxHeight_TextChanged;
 			// 
 			// buttonFont
 			// 
@@ -162,6 +166,7 @@
 			buttonFont.TabIndex = 5;
 			buttonFont.Text = "...";
 			buttonFont.UseVisualStyleBackColor = true;
+			buttonFont.Click += buttonFont_Click;
 			// 
 			// panelPreview
 			// 
@@ -171,6 +176,7 @@
 			panelPreview.Name = "panelPreview";
 			panelPreview.Size = new System.Drawing.Size(794, 260);
 			panelPreview.TabIndex = 6;
+			panelPreview.Paint += panelPreview_Paint;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -235,7 +241,7 @@
 		private System.Windows.Forms.TextBox textBoxWidth;
 		private System.Windows.Forms.TextBox textBoxHeight;
 		private System.Windows.Forms.Button buttonFont;
-		private System.Windows.Forms.Panel panelPreview;
+		private DoubleBufferedPanel panelPreview;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Button buttonOK;
 		private System.Windows.Forms.Button buttonCancel;
