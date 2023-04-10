@@ -150,6 +150,7 @@ namespace GCEd
 			var minY = Single.MaxValue;
 			foreach (var item in items)
 			{
+				if (item.Operation.Line.Instruction == GInstruction.G0) continue;
 				if (item.AbsBoundingBox.X < minX) minX = item.AbsBoundingBox.X;
 				if (item.AbsBoundingBox.Y < minY) minY = item.AbsBoundingBox.Y;
 				if (item.AbsBoundingBox.X + item.AbsBoundingBox.Width > maxX) maxX = item.AbsBoundingBox.X + item.AbsBoundingBox.Width;
@@ -178,17 +179,15 @@ namespace GCEd
 			using var penCurve = new Pen(Color.Violet, 2 / scale);
 			using var penOutline = new Pen(Color.Red, 1 / scale);
 
-			e.Graphics.DrawLine(Pens.Blue, -1000, 0, 1000, 0);
-			e.Graphics.DrawLine(Pens.Blue, 0, -1000, 0, 1000);
-			e.Graphics.DrawRectangle(penOutline, minX, minY, width, height);
+			e.Graphics.TranslateTransform(-minX, maxY);
 			e.Graphics.DrawPath(penOriginal, path);
 
 			e.Graphics.ScaleTransform(1, -1);
+			e.Graphics.DrawRectangle(penOutline, minX, minY, width, height);
 
 			foreach (var item in items)
 			{
 				item.Draw(e.Graphics, style);
-				e.Graphics.DrawRectangle(penOutline, item.AbsBoundingBox.X, item.AbsBoundingBox.Y, item.AbsBoundingBox.Width, item.AbsBoundingBox.Height);
 			}
 
 		}
