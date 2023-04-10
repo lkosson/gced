@@ -105,17 +105,14 @@ namespace GCEd
 					bezierPoints.Add(point);
 					if (bezierPoints.Count == 4)
 					{
-						var midPoint14 = BezierEval(bezierPoints, 0.25);
 						var midPoint24 = BezierEval(bezierPoints, 0.50);
-						var midPoint34 = BezierEval(bezierPoints, 0.75);
 
-						//var c1 = Geometry.CircleCenterFromThreePoints(bezierPoints[0], midPoint14, midPoint24);
-						//var c2 = Geometry.CircleCenterFromThreePoints(midPoint24, midPoint34, bezierPoints[3]);
 						var centerPoint = Geometry.CircleCenterFromThreePoints(bezierPoints[0], midPoint24, bezierPoints[3]);
 						var side = (bezierPoints[3].X - bezierPoints[0].X) * (centerPoint.Y - bezierPoints[0].Y)
 							- (bezierPoints[3].Y - bezierPoints[0].Y) * (centerPoint.X - bezierPoints[0].X);
 
-						program.Lines.AddLast(new GLine { Instruction = side > 0 ? GInstruction.G3 : GInstruction.G2, X = (decimal)point.X, Y = (decimal)point.Y, I = (decimal)(centerPoint.X - bezierPoints[0].X), J = (decimal)(centerPoint.Y - bezierPoints[0].Y) });
+						if (Single.IsInfinity(centerPoint.X) || Single.IsInfinity(centerPoint.Y)) program.Lines.AddLast(new GLine { Instruction = GInstruction.G1, X = (decimal)point.X, Y = (decimal)point.Y });
+						else program.Lines.AddLast(new GLine { Instruction = side > 0 ? GInstruction.G3 : GInstruction.G2, X = (decimal)point.X, Y = (decimal)point.Y, I = (decimal)(centerPoint.X - bezierPoints[0].X), J = (decimal)(centerPoint.Y - bezierPoints[0].Y) });
 						bezierPoints.Clear();
 					}
 				}
