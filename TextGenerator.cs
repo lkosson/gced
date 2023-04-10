@@ -126,14 +126,8 @@ namespace GCEd
 					bezierPoints.Add(point);
 					if (bezierPoints.Count == 4)
 					{
-						var midPoint24 = BezierEval(bezierPoints, 0.50);
-
-						var centerPoint = Geometry.CircleCenterFromThreePoints(bezierPoints[0], midPoint24, bezierPoints[3]);
-						var side = (bezierPoints[3].X - bezierPoints[0].X) * (centerPoint.Y - bezierPoints[0].Y)
-							- (bezierPoints[3].Y - bezierPoints[0].Y) * (centerPoint.X - bezierPoints[0].X);
-
-						if (Single.IsInfinity(centerPoint.X) || Single.IsInfinity(centerPoint.Y)) program.Lines.AddLast(new GLine { Instruction = GInstruction.G1, X = (decimal)point.X, Y = (decimal)point.Y });
-						else program.Lines.AddLast(new GLine { Instruction = side > 0 ? GInstruction.G3 : GInstruction.G2, X = (decimal)point.X, Y = (decimal)point.Y, I = (decimal)(centerPoint.X - bezierPoints[0].X), J = (decimal)(centerPoint.Y - bezierPoints[0].Y) });
+						var arcs = ArcsFromBezier(bezierPoints, 0, 1);
+						foreach (var arc in arcs) program.Lines.AddLast(arc);
 						bezierPoints.Clear();
 					}
 				}
@@ -221,6 +215,38 @@ namespace GCEd
 			var x = points[0].X * c1 + points[1].X * c2 + points[2].X * c3 + points[3].X * c4;
 			var y = points[0].Y * c1 + points[1].Y * c2 + points[2].Y * c3 + points[3].Y * c4;
 			return new PointF((float)x, (float)y);
+		}
+
+		private IEnumerable<GLine> ArcsFromBezier(IList<PointF> bezierPoints, float start, float end)
+		{
+			var span = end - start;
+			var startPoint = BezierEval(bezierPoints, start);
+			var midPoint14 = BezierEval(bezierPoints, start + 0.25f * span);
+			var midPoint24 = BezierEval(bezierPoints, start + 0.50f * span);
+			var midPoint34 = BezierEval(bezierPoints, start + 0.75f * span);
+			var endPoint = BezierEval(bezierPoints, end);
+
+			var centerPoint = Geometry.CircleCenterFromThreePoints(startPoint, midPoint24, endPoint);
+			var radius = Geometry.LineLength(centerPoint, startPoint);
+			var error14 = Math.Abs(Geometry.LineLength(centerPoint, midPoint14) - radius) / radius;
+			var error34 = Math.Abs(Geometry.LineLength(centerPoint, midPoint34) - radius) / radius;
+			if (error14 > 0.01 || error34 > 0.01)
+			{
+				var firstHalf = ArcsFromBezier(bezierPoints, start, start + span / 2);
+				var secondHalf = ArcsFromBezier(bezierPoints, start + span / 2, end);
+				return Enumerable.Concat(firstHalf, secondHalf);
+			}
+			else
+			{
+				var side = (endPoint.X - startPoint.X) * (centerPoint.Y - startPoint.Y)
+					- (endPoint.Y - startPoint.Y) * (centerPoint.X - startPoint.X);
+
+				GLine line;
+				if (Single.IsInfinity(centerPoint.X) || Single.IsInfinity(centerPoint.Y)) line = new GLine { Instruction = GInstruction.G1, X = (decimal)endPoint.X, Y = (decimal)endPoint.Y };
+				else line = new GLine { Instruction = side > 0 ? GInstruction.G3 : GInstruction.G2, X = (decimal)endPoint.X, Y = (decimal)endPoint.Y, I = (decimal)(centerPoint.X - startPoint.X), J = (decimal)(centerPoint.Y - startPoint.Y) };
+
+				return Enumerable.Repeat(line, 1);
+			}
 		}
 
 		private class DoubleBufferedPanel : Panel
