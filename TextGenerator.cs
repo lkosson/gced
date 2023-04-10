@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,11 +15,14 @@ namespace GCEd
 {
 	public partial class TextGenerator : Form
 	{
-		private PathData? pathData;
+		private GraphicsPath path;
+		private List<CanvasItem> items;
 
 		public TextGenerator()
 		{
 			InitializeComponent();
+			path = new GraphicsPath();
+			items = new List<CanvasItem>();
 			textBoxText.Text = "Lorem ipsum";
 			textBoxFont.Text = FontFamily.GenericSerif.Name;
 			textBoxWidth.Text = "100";
@@ -62,56 +67,18 @@ namespace GCEd
 		{
 			if (String.IsNullOrEmpty(textBoxText.Text)) return;
 			if (String.IsNullOrEmpty(textBoxFont.Text)) return;
-			using var gp = new GraphicsPath();
-			gp.AddString(textBoxText.Text, new FontFamily(textBoxFont.Text), 0, 20, new Point(0, 0), null);
-			var pd = gp.PathData;
-			if (pd.Points == null || pd.Types == null || pd.Points.Length != pd.Types.Length) return;
-			pathData = pd;
-			panelPreview.Invalidate();
-		}
+			if (path != null) path.Dispose();
+			path = new GraphicsPath();
+			path.AddString(textBoxText.Text, new FontFamily(textBoxFont.Text), 0, 20, new Point(0, 0), null);
+			var pathData = path.PathData;
+			if (pathData.Points == null || pathData.Types == null || pathData.Points.Length != pathData.Types.Length) return;
 
-		private void panelPreview_Paint(object sender, PaintEventArgs e)
-		{
-			if (pathData == null || pathData.Points == null || pathData.Types == null) return;
+			var program = new GProgram();
 
-			e.Graphics.FillRectangle(Brushes.White, ClientRectangle);
+			var currentPoint = new PointF(0, 0);
+			var startPoint = new PointF(0, 0);
+			var bezierPoints = new List<PointF>(4);
 
-			var maxX = 1f;
-			var maxY = 1f;
-			for (int i = 0; i < pathData.Points.Length; i++)
-			{
-				if (pathData.Points[i].X > maxX) maxX = pathData.Points[i].X;
-				if (pathData.Points[i].Y > maxY) maxY = pathData.Points[i].Y;
-			}
-
-			var scaleX = 1f * panelPreview.ClientSize.Width / maxX;
-			var scaleY = 1f * panelPreview.ClientSize.Height / maxY;
-
-			var scale = scaleX > scaleY ? scaleY : scaleX;
-
-			e.Graphics.ScaleTransform(scale, scale);
-			if (scaleX > scaleY) e.Graphics.TranslateTransform((panelPreview.ClientSize.Width / scaleY - maxX) / 2, 0);
-			else e.Graphics.TranslateTransform(0, (panelPreview.ClientSize.Height / scaleX - maxY) / 2);
-			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-			using var penOriginal = new Pen(Color.LightGreen, 5 / scale);
-			using var penRapid = new Pen(Color.LightGray, 1 / scale);
-			using var penLine = new Pen(Color.Black, 2 / scale);
-			using var penCurve = new Pen(Color.Violet, 2 / scale);
-			using var penOutline = new Pen(Color.Red, 1 / scale);
-			using var gp = new GraphicsPath(pathData.Points, pathData.Types);
-
-			e.Graphics.DrawRectangle(penOutline, 0, 0, maxX, maxY);
-			e.Graphics.DrawPath(penOriginal, gp);
-
-			var x = 0f;
-			var y = 0f;
-			var startx = 0f;
-			var starty = 0f;
-			var bezierStart = new PointF(0, 0);
-			var bezier1 = new PointF(0, 0);
-			var bezier2 = new PointF(0, 0);
-			var bezierN = 0;
 			for (int i = 0; i < pathData.Points.Length; i++)
 			{
 				var type = (PathPointType)pathData.Types[i];
@@ -121,41 +88,119 @@ namespace GCEd
 				var line = (type & PathPointType.PathTypeMask) == PathPointType.Line;
 				var curve = (type & PathPointType.PathTypeMask) == PathPointType.Bezier;
 
+				point = new PointF(point.X, -point.Y);
+
 				if (start)
 				{
-					e.Graphics.DrawLine(penRapid, x, y, point.X, point.Y);
-					startx = point.X;
-					starty = point.Y;
+					program.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)point.X, Y = (decimal)point.Y });
+					startPoint = point;
 				}
 				else if (line)
 				{
-					e.Graphics.DrawLine(penLine, x, y, point.X, point.Y);
+					program.Lines.AddLast(new GLine { Instruction = GInstruction.G1, X = (decimal)point.X, Y = (decimal)point.Y });
 				}
 				else if (curve)
 				{
-					if (bezierN == 0)
+					if (bezierPoints.Count == 0) bezierPoints.Add(currentPoint);
+					bezierPoints.Add(point);
+					if (bezierPoints.Count == 4)
 					{
-						bezierStart = new PointF(x, y);
-						bezier1 = point;
-						bezierN = 1;
-					}
-					else if (bezierN == 1)
-					{
-						bezier2 = point;
-						bezierN = 2;
-					}
-					else if (bezierN == 2)
-					{
-						e.Graphics.DrawLine(penCurve, bezierStart.X, bezierStart.Y, point.X, point.Y);
-						bezierN = 0;
+						var midPoint14 = BezierEval(bezierPoints, 0.25);
+						var midPoint24 = BezierEval(bezierPoints, 0.50);
+						var midPoint34 = BezierEval(bezierPoints, 0.75);
+
+						//var c1 = Geometry.CircleCenterFromThreePoints(bezierPoints[0], midPoint14, midPoint24);
+						//var c2 = Geometry.CircleCenterFromThreePoints(midPoint24, midPoint34, bezierPoints[3]);
+						var centerPoint = Geometry.CircleCenterFromThreePoints(bezierPoints[0], midPoint24, bezierPoints[3]);
+
+						program.Lines.AddLast(new GLine { Instruction = GInstruction.G2, X = (decimal)point.X, Y = (decimal)point.Y, I = (decimal)(centerPoint.X - bezierPoints[0].X), J = (decimal)(centerPoint.Y - bezierPoints[0].Y) });
+						bezierPoints.Clear();
 					}
 				}
+				if (end)
+				{
+					program.Lines.AddLast(new GLine { Instruction = GInstruction.G1, X = (decimal)startPoint.X, Y = (decimal)startPoint.Y });
+				}
 
-				if (end) e.Graphics.DrawLine(penLine, point.X, point.Y, startx, starty);
-
-				x = point.X;
-				y = point.Y;
+				currentPoint = point;
 			}
+
+			items.Clear();
+			var operations = program.Run();
+			foreach (var operation in operations)
+			{
+				var item = CanvasItem.FromOperation(operation);
+				if (item == null) continue;
+				items.Add(item);
+			}
+
+			panelPreview.Invalidate();
+		}
+
+		private void panelPreview_Paint(object sender, PaintEventArgs e)
+		{
+			e.Graphics.FillRectangle(Brushes.White, ClientRectangle);
+			if (!items.Any()) return;
+
+			var maxX = Single.MinValue;
+			var maxY = Single.MinValue;
+			var minX = Single.MaxValue;
+			var minY = Single.MaxValue;
+			foreach (var item in items)
+			{
+				if (item.AbsBoundingBox.X < minX) minX = item.AbsBoundingBox.X;
+				if (item.AbsBoundingBox.Y < minY) minY = item.AbsBoundingBox.Y;
+				if (item.AbsBoundingBox.X + item.AbsBoundingBox.Width > maxX) maxX = item.AbsBoundingBox.X + item.AbsBoundingBox.Width;
+				if (item.AbsBoundingBox.Y + item.AbsBoundingBox.Height > maxY) maxY = item.AbsBoundingBox.Y + item.AbsBoundingBox.Height;
+			}
+			var width = maxX - minX;
+			var height = maxY - minY;
+
+			var scaleX = 1f * panelPreview.ClientSize.Width / width;
+			var scaleY = 1f * panelPreview.ClientSize.Height / height;
+
+			var scale = scaleX > scaleY ? scaleY : scaleX;
+
+			e.Graphics.ScaleTransform(scale, scale);
+			if (scaleX > scaleY) e.Graphics.TranslateTransform((panelPreview.ClientSize.Width / scale - width) / 2, 0);
+			else e.Graphics.TranslateTransform(0, (panelPreview.ClientSize.Height / scaleX - height) / 2);
+
+			using var style = new TextGeneratorCanvasStyle();
+			style.ViewMatrixChanged(e.Graphics.Transform);
+
+			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			using var penOriginal = new Pen(Color.LightGreen, 5 / scale);
+			using var penRapid = new Pen(Color.LightGray, 1 / scale);
+			using var penLine = new Pen(Color.Black, 2 / scale);
+			using var penCurve = new Pen(Color.Violet, 2 / scale);
+			using var penOutline = new Pen(Color.Red, 1 / scale);
+
+			e.Graphics.DrawLine(Pens.Blue, -1000, 0, 1000, 0);
+			e.Graphics.DrawLine(Pens.Blue, 0, -1000, 0, 1000);
+			e.Graphics.DrawRectangle(penOutline, minX, minY, width, height);
+			e.Graphics.DrawPath(penOriginal, path);
+
+			e.Graphics.ScaleTransform(1, -1);
+
+			foreach (var item in items)
+			{
+				item.Draw(e.Graphics, style);
+				e.Graphics.DrawRectangle(penOutline, item.AbsBoundingBox.X, item.AbsBoundingBox.Y, item.AbsBoundingBox.Width, item.AbsBoundingBox.Height);
+			}
+
+		}
+
+		private PointF BezierEval(IList<PointF> points, double t)
+		{
+			var t1 = 1 - t;
+			var c1 = t1 * t1 * t1;
+			var c2 = 3 * t1 * t1 *t;
+			var c3 = 3 * t1* t *t;
+			var c4 = t * t * t;
+			var x = points[0].X * c1 + points[1].X * c2 + points[2].X * c3 + points[3].X * c4;
+			var y = points[0].Y * c1 + points[1].Y * c2 + points[2].Y * c3 + points[3].Y * c4;
+			return new PointF((float)x, (float)y);
 		}
 
 		private class DoubleBufferedPanel : Panel
@@ -163,6 +208,31 @@ namespace GCEd
 			public DoubleBufferedPanel()
 			{
 				DoubleBuffered = true;
+			}
+		}
+
+		private class TextGeneratorCanvasStyle : CanvasStyle
+		{
+			public override void ViewMatrixChanged(Matrix viewMatrix)
+			{
+				var probe = new[] { new Point(100, 0) };
+				viewMatrix.VectorTransformPoints(probe);
+				var len = Math.Max(probe[0].X / 100f, 0.0001f);
+				PixelSize = 1 / len;
+				IdlePen = new Pen(Color.Black, PixelSize) { DashStyle = DashStyle.Dash, DashPattern = new[] { 10f, 10f } };
+				ActivePen = new Pen(Color.Black, PixelSize);
+				HoveredIdlePen = ActivePen;
+				HoveredActivePen = ActivePen;
+				SelectedIdlePen = ActivePen;
+				SelectedActivePen = ActivePen;
+
+				MinorGridPen = new Pen(Color.Transparent);
+				MajorGridPen = MinorGridPen;
+				OriginGridPen = MinorGridPen;
+				SelectionPen = MinorGridPen;
+				TextBrush = new SolidBrush(Color.Transparent);
+				BackgroundBrush = TextBrush;
+				SelectionBrush = TextBrush;
 			}
 		}
 	}

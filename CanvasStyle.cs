@@ -12,20 +12,20 @@ namespace GCEd
 {
 	class CanvasStyle : IDisposable
 	{
-		public float PixelSize { get; private set; }
-		public Pen IdlePen { get; private set; } = default!;
-		public Pen ActivePen { get; private set; } = default!;
-		public Pen HoveredIdlePen { get; private set; } = default!;
-		public Pen HoveredActivePen { get; private set; } = default!;
-		public Pen SelectedIdlePen { get; private set; } = default!;
-		public Pen SelectedActivePen { get; private set; } = default!;
-		public Pen MinorGridPen { get; private set; } = default!;
-		public Pen MajorGridPen { get; private set; } = default!;
-		public Pen OriginGridPen { get; private set; } = default!;
-		public Pen SelectionPen { get; private set; } = default!;
-		public Brush TextBrush { get; private set; } = default!;
-		public Brush BackgroundBrush { get; private set; } = default!;
-		public Brush SelectionBrush { get; private set; } = default!;
+		public float PixelSize { get; protected set; }
+		public Pen IdlePen { get; protected set; } = default!;
+		public Pen ActivePen { get; protected set; } = default!;
+		public Pen HoveredIdlePen { get; protected set; } = default!;
+		public Pen HoveredActivePen { get; protected set; } = default!;
+		public Pen SelectedIdlePen { get; protected set; } = default!;
+		public Pen SelectedActivePen { get; protected set; } = default!;
+		public Pen MinorGridPen { get; protected set; } = default!;
+		public Pen MajorGridPen { get; protected set; } = default!;
+		public Pen OriginGridPen { get; protected set; } = default!;
+		public Pen SelectionPen { get; protected set; } = default!;
+		public Brush TextBrush { get; protected set; } = default!;
+		public Brush BackgroundBrush { get; protected set; } = default!;
+		public Brush SelectionBrush { get; protected set; } = default!;
 
 		public CanvasStyle()
 		{
