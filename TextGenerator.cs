@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -67,9 +68,29 @@ namespace GCEd
 		{
 			if (String.IsNullOrEmpty(textBoxText.Text)) return;
 			if (String.IsNullOrEmpty(textBoxFont.Text)) return;
+			if (!Single.TryParse(textBoxWidth.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out var desiredWidth) && !String.IsNullOrEmpty(textBoxWidth.Text)) return;
+			if (!Single.TryParse(textBoxHeight.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out var desiredHeight) && !String.IsNullOrEmpty(textBoxHeight.Text)) return;
 			if (path != null) path.Dispose();
+
+			using var img = new Bitmap(10, 10);
+			using var g = Graphics.FromImage(img);
+			using var font = new Font(textBoxFont.Text, 20);
+			var textSize = g.MeasureString(textBoxText.Text, font);
+
+			using var matrix = new Matrix();
+			if (desiredWidth > 0)
+			{
+				if (desiredHeight > 0) matrix.Scale(desiredWidth / textSize.Width, 1);
+				else matrix.Scale(desiredWidth / textSize.Width, desiredWidth / textSize.Width);
+			}
+			if (desiredHeight > 0)
+			{
+				if (desiredWidth > 0) matrix.Scale(1, desiredHeight / textSize.Height);
+				else matrix.Scale(desiredHeight / textSize.Height, desiredHeight / textSize.Height);
+			}
 			path = new GraphicsPath();
 			path.AddString(textBoxText.Text, new FontFamily(textBoxFont.Text), 0, 20, new Point(0, 0), null);
+			path.Transform(matrix);
 			var pathData = path.PathData;
 			if (pathData.Points == null || pathData.Types == null || pathData.Points.Length != pathData.Types.Length) return;
 
@@ -124,8 +145,9 @@ namespace GCEd
 				currentPoint = point;
 			}
 
-			items.Clear();
 			var operations = program.Run();
+
+			items.Clear();
 			foreach (var operation in operations)
 			{
 				var item = CanvasItem.FromOperation(operation);
