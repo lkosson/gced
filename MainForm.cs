@@ -129,7 +129,9 @@ namespace GCEd
 			if (textGenerator.ShowDialog() != DialogResult.OK || textGenerator.Program == null) return;
 			var subProgram = textGenerator.Program;
 			viewState.SaveUndoState();
-			if (viewState.LastSelectedOperation != null && !viewState.LastSelectedOperation.Absolute)
+			var baseOperation = viewState.LastSelectedOperation;
+			if (baseOperation == null) baseOperation = viewState.Operations.LastOrDefault();
+			if (baseOperation == null || !baseOperation.Absolute)
 			{
 				subProgram.Lines.AddFirst(new GLine { Instruction = GInstruction.G90 });
 				subProgram.Lines.AddLast(new GLine { Instruction = GInstruction.G91 });

@@ -109,15 +109,16 @@ namespace GCEd
 				if (point.Y > maxY) maxY = point.Y;
 			}
 			using var matrix = new Matrix();
+			matrix.Translate(-minX, -maxY);
 			if (desiredWidth > 0)
 			{
-				if (desiredHeight > 0) matrix.Scale(desiredWidth / (maxX - minX), 1);
-				else matrix.Scale(desiredWidth / (maxX - minX), desiredWidth / (maxX - minX));
+				if (desiredHeight > 0) matrix.Scale(desiredWidth / (maxX - minX), 1, MatrixOrder.Append);
+				else matrix.Scale(desiredWidth / (maxX - minX), desiredWidth / (maxX - minX), MatrixOrder.Append);
 			}
 			if (desiredHeight > 0)
 			{
-				if (desiredWidth > 0) matrix.Scale(1, desiredHeight / (maxY - minY));
-				else matrix.Scale(desiredHeight / (maxY - minY), desiredHeight / (maxY - minY));
+				if (desiredWidth > 0) matrix.Scale(1, desiredHeight / (maxY - minY), MatrixOrder.Append);
+				else matrix.Scale(desiredHeight / (maxY - minY), desiredHeight / (maxY - minY), MatrixOrder.Append);
 			}
 			path.Transform(matrix);
 			pathData = path.PathData;
