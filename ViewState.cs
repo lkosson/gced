@@ -106,6 +106,7 @@ namespace GCEd
 			}
 			foreach (var node in lineNodesToConvert)
 			{
+				if (node.Value.Instruction == GInstruction.G90 || node.Value.Instruction == GInstruction.G91) continue;
 				if (node.Previous != null && node.Previous.Value.Instruction == GInstruction.G91) program.Lines.Remove(node.Previous);
 				else if (node.Previous == null || node.Previous.Value.Instruction != GInstruction.G90) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G90 });
 
@@ -114,8 +115,8 @@ namespace GCEd
 			}
 			foreach (var operation in operations)
 			{
-				operation.Line.X = (decimal)operation.AbsXEnd;
-				operation.Line.Y = (decimal)operation.AbsYEnd;
+				if (operation.Line.X.HasValue) operation.Line.X = (decimal)operation.AbsXEnd;
+				if (operation.Line.Y.HasValue) operation.Line.Y = (decimal)operation.AbsYEnd;
 			}
 			RunProgram();
 		}
@@ -131,6 +132,7 @@ namespace GCEd
 			}
 			foreach (var node in lineNodesToConvert)
 			{
+				if (node.Value.Instruction == GInstruction.G90 || node.Value.Instruction == GInstruction.G91) continue;
 				if (node.Previous != null && node.Previous.Value.Instruction == GInstruction.G90) program.Lines.Remove(node.Previous);
 				else if (node.Previous == null || node.Previous.Value.Instruction != GInstruction.G91) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G91 });
 
@@ -139,8 +141,8 @@ namespace GCEd
 			}
 			foreach (var operation in operations)
 			{
-				operation.Line.X = (decimal)(operation.AbsXEnd - operation.AbsXStart);
-				operation.Line.Y = (decimal)(operation.AbsYEnd - operation.AbsYStart);
+				if (operation.Line.X.HasValue) operation.Line.X = (decimal)(operation.AbsXEnd - operation.AbsXStart);
+				if (operation.Line.Y.HasValue) operation.Line.Y = (decimal)(operation.AbsYEnd - operation.AbsYStart);
 			}
 			RunProgram();
 		}
