@@ -18,6 +18,7 @@ namespace GCEd
 	{
 		private GraphicsPath path;
 		private List<CanvasItem> items;
+		private bool ready;
 
 		public TextGenerator()
 		{
@@ -27,6 +28,10 @@ namespace GCEd
 			textBoxText.Text = "Lorem ipsum";
 			textBoxFont.Text = FontFamily.GenericSerif.Name;
 			textBoxWidth.Text = "100";
+			textBoxX.Text = "0";
+			textBoxY.Text = "0";
+			ready = true;
+			UpdateCode();
 		}
 
 		protected override void OnResize(EventArgs e)
@@ -64,34 +69,57 @@ namespace GCEd
 			UpdateCode();
 		}
 
+		private void textBoxX_TextChanged(object sender, EventArgs e)
+		{
+			UpdateCode();
+		}
+
+		private void textBoxY_TextChanged(object sender, EventArgs e)
+		{
+			UpdateCode();
+		}
+
 		private void UpdateCode()
 		{
+			if (!ready) return;
 			if (String.IsNullOrEmpty(textBoxText.Text)) return;
 			if (String.IsNullOrEmpty(textBoxFont.Text)) return;
 			if (!Single.TryParse(textBoxWidth.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out var desiredWidth) && !String.IsNullOrEmpty(textBoxWidth.Text)) return;
 			if (!Single.TryParse(textBoxHeight.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out var desiredHeight) && !String.IsNullOrEmpty(textBoxHeight.Text)) return;
+			if (!Decimal.TryParse(textBoxX.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out var originX)) return;
+			if (!Decimal.TryParse(textBoxY.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out var originY)) return;
 			if (path != null) path.Dispose();
 
-			using var img = new Bitmap(10, 10);
-			using var g = Graphics.FromImage(img);
-			using var font = new Font(textBoxFont.Text, 20);
-			var textSize = g.MeasureString(textBoxText.Text, font);
+			path = new GraphicsPath();
+			path.AddString(textBoxText.Text, new FontFamily(textBoxFont.Text), (int)FontStyle.Regular, 20, new Point(0, 0), null);
 
+			var pathData = path.PathData;
+			if (pathData.Points == null || pathData.Types == null || pathData.Points.Length != pathData.Types.Length) return;
+			var maxX = Single.MinValue;
+			var maxY = Single.MinValue;
+			var minX = Single.MaxValue;
+			var minY = Single.MaxValue;
+			for (int i = 0; i < pathData.Points.Length; i++)
+			{
+				var point = pathData.Points[i];
+				if (point.X < minX) minX = point.X;
+				if (point.Y < minY) minY = point.Y;
+				if (point.X > maxX) maxX = point.X;
+				if (point.Y > maxY) maxY = point.Y;
+			}
 			using var matrix = new Matrix();
 			if (desiredWidth > 0)
 			{
-				if (desiredHeight > 0) matrix.Scale(desiredWidth / textSize.Width, 1);
-				else matrix.Scale(desiredWidth / textSize.Width, desiredWidth / textSize.Width);
+				if (desiredHeight > 0) matrix.Scale(desiredWidth / (maxX - minX), 1);
+				else matrix.Scale(desiredWidth / (maxX - minX), desiredWidth / (maxX - minX));
 			}
 			if (desiredHeight > 0)
 			{
-				if (desiredWidth > 0) matrix.Scale(1, desiredHeight / textSize.Height);
-				else matrix.Scale(desiredHeight / textSize.Height, desiredHeight / textSize.Height);
+				if (desiredWidth > 0) matrix.Scale(1, desiredHeight / (maxY - minY));
+				else matrix.Scale(desiredHeight / (maxY - minY), desiredHeight / (maxY - minY));
 			}
-			path = new GraphicsPath();
-			path.AddString(textBoxText.Text, new FontFamily(textBoxFont.Text), 0, 20, new Point(0, 0), null);
 			path.Transform(matrix);
-			var pathData = path.PathData;
+			pathData = path.PathData;
 			if (pathData.Points == null || pathData.Types == null || pathData.Points.Length != pathData.Types.Length) return;
 
 			var program = new GProgram();
@@ -137,6 +165,12 @@ namespace GCEd
 				}
 
 				currentPoint = point;
+			}
+
+			foreach (var line in program.Lines)
+			{
+				line.X += originX;
+				line.Y += originY;
 			}
 
 			var operations = program.Run();
@@ -193,7 +227,7 @@ namespace GCEd
 			using var penOutline = new Pen(Color.Red, 1 / scale);
 
 			e.Graphics.TranslateTransform(-minX, maxY);
-			e.Graphics.DrawPath(penOriginal, path);
+			//e.Graphics.DrawPath(penOriginal, path);
 
 			e.Graphics.ScaleTransform(1, -1);
 			e.Graphics.DrawRectangle(penOutline, minX, minY, width, height);
@@ -203,14 +237,16 @@ namespace GCEd
 				item.Draw(e.Graphics, style);
 			}
 
+			textBoxWidth.PlaceholderText = width.ToString("0.000", CultureInfo.InvariantCulture);
+			textBoxHeight.PlaceholderText = height.ToString("0.000", CultureInfo.InvariantCulture);
 		}
 
 		private PointF BezierEval(IList<PointF> points, double t)
 		{
 			var t1 = 1 - t;
 			var c1 = t1 * t1 * t1;
-			var c2 = 3 * t1 * t1 *t;
-			var c3 = 3 * t1* t *t;
+			var c2 = 3 * t1 * t1 * t;
+			var c3 = 3 * t1 * t * t;
 			var c4 = t * t * t;
 			var x = points[0].X * c1 + points[1].X * c2 + points[2].X * c3 + points[3].X * c4;
 			var y = points[0].Y * c1 + points[1].Y * c2 + points[2].Y * c3 + points[3].Y * c4;

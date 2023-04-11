@@ -42,6 +42,10 @@
 			flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			buttonOK = new System.Windows.Forms.Button();
 			buttonCancel = new System.Windows.Forms.Button();
+			label5 = new System.Windows.Forms.Label();
+			label6 = new System.Windows.Forms.Label();
+			textBoxX = new System.Windows.Forms.TextBox();
+			textBoxY = new System.Windows.Forms.TextBox();
 			fontDialog = new System.Windows.Forms.FontDialog();
 			tableLayoutPanel1.SuspendLayout();
 			flowLayoutPanel1.SuspendLayout();
@@ -49,7 +53,9 @@
 			// 
 			// tableLayoutPanel1
 			// 
-			tableLayoutPanel1.ColumnCount = 3;
+			tableLayoutPanel1.ColumnCount = 5;
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -61,9 +67,13 @@
 			tableLayoutPanel1.Controls.Add(textBoxFont, 1, 1);
 			tableLayoutPanel1.Controls.Add(textBoxWidth, 1, 2);
 			tableLayoutPanel1.Controls.Add(textBoxHeight, 1, 3);
-			tableLayoutPanel1.Controls.Add(buttonFont, 2, 1);
+			tableLayoutPanel1.Controls.Add(buttonFont, 4, 1);
 			tableLayoutPanel1.Controls.Add(panelPreview, 0, 4);
 			tableLayoutPanel1.Controls.Add(flowLayoutPanel1, 0, 5);
+			tableLayoutPanel1.Controls.Add(label5, 2, 2);
+			tableLayoutPanel1.Controls.Add(label6, 2, 3);
+			tableLayoutPanel1.Controls.Add(textBoxX, 3, 2);
+			tableLayoutPanel1.Controls.Add(textBoxY, 3, 3);
 			tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -121,7 +131,7 @@
 			// 
 			textBoxText.AcceptsReturn = true;
 			textBoxText.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			tableLayoutPanel1.SetColumnSpan(textBoxText, 2);
+			tableLayoutPanel1.SetColumnSpan(textBoxText, 4);
 			textBoxText.Location = new System.Drawing.Point(52, 3);
 			textBoxText.Multiline = true;
 			textBoxText.Name = "textBoxText";
@@ -132,6 +142,7 @@
 			// textBoxFont
 			// 
 			textBoxFont.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			tableLayoutPanel1.SetColumnSpan(textBoxFont, 3);
 			textBoxFont.Location = new System.Drawing.Point(52, 64);
 			textBoxFont.Name = "textBoxFont";
 			textBoxFont.Size = new System.Drawing.Size(713, 23);
@@ -143,7 +154,7 @@
 			textBoxWidth.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			textBoxWidth.Location = new System.Drawing.Point(52, 94);
 			textBoxWidth.Name = "textBoxWidth";
-			textBoxWidth.Size = new System.Drawing.Size(49, 23);
+			textBoxWidth.Size = new System.Drawing.Size(74, 23);
 			textBoxWidth.TabIndex = 3;
 			textBoxWidth.TextChanged += textBoxWidth_TextChanged;
 			// 
@@ -152,7 +163,7 @@
 			textBoxHeight.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			textBoxHeight.Location = new System.Drawing.Point(52, 123);
 			textBoxHeight.Name = "textBoxHeight";
-			textBoxHeight.Size = new System.Drawing.Size(49, 23);
+			textBoxHeight.Size = new System.Drawing.Size(74, 23);
 			textBoxHeight.TabIndex = 4;
 			textBoxHeight.TextChanged += textBoxHeight_TextChanged;
 			// 
@@ -171,7 +182,7 @@
 			// panelPreview
 			// 
 			panelPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			tableLayoutPanel1.SetColumnSpan(panelPreview, 3);
+			tableLayoutPanel1.SetColumnSpan(panelPreview, 5);
 			panelPreview.Location = new System.Drawing.Point(3, 152);
 			panelPreview.Name = "panelPreview";
 			panelPreview.Size = new System.Drawing.Size(794, 260);
@@ -183,7 +194,7 @@
 			flowLayoutPanel1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			flowLayoutPanel1.AutoSize = true;
 			flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			tableLayoutPanel1.SetColumnSpan(flowLayoutPanel1, 3);
+			tableLayoutPanel1.SetColumnSpan(flowLayoutPanel1, 5);
 			flowLayoutPanel1.Controls.Add(buttonOK);
 			flowLayoutPanel1.Controls.Add(buttonCancel);
 			flowLayoutPanel1.Location = new System.Drawing.Point(3, 418);
@@ -210,6 +221,44 @@
 			buttonCancel.TabIndex = 1;
 			buttonCancel.Text = "Cancel";
 			buttonCancel.UseVisualStyleBackColor = true;
+			// 
+			// label5
+			// 
+			label5.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			label5.AutoSize = true;
+			label5.Location = new System.Drawing.Point(132, 98);
+			label5.Name = "label5";
+			label5.Size = new System.Drawing.Size(14, 15);
+			label5.TabIndex = 0;
+			label5.Text = "X";
+			// 
+			// label6
+			// 
+			label6.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			label6.AutoSize = true;
+			label6.Location = new System.Drawing.Point(132, 127);
+			label6.Name = "label6";
+			label6.Size = new System.Drawing.Size(14, 15);
+			label6.TabIndex = 0;
+			label6.Text = "Y";
+			// 
+			// textBoxX
+			// 
+			textBoxX.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			textBoxX.Location = new System.Drawing.Point(152, 94);
+			textBoxX.Name = "textBoxX";
+			textBoxX.Size = new System.Drawing.Size(74, 23);
+			textBoxX.TabIndex = 3;
+			textBoxX.TextChanged += textBoxX_TextChanged;
+			// 
+			// textBoxY
+			// 
+			textBoxY.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			textBoxY.Location = new System.Drawing.Point(152, 123);
+			textBoxY.Name = "textBoxY";
+			textBoxY.Size = new System.Drawing.Size(74, 23);
+			textBoxY.TabIndex = 4;
+			textBoxY.TextChanged += textBoxY_TextChanged;
 			// 
 			// fontDialog
 			// 
@@ -246,5 +295,9 @@
 		private System.Windows.Forms.Button buttonOK;
 		private System.Windows.Forms.Button buttonCancel;
 		private System.Windows.Forms.FontDialog fontDialog;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.TextBox textBoxX;
+		private System.Windows.Forms.TextBox textBoxY;
 	}
 }
