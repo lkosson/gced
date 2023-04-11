@@ -190,5 +190,27 @@ namespace GCEd
 			var newOperation = operations.First(operation => operation.Line == line);
 			SetSelection(new[] { newOperation });
 		}
+
+		public void AppendProgram(GOperation? baseOperation, GProgram subprogram)
+		{
+			var baseLine = program.Lines.Last;
+			if (baseOperation != null)
+			{
+				for (var node = program.Lines.First; node != null; node = node.Next)
+				{
+					if (node.Value != baseOperation.Line) continue;
+					baseLine = node;
+					break;
+				}
+			}
+
+			if (baseLine == null) foreach (var line in subprogram.Lines) program.Lines.AddLast(line);
+			else foreach (var line in subprogram.Lines) baseLine = program.Lines.AddAfter(baseLine, line);
+
+			RunProgram();
+			var newLines = new HashSet<GLine>(subprogram.Lines);
+			var newOperations = operations.Where(operation => newLines.Contains(operation.Line));
+			SetSelection(newOperations);
+		}
 	}
 }

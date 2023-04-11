@@ -123,6 +123,20 @@ namespace GCEd
 			canvas.ResumePanningToSelection();
 		}
 
+		private void AddText()
+		{
+			using var textGenerator = new TextGenerator();
+			if (textGenerator.ShowDialog() != DialogResult.OK || textGenerator.Program == null) return;
+			var subProgram = textGenerator.Program;
+			viewState.SaveUndoState();
+			if (viewState.LastSelectedOperation != null && !viewState.LastSelectedOperation.Absolute)
+			{
+				subProgram.Lines.AddFirst(new GLine { Instruction = GInstruction.G90 });
+				subProgram.Lines.AddLast(new GLine { Instruction = GInstruction.G91 });
+			}
+			viewState.AppendProgram(viewState.LastSelectedOperation, subProgram);
+		}
+
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			e.Handled = true;
@@ -143,6 +157,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.D1) AddG1();
 			else if (e.KeyCode == Keys.D2) AddG2();
 			else if (e.KeyCode == Keys.D3) AddG3();
+			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) AddText();
 			else { e.Handled = false; }
 
 			base.OnKeyDown(e);

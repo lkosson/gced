@@ -266,8 +266,10 @@
 			// 
 			// TextGenerator
 			// 
+			AcceptButton = buttonOK;
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			CancelButton = buttonCancel;
 			ClientSize = new System.Drawing.Size(800, 450);
 			Controls.Add(tableLayoutPanel1);
 			Name = "TextGenerator";

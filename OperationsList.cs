@@ -89,7 +89,7 @@ namespace GCEd
 				allVisible &= item.Operation.Line.Instruction == GInstruction.G0 || item.Operation.Line.Instruction == GInstruction.G1 || item.Operation.Line.Instruction == GInstruction.G2 || item.Operation.Line.Instruction == GInstruction.G3;
 			}
 			viewState.SetSelection(selectedOperations);
-			if (allVisible) viewState.FocusCanvas();
+			//if (allVisible) viewState.FocusCanvas();
 			selectionInProgress = false;
 		}
 

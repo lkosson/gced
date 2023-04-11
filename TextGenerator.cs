@@ -14,11 +14,12 @@ using System.Windows.Forms;
 
 namespace GCEd
 {
-	public partial class TextGenerator : Form
+	partial class TextGenerator : Form
 	{
 		private GraphicsPath path;
 		private List<CanvasItem> items;
 		private bool ready;
+		public GProgram? Program { get; private set; }
 
 		public TextGenerator()
 		{
@@ -184,6 +185,7 @@ namespace GCEd
 			}
 
 			panelPreview.Invalidate();
+			Program = program;
 		}
 
 		private void panelPreview_Paint(object sender, PaintEventArgs e)
