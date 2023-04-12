@@ -24,10 +24,12 @@ namespace GCEd
 		private List<GOperation> operations;
 		private HashSet<GOperation> selectedOperations;
 		private List<GProgram> undoBuffer;
+		private List<GProgram> redoBuffer;
 
 		public ViewState()
 		{
 			undoBuffer = new List<GProgram>();
+			redoBuffer = new List<GProgram>();
 			program = new GProgram();
 			operations = new List<GOperation>();
 			selectedOperations = new HashSet<GOperation>(GOperation.ByGLineEqualityComparer);
@@ -159,14 +161,25 @@ namespace GCEd
 
 		public void SaveUndoState()
 		{
+			redoBuffer.Clear();
 			undoBuffer.Add(program.Clone());
 		}
 
 		public void Undo()
 		{
 			if (undoBuffer.Count == 0) return;
-			program = undoBuffer[undoBuffer.Count - 1];
+			redoBuffer.Add(program.Clone());
+			program = undoBuffer[^1];
 			undoBuffer.RemoveAt(undoBuffer.Count - 1);
+			RunProgram();
+		}
+
+		public void Redo()
+		{
+			if (redoBuffer.Count == 0) return;
+			undoBuffer.Add(program.Clone());
+			program = redoBuffer[^1];
+			redoBuffer.RemoveAt(redoBuffer.Count - 1);
 			RunProgram();
 		}
 

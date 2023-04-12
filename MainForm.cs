@@ -68,6 +68,11 @@ namespace GCEd
 			viewState.Undo();
 		}
 
+		private void Redo()
+		{
+			viewState.Redo();
+		}
+
 		private void ConvertToAbsolute()
 		{
 			viewState.SaveUndoState();
@@ -151,6 +156,7 @@ namespace GCEd
 			else if (editorFocused) { e.Handled = false; }
 			else if (e.KeyCode == Keys.A && (ModifierKeys & Keys.Control) == Keys.Control) SelectAll();
 			else if (e.KeyCode == Keys.Z && ModifierKeys == Keys.Control) Undo();
+			else if (e.KeyCode == Keys.Y && ModifierKeys == Keys.Control) Redo();
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None) ConvertToAbsolute();
 			else if (e.KeyCode == Keys.I) AddNewLine();
 			else if (e.KeyCode == Keys.R) ConvertToRelative();
