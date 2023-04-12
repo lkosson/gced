@@ -104,7 +104,7 @@ namespace GCEd
 			Focus();
 		}
 
-		private void PanZoomViewToFit()
+		public void PanZoomViewToFit()
 		{
 			var absX1 = Single.MaxValue;
 			var absY1 = Single.MaxValue;
@@ -181,7 +181,7 @@ namespace GCEd
 			panningToSelectionSuspended = false;
 		}
 
-		private void AddBackground()
+		public void AddBackground()
 		{
 			using var openFileDialog = new OpenFileDialog();
 			openFileDialog.Filter = "Images (*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.jpeg;*.png;*.gif|All files|*.*";
@@ -190,7 +190,7 @@ namespace GCEd
 			viewState.AppendNewLine(null, true, new GLine(";.background X0 Y0 I100 J100 S100 P\"" + openFileDialog.FileName + "\""));
 		}
 
-		private void ToggleGrid()
+		public void ToggleGrid()
 		{
 			if (ShowMinorGrid)
 			{
@@ -204,23 +204,23 @@ namespace GCEd
 			Invalidate();
 		}
 
-		private void ToggleSnapToGrid()
+		public void ToggleSnapToGrid()
 		{
 			SnapToGrid = !SnapToGrid;
 		}
 
-		private void ToggleSnapToItems()
+		public void ToggleSnapToItems()
 		{
 			SnapToItems = !SnapToItems;
 		}
 
-		private void ToggleFPS()
+		public void ToggleFPS()
 		{
 			ShowFPS = !ShowFPS;
 			Invalidate();
 		}
 
-		private void ToggleCoords()
+		public void ToggleCoords()
 		{
 			ShowCursorCoords = !ShowCursorCoords;
 			if (!ShowCursorCoords) ShowItemCoords = !ShowItemCoords;
@@ -599,7 +599,7 @@ namespace GCEd
 			Invalidate();
 		}
 
-		private void StartMouseOffsetMove()
+		public void StartMouseOffsetMove()
 		{
 			if (!viewState.SelectedOperations.Any()) return;
 			var newSelection = new List<GOperation>();
@@ -744,7 +744,7 @@ namespace GCEd
 			Invalidate();
 		}
 
-		private void Abort()
+		public void Abort()
 		{
 			if (interaction == Interaction.EndMove || interaction == Interaction.OffsetMove) AbortMove();
 		}
@@ -777,22 +777,6 @@ namespace GCEd
 			else if (interaction == Interaction.None) UpdateMouseHover(e.Location);
 			if (ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
 			base.OnMouseMove(e);
-		}
-
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) ToggleCoords();
-			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.None) PanZoomViewToFit();
-			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) ToggleFPS();
-			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) ToggleGrid();
-			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
-			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
-			else if (e.KeyCode == Keys.E && ModifierKeys == Keys.None) StartMouseEndMove();
-			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) StartMouseOffsetMove();
-			else if (e.KeyCode == Keys.Escape) Abort();
-			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.None) AddBackground();
-
-			base.OnKeyDown(e);
 		}
 	}
 }

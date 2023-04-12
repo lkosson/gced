@@ -160,6 +160,16 @@ namespace GCEd
 			else if (e.KeyCode == Keys.D2) AddG2();
 			else if (e.KeyCode == Keys.D3) AddG3();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) AddText();
+			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) canvas.ToggleCoords();
+			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.None) canvas.PanZoomViewToFit();
+			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) canvas.ToggleFPS();
+			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) canvas.ToggleGrid();
+			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) canvas.ToggleSnapToGrid();
+			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) canvas.ToggleSnapToItems();
+			else if (e.KeyCode == Keys.E && ModifierKeys == Keys.None) canvas.StartMouseEndMove();
+			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) canvas.StartMouseOffsetMove();
+			else if (e.KeyCode == Keys.Escape) canvas.Abort();
+			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.None) canvas.AddBackground();
 			else { e.Handled = false; }
 
 			base.OnKeyDown(e);
