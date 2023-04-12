@@ -9,9 +9,19 @@ namespace GCEd
 {
 	static class Geometry
 	{
+		public static float LineLength(PointF lineOffset)
+		{
+			return (float)Math.Sqrt(lineOffset.X * lineOffset.X + lineOffset.Y * lineOffset.Y);
+		}
+
 		public static float LineLength(PointF lineStart, PointF lineEnd)
 		{
 			return (float)Math.Sqrt((lineEnd.X - lineStart.X) * (lineEnd.X - lineStart.X) + (lineEnd.Y - lineStart.Y) * (lineEnd.Y - lineStart.Y));
+		}
+
+		public static double LineAngle(PointF lineStart, PointF lineEnd)
+		{
+			return (float)Math.Atan2(lineEnd.X - lineStart.X, lineEnd.Y - lineStart.Y);
 		}
 
 		public static float DistanceBetweenLineAndPoint(PointF lineStart, PointF lineEnd, PointF point)
@@ -69,6 +79,20 @@ namespace GCEd
 			var radius = (float)Math.Sqrt((center.X - circlePoint.X) * (center.X - circlePoint.X) + (center.Y - circlePoint.Y) * (center.Y - circlePoint.Y));
 			var distance = (float)Math.Sqrt(directionX * directionX + directionY * directionY);
 			return new PointF(center.X - directionX * radius / distance, center.Y - directionY * radius / distance);
+		}
+
+		public static PointF SimilarTriangle(PointF originalA, PointF originalB, PointF originalC, PointF newA, PointF newB)
+		{
+			var originalABLength = LineLength(originalA, originalB);
+			var originalABAngle = LineAngle(originalA, originalB);
+			var originalACLength = LineLength(originalA, originalC);
+			var originalACAngle = LineAngle(originalA, originalC);
+			var newABLength = LineLength(newA, newB);
+			var newABAngle = LineAngle(newA, newB);
+			var newACLength = originalACLength * newABLength / originalABLength;
+			var newACDeltaX = (float)(newACLength * Math.Sin(originalACAngle + newABAngle - originalABAngle));
+			var newACDeltaY = (float)(newACLength * Math.Cos(originalACAngle + newABAngle - originalABAngle));
+			return new PointF(newA.X + newACDeltaX, newA.Y + newACDeltaY);
 		}
 	}
 }

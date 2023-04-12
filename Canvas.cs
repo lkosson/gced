@@ -46,6 +46,7 @@ namespace GCEd
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
 		private Point mouseDragStart;
+		private PointF originalAbsEnd;
 		private bool matrixUpdated;
 		private CanvasStyle style;
 		private IEnumerable<CanvasItem> items;
@@ -555,13 +556,15 @@ namespace GCEd
 
 		public void StartMouseEndMove()
 		{
-			if (!viewState.SelectedOperations.Any()) return;
+			if (!viewState.SelectedOperations.Any() || viewState.LastSelectedOperation == null) return;
 			interaction = Interaction.EndMove;
+			originalAbsEnd = viewState.LastSelectedOperation.AbsEnd;
 			UpdateMouseEndMove(PointToClient(MousePosition));
 		}
 
 		private void UpdateMouseEndMove(Point mouseLocation)
 		{
+			var changeArcSweepAngle = (ModifierKeys & Keys.Alt) == Keys.Alt;
 			var hints = new List<PointF>();
 			foreach (var item in items)
 			{
@@ -572,9 +575,31 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				if (item.Operation.Line.IsArc && item.Operation.Line.I.HasValue && item.Operation.Line.J.HasValue) absPos = Geometry.ConstrainToCircle(new PointF(item.Operation.AbsI, item.Operation.AbsJ), item.Operation.AbsStart, absPos);
-				item.Operation.AbsXEnd = absPos.X;
-				item.Operation.AbsYEnd = absPos.Y;
+				if (item.Operation.Line.IsArc)
+				{
+					if (changeArcSweepAngle)
+					{
+						if (item.Operation.Line.I.HasValue && item.Operation.Line.J.HasValue) absPos = Geometry.ConstrainToCircle(new PointF(item.Operation.AbsI, item.Operation.AbsJ), item.Operation.AbsStart, absPos);
+						item.Operation.AbsXEnd = absPos.X;
+						item.Operation.AbsYEnd = absPos.Y; 
+					}
+					else
+					{
+						item.Operation.AbsXEnd = absPos.X;
+						item.Operation.AbsYEnd = absPos.Y;
+						var newAbsOffset = Geometry.SimilarTriangle(item.Operation.AbsStart, originalAbsEnd, new PointF((float)item.Operation.Line.I.GetValueOrDefault(), (float)item.Operation.Line.J.GetValueOrDefault()), item.Operation.AbsStart, item.Operation.AbsEnd);
+						if (!Single.IsNaN(newAbsOffset.X) && !Single.IsNaN(newAbsOffset.Y))
+						{
+							item.Operation.AbsI = newAbsOffset.X;
+							item.Operation.AbsJ = newAbsOffset.Y;
+						}
+					}
+				}
+				else
+				{
+					item.Operation.AbsXEnd = absPos.X;
+					item.Operation.AbsYEnd = absPos.Y;
+				}
 				item.OperationChanged();
 			}
 
@@ -590,7 +615,15 @@ namespace GCEd
 				if (!item.Selected) continue;
 				item.Operation.Line.X = (decimal)(item.Operation.Absolute ? item.Operation.AbsXEnd : item.Operation.AbsXEnd - item.Operation.AbsXStart);
 				item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? item.Operation.AbsYEnd : item.Operation.AbsYEnd - item.Operation.AbsYStart);
-				if (item.Operation.Line.IsArc && (!item.Operation.Line.I.HasValue || !item.Operation.Line.J.HasValue)) needsOffset = true;
+				if (item.Operation.Line.IsArc)
+				{
+					if (!item.Operation.Line.I.HasValue || !item.Operation.Line.J.HasValue) needsOffset = true;
+					else
+					{
+						item.Operation.Line.I = (decimal)(item.Operation.AbsI - item.Operation.AbsXStart);
+						item.Operation.Line.J = (decimal)(item.Operation.AbsJ - item.Operation.AbsYStart);
+					}
+				}
 				item.OperationChanged();
 			}
 
@@ -631,7 +664,7 @@ namespace GCEd
 
 				var offset =
 					byThreePoints ? Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, Snap(absPos, item.Operation.AbsStart, item.Operation.AbsEnd))
-					: Snap(Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, absPos), item.Operation.AbsStart, item.Operation.AbsEnd);
+					: Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, Snap(absPos, item.Operation.AbsStart, item.Operation.AbsEnd));
 
 				if (byThreePoints)
 				{
