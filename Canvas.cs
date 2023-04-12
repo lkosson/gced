@@ -583,6 +583,7 @@ namespace GCEd
 
 		private void FinishMouseEndMove()
 		{
+			viewState.SaveUndoState();
 			var needsOffset = false;
 			foreach (var item in items)
 			{
@@ -649,6 +650,7 @@ namespace GCEd
 
 		private void FinishMouseOffsetMove()
 		{
+			viewState.SaveUndoState();
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
