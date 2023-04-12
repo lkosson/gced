@@ -21,8 +21,27 @@ namespace GCEd
 			KeyPreview = true;
 		}
 
+		private bool ConfirmAbandonDirty()
+		{
+			if (!viewState.IsDirty) return true;
+			var result = MessageBox.Show(viewState.CurrentFile == null ? "Save current file?" : $"Save \"{viewState.CurrentFile}\"?", "GCEd", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+			if (result == DialogResult.Cancel) return false;
+			if (result == DialogResult.No) return true;
+			if (viewState.CurrentFile != null)
+			{
+				viewState.SaveProgram(viewState.CurrentFile);
+			}
+			else
+			{
+				if (saveFileDialog.ShowDialog() != DialogResult.OK) return false;
+				viewState.SaveProgram(saveFileDialog.FileName);
+			}
+			return true;
+		}
+
 		private void NewFile()
 		{
+			if (!ConfirmAbandonDirty()) return;
 			viewState.NewProgram();
 		}
 
@@ -41,6 +60,7 @@ namespace GCEd
 		private void OpenFile()
 		{
 			if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+			if (!ConfirmAbandonDirty()) return;
 			viewState.LoadProgram(openFileDialog.FileName);
 		}
 

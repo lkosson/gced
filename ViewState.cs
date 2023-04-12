@@ -14,6 +14,7 @@ namespace GCEd
 		public IReadOnlySet<GOperation> SelectedOperations { get => selectedOperations; }
 		public GOperation? LastSelectedOperation { get; private set; }
 		public string? CurrentFile { get; set; }
+		public bool IsDirty { get; private set; }
 
 		public event Action? OperationsChanged;
 		public event Action? SelectedOperationsChanged;
@@ -41,6 +42,7 @@ namespace GCEd
 			program = new GProgram();
 			program.New();
 			RunProgram();
+			IsDirty = false;
 		}
 
 		public void LoadProgram(string file)
@@ -49,12 +51,14 @@ namespace GCEd
 			program.Load(file);
 			RunProgram();
 			CurrentFile = file;
+			IsDirty = false;
 		}
 
 		public void SaveProgram(string file)
 		{
 			program.Save(file);
 			CurrentFile = file;
+			IsDirty = false;
 		}
 
 		public void RunProgram()
@@ -163,6 +167,7 @@ namespace GCEd
 		{
 			redoBuffer.Clear();
 			undoBuffer.Add(program.Clone());
+			IsDirty = true;
 		}
 
 		public void Undo()
