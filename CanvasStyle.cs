@@ -35,10 +35,12 @@ namespace GCEd
 
 		public virtual void ViewMatrixChanged(Matrix viewMatrix)
 		{
-			var probe = new[] { new Point(100, 0) };
+			var probe = new[] { new Point(100, 100) };
+			var probeLength = Math.Sqrt(probe[0].X * probe[0].X + probe[0].Y * probe[0].Y);
 			viewMatrix.VectorTransformPoints(probe);
-			var len = Math.Max(probe[0].X / 100f, 0.0001f);
-			PixelSize = 1 / len;
+			var transformedProbeLength = Math.Sqrt(probe[0].X * probe[0].X + probe[0].Y * probe[0].Y);
+			var len = Math.Max(transformedProbeLength / probeLength, 0.0001f);
+			PixelSize = (float)(1 / len);
 			var selectedStrokeColor = Color.FromArgb(0xF5, 0xFA, 0xFF);
 			var strokeColor = Color.FromArgb(0xA5, 0xCA, 0xFF);
 			IdlePen = new Pen(strokeColor, PixelSize) { DashStyle = DashStyle.Dash, DashPattern = new[] { 10f, 10f } };
