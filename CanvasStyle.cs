@@ -36,9 +36,9 @@ namespace GCEd
 		public virtual void ViewMatrixChanged(Matrix viewMatrix)
 		{
 			var probe = new[] { new Point(100, 100) };
-			var probeLength = Math.Sqrt(probe[0].X * probe[0].X + probe[0].Y * probe[0].Y);
+			var probeLength = Geometry.LineLength(probe[0]);
 			viewMatrix.VectorTransformPoints(probe);
-			var transformedProbeLength = Math.Sqrt(probe[0].X * probe[0].X + probe[0].Y * probe[0].Y);
+			var transformedProbeLength = Geometry.LineLength(probe[0]);
 			var len = Math.Max(transformedProbeLength / probeLength, 0.0001f);
 			PixelSize = (float)(1 / len);
 			var selectedStrokeColor = Color.FromArgb(0xF5, 0xFA, 0xFF);

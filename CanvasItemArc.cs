@@ -26,13 +26,9 @@ namespace GCEd
 		public override void OperationChanged()
 		{
 			base.OperationChanged();
-			var startDeltaX = Operation.AbsXStart - Operation.AbsI;
-			var startDeltaY = Operation.AbsYStart - Operation.AbsJ;
-			var endDeltaX = Operation.AbsXEnd - Operation.AbsI;
-			var endDeltaY = Operation.AbsYEnd - Operation.AbsJ;
-			radius = (float)Math.Sqrt(startDeltaX * startDeltaX + startDeltaY * startDeltaY);
-			var startAngle = (float)(Math.Atan2(startDeltaX, startDeltaY) * 180 / Math.PI);
-			var endAngle = (float)(Math.Atan2(endDeltaX, endDeltaY) * 180 / Math.PI);
+			radius = Geometry.LineLength(Operation.AbsStart, Operation.AbsOffset);
+			var startAngle = (float)(Geometry.LineAngle(Operation.AbsOffset, Operation.AbsStart) * 180 / Math.PI);
+			var endAngle = (float)(Geometry.LineAngle(Operation.AbsOffset, Operation.AbsEnd) * 180 / Math.PI);
 			if (Operation.Line.Instruction == GInstruction.G2 && endAngle < startAngle) endAngle += 360;
 			if (Operation.Line.Instruction == GInstruction.G3 && startAngle < endAngle) startAngle += 360;
 			startAngle = 90 - startAngle;
@@ -75,12 +71,10 @@ namespace GCEd
 
 		public override float Distance(PointF p)
 		{
-			var dx = p.X - Operation.AbsI;
-			var dy = p.Y - Operation.AbsJ;
-			var pointAngle = 90 - (float)(Math.Atan2(dx, dy) * 180 / Math.PI);
+			var pointAngle = 90 - (float)(Geometry.LineAngle(Operation.AbsOffset, p) * 180 / Math.PI);
 			if (pointAngle < 0) pointAngle += 360;
 
-			var onArc = false;
+			bool onArc;
 
 			if (sweep > 0)
 			{
@@ -107,12 +101,12 @@ namespace GCEd
 
 			if (onArc)
 			{
-				return (float)Math.Abs(Math.Sqrt(dx * dx + dy * dy) - radius);
+				return (float)Math.Abs(Geometry.LineLength(Operation.AbsOffset, p) - radius);
 			}
 			else
 			{
-				var d1 = (float)Math.Sqrt((p.X - Operation.AbsXStart) * (p.X - Operation.AbsXStart) + (p.Y - Operation.AbsYStart) * (p.Y - Operation.AbsYStart));
-				var d2 = (float)Math.Sqrt((p.X - Operation.AbsXEnd) * (p.X - Operation.AbsXEnd) + (p.Y - Operation.AbsYEnd) * (p.Y - Operation.AbsYEnd));
+				var d1 = Geometry.LineLength(p, Operation.AbsStart);
+				var d2 = Geometry.LineLength(p, Operation.AbsEnd);
 				return Math.Min(d1, d2);
 			}
 		}
