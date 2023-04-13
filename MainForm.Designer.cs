@@ -196,6 +196,7 @@
 			newToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+N";
 			newToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			newToolStripMenuItem.Text = "New";
+			newToolStripMenuItem.Click += newToolStripMenuItem_Click;
 			// 
 			// openToolStripMenuItem
 			// 
@@ -203,6 +204,7 @@
 			openToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+O";
 			openToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			openToolStripMenuItem.Text = "Open ...";
+			openToolStripMenuItem.Click += openToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator1
 			// 
@@ -215,6 +217,7 @@
 			saveToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+S";
 			saveToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			saveToolStripMenuItem.Text = "Save";
+			saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
 			// 
 			// saveAsToolStripMenuItem
 			// 
@@ -222,6 +225,7 @@
 			saveAsToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Shift+S";
 			saveAsToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			saveAsToolStripMenuItem.Text = "Save as ...";
+			saveAsToolStripMenuItem.Click += saveAsToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator2
 			// 
@@ -234,6 +238,7 @@
 			exitToolStripMenuItem.ShortcutKeyDisplayString = "Alt+F4";
 			exitToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			exitToolStripMenuItem.Text = "Exit";
+			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
 			// 
 			// editToolStripMenuItem
 			// 
@@ -248,6 +253,7 @@
 			undoToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Z";
 			undoToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			undoToolStripMenuItem.Text = "Undo";
+			undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
 			// 
 			// redoToolStripMenuItem
 			// 
@@ -255,6 +261,7 @@
 			redoToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Y";
 			redoToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			redoToolStripMenuItem.Text = "Redo";
+			redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator3
 			// 
@@ -267,6 +274,7 @@
 			cutToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+X";
 			cutToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			cutToolStripMenuItem.Text = "Cut";
+			cutToolStripMenuItem.Click += cutToolStripMenuItem_Click;
 			// 
 			// copyToolStripMenuItem
 			// 
@@ -274,6 +282,7 @@
 			copyToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+C";
 			copyToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			copyToolStripMenuItem.Text = "Copy";
+			copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
 			// 
 			// pasteToolStripMenuItem
 			// 
@@ -281,6 +290,7 @@
 			pasteToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+V";
 			pasteToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			pasteToolStripMenuItem.Text = "Paste";
+			pasteToolStripMenuItem.Click += pasteToolStripMenuItem_Click;
 			// 
 			// deleteToolStripMenuItem
 			// 
@@ -288,6 +298,7 @@
 			deleteToolStripMenuItem.ShortcutKeyDisplayString = "Del";
 			deleteToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			deleteToolStripMenuItem.Text = "Delete";
+			deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator4
 			// 
@@ -300,6 +311,7 @@
 			selectAllToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+A";
 			selectAllToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			selectAllToolStripMenuItem.Text = "Select all";
+			selectAllToolStripMenuItem.Click += selectAllToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator5
 			// 
@@ -312,6 +324,7 @@
 			convertToAbsoluteToolStripMenuItem.ShortcutKeyDisplayString = "A";
 			convertToAbsoluteToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			convertToAbsoluteToolStripMenuItem.Text = "Convert to absolute";
+			convertToAbsoluteToolStripMenuItem.Click += convertToAbsoluteToolStripMenuItem_Click;
 			// 
 			// convertToRelativeToolStripMenuItem
 			// 
@@ -319,6 +332,7 @@
 			convertToRelativeToolStripMenuItem.ShortcutKeyDisplayString = "Shift+A";
 			convertToRelativeToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			convertToRelativeToolStripMenuItem.Text = "Convert to relative";
+			convertToRelativeToolStripMenuItem.Click += convertToRelativeToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator6
 			// 
@@ -331,6 +345,7 @@
 			moveEndpointToolStripMenuItem.ShortcutKeyDisplayString = "E";
 			moveEndpointToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			moveEndpointToolStripMenuItem.Text = "Move endpoint";
+			moveEndpointToolStripMenuItem.Click += moveEndpointToolStripMenuItem_Click;
 			// 
 			// moveOffsetToolStripMenuItem
 			// 
@@ -338,6 +353,7 @@
 			moveOffsetToolStripMenuItem.ShortcutKeyDisplayString = "Shift+E";
 			moveOffsetToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			moveOffsetToolStripMenuItem.Text = "Move offset";
+			moveOffsetToolStripMenuItem.Click += moveOffsetToolStripMenuItem_Click;
 			// 
 			// viewToolStripMenuItem
 			// 
@@ -350,29 +366,33 @@
 			// 
 			showGridToolStripMenuItem.Name = "showGridToolStripMenuItem";
 			showGridToolStripMenuItem.ShortcutKeyDisplayString = "G";
-			showGridToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+			showGridToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			showGridToolStripMenuItem.Text = "Show grid";
+			showGridToolStripMenuItem.Click += showGridToolStripMenuItem_Click;
 			// 
 			// snapToGridToolStripMenuItem
 			// 
 			snapToGridToolStripMenuItem.Name = "snapToGridToolStripMenuItem";
 			snapToGridToolStripMenuItem.ShortcutKeyDisplayString = "S";
-			snapToGridToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+			snapToGridToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			snapToGridToolStripMenuItem.Text = "Snap to grid";
+			snapToGridToolStripMenuItem.Click += snapToGridToolStripMenuItem_Click;
 			// 
 			// snapToItemsToolStripMenuItem
 			// 
 			snapToItemsToolStripMenuItem.Name = "snapToItemsToolStripMenuItem";
 			snapToItemsToolStripMenuItem.ShortcutKeyDisplayString = "Shift+S";
-			snapToItemsToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+			snapToItemsToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			snapToItemsToolStripMenuItem.Text = "Snap to items";
+			snapToItemsToolStripMenuItem.Click += snapToItemsToolStripMenuItem_Click;
 			// 
 			// showCoordinatesToolStripMenuItem
 			// 
 			showCoordinatesToolStripMenuItem.Name = "showCoordinatesToolStripMenuItem";
 			showCoordinatesToolStripMenuItem.ShortcutKeyDisplayString = "C";
-			showCoordinatesToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+			showCoordinatesToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			showCoordinatesToolStripMenuItem.Text = "Show coordinates";
+			showCoordinatesToolStripMenuItem.Click += showCoordinatesToolStripMenuItem_Click;
 			// 
 			// showPerformanceStatsToolStripMenuItem
 			// 
@@ -380,6 +400,7 @@
 			showPerformanceStatsToolStripMenuItem.ShortcutKeyDisplayString = "F";
 			showPerformanceStatsToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			showPerformanceStatsToolStripMenuItem.Text = "Show performance stats";
+			showPerformanceStatsToolStripMenuItem.Click += showPerformanceStatsToolStripMenuItem_Click;
 			// 
 			// insertToolStripMenuItem
 			// 
@@ -394,6 +415,7 @@
 			newLineToolStripMenuItem.ShortcutKeyDisplayString = "Shift+I";
 			newLineToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			newLineToolStripMenuItem.Text = "New line before current";
+			newLineToolStripMenuItem.Click += newLineToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator7
 			// 
@@ -406,6 +428,7 @@
 			rapidToolStripMenuItem.ShortcutKeyDisplayString = "0";
 			rapidToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			rapidToolStripMenuItem.Text = "Rapid";
+			rapidToolStripMenuItem.Click += rapidToolStripMenuItem_Click;
 			// 
 			// lineToolStripMenuItem
 			// 
@@ -413,6 +436,7 @@
 			lineToolStripMenuItem.ShortcutKeyDisplayString = "1";
 			lineToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			lineToolStripMenuItem.Text = "Line";
+			lineToolStripMenuItem.Click += lineToolStripMenuItem_Click;
 			// 
 			// clockwiseArcToolStripMenuItem
 			// 
@@ -420,6 +444,7 @@
 			clockwiseArcToolStripMenuItem.ShortcutKeyDisplayString = "2";
 			clockwiseArcToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			clockwiseArcToolStripMenuItem.Text = "Clockwise arc";
+			clockwiseArcToolStripMenuItem.Click += clockwiseArcToolStripMenuItem_Click;
 			// 
 			// counterclockwiseArcToolStripMenuItem
 			// 
@@ -427,6 +452,7 @@
 			counterclockwiseArcToolStripMenuItem.ShortcutKeyDisplayString = "3";
 			counterclockwiseArcToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			counterclockwiseArcToolStripMenuItem.Text = "Counterclockwise arc";
+			counterclockwiseArcToolStripMenuItem.Click += counterclockwiseArcToolStripMenuItem_Click;
 			// 
 			// commentToolStripMenuItem
 			// 
@@ -434,6 +460,7 @@
 			commentToolStripMenuItem.ShortcutKeyDisplayString = ";";
 			commentToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			commentToolStripMenuItem.Text = "Comment after current";
+			commentToolStripMenuItem.Click += commentToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator8
 			// 
@@ -446,6 +473,7 @@
 			backgroundImageToolStripMenuItem.ShortcutKeyDisplayString = "B";
 			backgroundImageToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			backgroundImageToolStripMenuItem.Text = "Background image ...";
+			backgroundImageToolStripMenuItem.Click += backgroundImageToolStripMenuItem_Click;
 			// 
 			// textShapeToolStripMenuItem
 			// 
@@ -453,6 +481,7 @@
 			textShapeToolStripMenuItem.ShortcutKeyDisplayString = "T";
 			textShapeToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			textShapeToolStripMenuItem.Text = "Text shape ...";
+			textShapeToolStripMenuItem.Click += textShapeToolStripMenuItem_Click;
 			// 
 			// newLineAfterCurrentToolStripMenuItem
 			// 
@@ -460,6 +489,7 @@
 			newLineAfterCurrentToolStripMenuItem.ShortcutKeyDisplayString = "I";
 			newLineAfterCurrentToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			newLineAfterCurrentToolStripMenuItem.Text = "New line after current";
+			newLineAfterCurrentToolStripMenuItem.Click += newLineAfterCurrentToolStripMenuItem_Click;
 			// 
 			// commentBeforeCurrentToolStripMenuItem
 			// 
@@ -467,6 +497,7 @@
 			commentBeforeCurrentToolStripMenuItem.ShortcutKeyDisplayString = "Shift+;";
 			commentBeforeCurrentToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			commentBeforeCurrentToolStripMenuItem.Text = "Comment before current";
+			commentBeforeCurrentToolStripMenuItem.Click += commentBeforeCurrentToolStripMenuItem_Click;
 			// 
 			// MainForm
 			// 

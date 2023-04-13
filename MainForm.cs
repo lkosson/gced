@@ -107,52 +107,52 @@ namespace GCEd
 			viewState.ConvertToRelative(viewState.SelectedOperations);
 		}
 
-		private void AddNewLine()
+		private void AddNewLine(bool before)
 		{
 			viewState.SaveUndoState();
-			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift);
+			viewState.AppendNewLine(viewState.LastSelectedOperation, before);
 			viewState.FocusLineEditor();
 		}
 
-		private void AddComment()
+		private void AddComment(bool before)
 		{
 			viewState.SaveUndoState();
-			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine("; "));
+			viewState.AppendNewLine(viewState.LastSelectedOperation, before, new GLine("; "));
 			viewState.FocusLineEditor();
 		}
 
-		private void AddG0()
+		private void AddG0(bool before)
 		{
 			canvas.SuspendPanningToSelection();
 			viewState.SaveUndoState();
-			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G0 });
+			viewState.AppendNewLine(viewState.LastSelectedOperation, before, new GLine { Instruction = GInstruction.G0 });
 			canvas.StartMouseEndMove();
 			canvas.ResumePanningToSelection();
 		}
 
-		private void AddG1()
+		private void AddG1(bool before)
 		{
 			canvas.SuspendPanningToSelection();
 			viewState.SaveUndoState();
-			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G1 });
+			viewState.AppendNewLine(viewState.LastSelectedOperation, before, new GLine { Instruction = GInstruction.G1 });
 			canvas.StartMouseEndMove();
 			canvas.ResumePanningToSelection();
 		}
 
-		private void AddG2()
+		private void AddG2(bool before)
 		{
 			canvas.SuspendPanningToSelection();
 			viewState.SaveUndoState();
-			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G2 });
+			viewState.AppendNewLine(viewState.LastSelectedOperation, before, new GLine { Instruction = GInstruction.G2 });
 			canvas.StartMouseEndMove();
 			canvas.ResumePanningToSelection();
 		}
 
-		private void AddG3()
+		private void AddG3(bool before)
 		{
 			canvas.SuspendPanningToSelection();
 			viewState.SaveUndoState();
-			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine { Instruction = GInstruction.G3 });
+			viewState.AppendNewLine(viewState.LastSelectedOperation, before, new GLine { Instruction = GInstruction.G3 });
 			canvas.StartMouseEndMove();
 			canvas.ResumePanningToSelection();
 		}
@@ -261,10 +261,14 @@ namespace GCEd
 			else if (e.KeyCode == Keys.Menu) { }
 			else if (editorFocused) { e.Handled = false; }
 
-			else if (e.KeyCode == Keys.D0 && ModifierKeys == Keys.None) AddG0();
-			else if (e.KeyCode == Keys.D1 && ModifierKeys == Keys.None) AddG1();
-			else if (e.KeyCode == Keys.D2 && ModifierKeys == Keys.None) AddG2();
-			else if (e.KeyCode == Keys.D3 && ModifierKeys == Keys.None) AddG3();
+			else if (e.KeyCode == Keys.D0 && ModifierKeys == Keys.None) AddG0(false);
+			else if (e.KeyCode == Keys.D0 && ModifierKeys == Keys.Shift) AddG0(true);
+			else if (e.KeyCode == Keys.D1 && ModifierKeys == Keys.None) AddG1(false);
+			else if (e.KeyCode == Keys.D1 && ModifierKeys == Keys.Shift) AddG1(true);
+			else if (e.KeyCode == Keys.D2 && ModifierKeys == Keys.None) AddG2(false);
+			else if (e.KeyCode == Keys.D2 && ModifierKeys == Keys.Shift) AddG2(true);
+			else if (e.KeyCode == Keys.D3 && ModifierKeys == Keys.None) AddG3(false);
+			else if (e.KeyCode == Keys.D3 && ModifierKeys == Keys.Shift) AddG3(true);
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None) ConvertToAbsolute();
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Shift) ConvertToRelative();
 			else if (e.KeyCode == Keys.A && (ModifierKeys & Keys.Control) == Keys.Control) SelectAll();
@@ -276,8 +280,8 @@ namespace GCEd
 			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) ToggleFPS();
 			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) ToggleGrid();
 			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.None) canvas.PanZoomViewToFit();
-			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.None) AddNewLine();
-			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine();
+			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.None) AddNewLine(false);
+			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine(true);
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) AddText();
@@ -287,11 +291,43 @@ namespace GCEd
 			else if (e.KeyCode == Keys.Z && ModifierKeys == Keys.Control) Undo();
 			else if (e.KeyCode == Keys.Delete && ModifierKeys == Keys.None) DeleteSelected();
 			else if (e.KeyCode == Keys.Escape) canvas.Abort();
-			else if (e.KeyCode == Keys.OemSemicolon && ModifierKeys == Keys.None) AddComment();
-			else if (e.KeyCode == Keys.OemSemicolon && ModifierKeys == Keys.Shift) AddComment();
+			else if (e.KeyCode == Keys.OemSemicolon && ModifierKeys == Keys.None) AddComment(false);
+			else if (e.KeyCode == Keys.OemSemicolon && ModifierKeys == Keys.Shift) AddComment(true);
 			else { e.Handled = false; }
 
 			base.OnKeyDown(e);
 		}
+
+		private void newToolStripMenuItem_Click(object sender, EventArgs e) => NewFile();
+		private void openToolStripMenuItem_Click(object sender, EventArgs e) => OpenFile();
+		private void saveToolStripMenuItem_Click(object sender, EventArgs e) => SaveFile();
+		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e) => SaveFileAs();
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
+		private void undoToolStripMenuItem_Click(object sender, EventArgs e) => Undo();
+		private void redoToolStripMenuItem_Click(object sender, EventArgs e) => Redo();
+		private void cutToolStripMenuItem_Click(object sender, EventArgs e) => Cut();
+		private void copyToolStripMenuItem_Click(object sender, EventArgs e) => Copy();
+		private void pasteToolStripMenuItem_Click(object sender, EventArgs e) => Paste();
+		private void deleteToolStripMenuItem_Click(object sender, EventArgs e) => DeleteSelected();
+		private void selectAllToolStripMenuItem_Click(object sender, EventArgs e) => SelectAll();
+		private void convertToAbsoluteToolStripMenuItem_Click(object sender, EventArgs e) => ConvertToAbsolute();
+		private void convertToRelativeToolStripMenuItem_Click(object sender, EventArgs e) => ConvertToRelative();
+		private void moveEndpointToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseEndMove();
+		private void moveOffsetToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseOffsetMove();
+		private void showGridToolStripMenuItem_Click(object sender, EventArgs e) => ToggleGrid();
+		private void snapToGridToolStripMenuItem_Click(object sender, EventArgs e) => ToggleSnapToGrid();
+		private void snapToItemsToolStripMenuItem_Click(object sender, EventArgs e) => ToggleSnapToItems();
+		private void showCoordinatesToolStripMenuItem_Click(object sender, EventArgs e) => ToggleCoords();
+		private void showPerformanceStatsToolStripMenuItem_Click(object sender, EventArgs e) => ToggleFPS();
+		private void newLineAfterCurrentToolStripMenuItem_Click(object sender, EventArgs e) => AddNewLine(false);
+		private void newLineToolStripMenuItem_Click(object sender, EventArgs e) => AddNewLine(true);
+		private void rapidToolStripMenuItem_Click(object sender, EventArgs e) => AddG0(false);
+		private void lineToolStripMenuItem_Click(object sender, EventArgs e) => AddG1(false);
+		private void clockwiseArcToolStripMenuItem_Click(object sender, EventArgs e) => AddG2(false);
+		private void counterclockwiseArcToolStripMenuItem_Click(object sender, EventArgs e) => AddG3(false);
+		private void commentToolStripMenuItem_Click(object sender, EventArgs e) => AddComment(false);
+		private void commentBeforeCurrentToolStripMenuItem_Click(object sender, EventArgs e) => AddComment(true);
+		private void backgroundImageToolStripMenuItem_Click(object sender, EventArgs e) => AddBackground();
+		private void textShapeToolStripMenuItem_Click(object sender, EventArgs e) => AddText();
 	}
 }
