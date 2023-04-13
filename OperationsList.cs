@@ -108,6 +108,11 @@ namespace GCEd
 			}
 		}
 
+		private void listBoxOperations_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			e.Handled = true;
+		}
+
 		private class ListItem
 		{
 			public GOperation Operation { get; set; }

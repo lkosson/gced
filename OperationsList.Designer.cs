@@ -28,33 +28,32 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.listBoxOperations = new System.Windows.Forms.ListBox();
-			this.SuspendLayout();
+			listBoxOperations = new System.Windows.Forms.ListBox();
+			SuspendLayout();
 			// 
 			// listBoxOperations
 			// 
-			this.listBoxOperations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.listBoxOperations.FormattingEnabled = true;
-			this.listBoxOperations.ItemHeight = 15;
-			this.listBoxOperations.Location = new System.Drawing.Point(3, 3);
-			this.listBoxOperations.Name = "listBoxOperations";
-			this.listBoxOperations.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.listBoxOperations.Size = new System.Drawing.Size(348, 289);
-			this.listBoxOperations.TabIndex = 0;
-			this.listBoxOperations.SelectedIndexChanged += new System.EventHandler(this.listBoxOperations_SelectedIndexChanged);
-			this.listBoxOperations.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBoxOperations_KeyDown);
+			listBoxOperations.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			listBoxOperations.FormattingEnabled = true;
+			listBoxOperations.IntegralHeight = false;
+			listBoxOperations.ItemHeight = 15;
+			listBoxOperations.Location = new System.Drawing.Point(3, 3);
+			listBoxOperations.Name = "listBoxOperations";
+			listBoxOperations.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+			listBoxOperations.Size = new System.Drawing.Size(348, 289);
+			listBoxOperations.TabIndex = 0;
+			listBoxOperations.SelectedIndexChanged += listBoxOperations_SelectedIndexChanged;
+			listBoxOperations.KeyDown += listBoxOperations_KeyDown;
+			listBoxOperations.KeyPress += listBoxOperations_KeyPress;
 			// 
 			// OperationsList
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.listBoxOperations);
-			this.Name = "OperationsList";
-			this.Size = new System.Drawing.Size(354, 298);
-			this.ResumeLayout(false);
-
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			Controls.Add(listBoxOperations);
+			Name = "OperationsList";
+			Size = new System.Drawing.Size(354, 298);
+			ResumeLayout(false);
 		}
 
 		#endregion
