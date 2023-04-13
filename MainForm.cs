@@ -114,6 +114,13 @@ namespace GCEd
 			viewState.FocusLineEditor();
 		}
 
+		private void AddComment()
+		{
+			viewState.SaveUndoState();
+			viewState.AppendNewLine(viewState.LastSelectedOperation, ModifierKeys == Keys.Shift, new GLine("; "));
+			viewState.FocusLineEditor();
+		}
+
 		private void AddG0()
 		{
 			canvas.SuspendPanningToSelection();
@@ -239,7 +246,14 @@ namespace GCEd
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			e.Handled = true;
-			var editorFocused = ActiveControl is LineEditor || ActiveControl is OperationProperties;
+
+			var editorFocused = false;
+			IContainerControl? container = this;
+			while (container != null)
+			{
+				editorFocused = container.ActiveControl is TextBox;
+				container = container.ActiveControl as IContainerControl;
+			}
 			if (e.KeyCode == Keys.N && ModifierKeys == Keys.Control) NewFile();
 			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.Control) OpenFile();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Control) SaveFile();
@@ -273,6 +287,8 @@ namespace GCEd
 			else if (e.KeyCode == Keys.Z && ModifierKeys == Keys.Control) Undo();
 			else if (e.KeyCode == Keys.Delete && ModifierKeys == Keys.None) DeleteSelected();
 			else if (e.KeyCode == Keys.Escape) canvas.Abort();
+			else if (e.KeyCode == Keys.OemSemicolon && ModifierKeys == Keys.None) AddComment();
+			else if (e.KeyCode == Keys.OemSemicolon && ModifierKeys == Keys.Shift) AddComment();
 			else { e.Handled = false; }
 
 			base.OnKeyDown(e);
