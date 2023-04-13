@@ -198,6 +198,44 @@ namespace GCEd
 			viewState.AppendProgram(viewState.LastSelectedOperation, subProgram, before);
 		}
 
+
+		public void ToggleGrid()
+		{
+			if (canvas.ShowMinorGrid)
+			{
+				canvas.ShowMinorGrid = false;
+				canvas.ShowMajorGrid = false;
+				canvas.ShowOriginGrid = false;
+			}
+			else if (!canvas.ShowOriginGrid) canvas.ShowOriginGrid = true;
+			else if (!canvas.ShowMajorGrid) canvas.ShowMajorGrid = true;
+			else canvas.ShowMinorGrid = true;
+			canvas.Invalidate();
+		}
+
+		public void ToggleSnapToGrid()
+		{
+			canvas.SnapToGrid = !canvas.SnapToGrid;
+		}
+
+		public void ToggleSnapToItems()
+		{
+			canvas.SnapToItems = !canvas.SnapToItems;
+		}
+
+		public void ToggleFPS()
+		{
+			canvas.ShowFPS = !canvas.ShowFPS;
+			canvas.Invalidate();
+		}
+
+		public void ToggleCoords()
+		{
+			canvas.ShowCursorCoords = !canvas.ShowCursorCoords;
+			if (!canvas.ShowCursorCoords) canvas.ShowItemCoords = !canvas.ShowItemCoords;
+			canvas.Invalidate();
+		}
+
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			e.Handled = true;
@@ -216,18 +254,18 @@ namespace GCEd
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None) ConvertToAbsolute();
 			else if (e.KeyCode == Keys.A && (ModifierKeys & Keys.Control) == Keys.Control) SelectAll();
 			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.None) AddBackground();
-			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) canvas.ToggleCoords();
+			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) ToggleCoords();
 			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.Control) Copy();
 			else if (e.KeyCode == Keys.E && ModifierKeys == Keys.None) canvas.StartMouseEndMove();
-			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) canvas.ToggleFPS();
-			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) canvas.ToggleGrid();
+			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) ToggleFPS();
+			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) ToggleGrid();
 			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.None) canvas.PanZoomViewToFit();
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.None) AddNewLine();
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine();
 			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) canvas.StartMouseOffsetMove();
 			else if (e.KeyCode == Keys.R && ModifierKeys == Keys.None) ConvertToRelative();
-			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) canvas.ToggleSnapToGrid();
-			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) canvas.ToggleSnapToItems();
+			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
+			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) AddText();
 			else if (e.KeyCode == Keys.V && (ModifierKeys & Keys.Control) == Keys.Control) Paste();
 			else if (e.KeyCode == Keys.X && ModifierKeys == Keys.Control) Cut();

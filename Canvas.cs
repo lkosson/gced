@@ -182,43 +182,6 @@ namespace GCEd
 			panningToSelectionSuspended = false;
 		}
 
-		public void ToggleGrid()
-		{
-			if (ShowMinorGrid)
-			{
-				ShowMinorGrid = false;
-				ShowMajorGrid = false;
-				ShowOriginGrid = false;
-			}
-			else if (!ShowOriginGrid) ShowOriginGrid = true;
-			else if (!ShowMajorGrid) ShowMajorGrid = true;
-			else ShowMinorGrid = true;
-			Invalidate();
-		}
-
-		public void ToggleSnapToGrid()
-		{
-			SnapToGrid = !SnapToGrid;
-		}
-
-		public void ToggleSnapToItems()
-		{
-			SnapToItems = !SnapToItems;
-		}
-
-		public void ToggleFPS()
-		{
-			ShowFPS = !ShowFPS;
-			Invalidate();
-		}
-
-		public void ToggleCoords()
-		{
-			ShowCursorCoords = !ShowCursorCoords;
-			if (!ShowCursorCoords) ShowItemCoords = !ShowItemCoords;
-			Invalidate();
-		}
-
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			var sw = Stopwatch.StartNew();
