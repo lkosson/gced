@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -148,6 +150,15 @@ namespace GCEd
 			canvas.ResumePanningToSelection();
 		}
 
+		private void AddBackground()
+		{
+			using var openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "Images (*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.jpeg;*.png;*.gif|All files|*.*";
+			openFileDialog.RestoreDirectory = true;
+			if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+			viewState.AppendNewLine(null, true, new GLine(";.background X0 Y0 I100 J100 S100 P\"" + openFileDialog.FileName + "\""));
+		}
+
 		private void AddText()
 		{
 			using var textGenerator = new TextGenerator();
@@ -162,6 +173,29 @@ namespace GCEd
 				subProgram.Lines.AddLast(new GLine { Instruction = GInstruction.G91 });
 			}
 			viewState.AppendProgram(viewState.LastSelectedOperation, subProgram);
+		}
+
+		private void Copy()
+		{
+			var code = String.Join(Environment.NewLine, viewState.SelectedOperations.Select(operation => operation.Line.ToString()));
+			Clipboard.SetText(code);
+		}
+
+		private void Cut()
+		{
+			Copy();
+			DeleteSelected();
+		}
+
+		private void Paste()
+		{
+			var code = Clipboard.GetText();
+			if (String.IsNullOrWhiteSpace(code)) return;
+			var before = (ModifierKeys & Keys.Shift) == Keys.Shift;
+			var subProgram = new GProgram();
+			subProgram.Load(new StringReader(code));
+			viewState.SaveUndoState();
+			viewState.AppendProgram(viewState.LastSelectedOperation, subProgram, before);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -181,8 +215,9 @@ namespace GCEd
 			else if (e.KeyCode == Keys.D3 && ModifierKeys == Keys.None) AddG3();
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None) ConvertToAbsolute();
 			else if (e.KeyCode == Keys.A && (ModifierKeys & Keys.Control) == Keys.Control) SelectAll();
-			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.None) canvas.AddBackground();
+			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.None) AddBackground();
 			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) canvas.ToggleCoords();
+			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.Control) Copy();
 			else if (e.KeyCode == Keys.E && ModifierKeys == Keys.None) canvas.StartMouseEndMove();
 			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) canvas.ToggleFPS();
 			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) canvas.ToggleGrid();
@@ -194,6 +229,8 @@ namespace GCEd
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) canvas.ToggleSnapToGrid();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) canvas.ToggleSnapToItems();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) AddText();
+			else if (e.KeyCode == Keys.V && (ModifierKeys & Keys.Control) == Keys.Control) Paste();
+			else if (e.KeyCode == Keys.X && ModifierKeys == Keys.Control) Cut();
 			else if (e.KeyCode == Keys.Y && ModifierKeys == Keys.Control) Redo();
 			else if (e.KeyCode == Keys.Z && ModifierKeys == Keys.Control) Undo();
 			else if (e.KeyCode == Keys.Delete && ModifierKeys == Keys.None) DeleteSelected();

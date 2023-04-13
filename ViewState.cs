@@ -211,7 +211,7 @@ namespace GCEd
 			SetSelection(new[] { newOperation });
 		}
 
-		public void AppendProgram(GOperation? baseOperation, GProgram subprogram)
+		public void AppendProgram(GOperation? baseOperation, GProgram subprogram, bool before = false)
 		{
 			var baseLine = program.Lines.Last;
 			if (baseOperation != null)
@@ -224,8 +224,18 @@ namespace GCEd
 				}
 			}
 
-			if (baseLine == null) foreach (var line in subprogram.Lines) program.Lines.AddLast(line);
-			else foreach (var line in subprogram.Lines) baseLine = program.Lines.AddAfter(baseLine, line);
+			if (before)
+			{
+				var marker = baseLine == null ? program.Lines.AddFirst(new GLine()) : program.Lines.AddBefore(baseLine, new GLine());
+				baseLine = marker;
+				foreach (var line in subprogram.Lines) baseLine = program.Lines.AddAfter(baseLine, line);
+				program.Lines.Remove(marker);
+			}
+			else
+			{
+				if (baseLine == null) foreach (var line in subprogram.Lines) program.Lines.AddLast(line);
+				else foreach (var line in subprogram.Lines) baseLine = program.Lines.AddAfter(baseLine, line);
+			}
 
 			RunProgram();
 			var newLines = new HashSet<GLine>(subprogram.Lines);

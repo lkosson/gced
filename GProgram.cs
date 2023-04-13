@@ -29,7 +29,7 @@ namespace GCEd
 			Lines.AddLast(new GLine("M5 ; Stop laser"));
 		}
 
-		public void Load(StreamReader reader)
+		public void Load(TextReader reader)
 		{
 			string? line;
 			Lines.Clear();
@@ -45,7 +45,7 @@ namespace GCEd
 			Load(sr);
 		}
 
-		public void Save(StreamWriter writer)
+		public void Save(TextWriter writer)
 		{
 			foreach (var line in Lines)
 			{

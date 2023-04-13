@@ -182,15 +182,6 @@ namespace GCEd
 			panningToSelectionSuspended = false;
 		}
 
-		public void AddBackground()
-		{
-			using var openFileDialog = new OpenFileDialog();
-			openFileDialog.Filter = "Images (*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.jpeg;*.png;*.gif|All files|*.*";
-			openFileDialog.RestoreDirectory = true;
-			if (openFileDialog.ShowDialog() != DialogResult.OK) return;
-			viewState.AppendNewLine(null, true, new GLine(";.background X0 Y0 I100 J100 S100 P\"" + openFileDialog.FileName + "\""));
-		}
-
 		public void ToggleGrid()
 		{
 			if (ShowMinorGrid)
