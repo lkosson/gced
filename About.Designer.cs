@@ -35,6 +35,7 @@
 			label1 = new System.Windows.Forms.Label();
 			label2 = new System.Windows.Forms.Label();
 			linkLabelUrl = new System.Windows.Forms.LinkLabel();
+			label3 = new System.Windows.Forms.Label();
 			tableLayoutPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)pictureBoxLogo).BeginInit();
 			flowLayoutPanel1.SuspendLayout();
@@ -56,14 +57,14 @@
 			tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			tableLayoutPanel.Size = new System.Drawing.Size(278, 103);
+			tableLayoutPanel.Size = new System.Drawing.Size(278, 118);
 			tableLayoutPanel.TabIndex = 0;
 			// 
 			// buttonOK
 			// 
 			buttonOK.AutoSize = true;
 			buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			buttonOK.Location = new System.Drawing.Point(3, 75);
+			buttonOK.Location = new System.Drawing.Point(3, 90);
 			buttonOK.Name = "buttonOK";
 			buttonOK.Size = new System.Drawing.Size(75, 25);
 			buttonOK.TabIndex = 0;
@@ -83,12 +84,13 @@
 			// 
 			flowLayoutPanel1.AutoSize = true;
 			flowLayoutPanel1.Controls.Add(label1);
+			flowLayoutPanel1.Controls.Add(label3);
 			flowLayoutPanel1.Controls.Add(label2);
 			flowLayoutPanel1.Controls.Add(linkLabelUrl);
 			flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			flowLayoutPanel1.Location = new System.Drawing.Point(84, 3);
 			flowLayoutPanel1.Name = "flowLayoutPanel1";
-			flowLayoutPanel1.Size = new System.Drawing.Size(191, 66);
+			flowLayoutPanel1.Size = new System.Drawing.Size(191, 81);
 			flowLayoutPanel1.TabIndex = 4;
 			// 
 			// label1
@@ -105,7 +107,7 @@
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Location = new System.Drawing.Point(3, 21);
+			label2.Location = new System.Drawing.Point(3, 36);
 			label2.Name = "label2";
 			label2.Size = new System.Drawing.Size(181, 30);
 			label2.TabIndex = 3;
@@ -114,13 +116,23 @@
 			// linkLabelUrl
 			// 
 			linkLabelUrl.AutoSize = true;
-			linkLabelUrl.Location = new System.Drawing.Point(3, 51);
+			linkLabelUrl.Location = new System.Drawing.Point(3, 66);
 			linkLabelUrl.Name = "linkLabelUrl";
 			linkLabelUrl.Size = new System.Drawing.Size(185, 15);
 			linkLabelUrl.TabIndex = 3;
 			linkLabelUrl.TabStop = true;
 			linkLabelUrl.Text = "https://github.com/lkosson/gced";
 			linkLabelUrl.LinkClicked += linkLabelUrl_LinkClicked;
+			// 
+			// label3
+			// 
+			label3.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			label3.AutoSize = true;
+			label3.Location = new System.Drawing.Point(26, 21);
+			label3.Name = "label3";
+			label3.Size = new System.Drawing.Size(139, 15);
+			label3.TabIndex = 4;
+			label3.Text = "Version: 1.0.0, 2023-04-14";
 			// 
 			// About
 			// 
@@ -130,7 +142,7 @@
 			AutoSize = true;
 			AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			CancelButton = buttonOK;
-			ClientSize = new System.Drawing.Size(278, 103);
+			ClientSize = new System.Drawing.Size(278, 118);
 			Controls.Add(tableLayoutPanel);
 			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			MaximizeBox = false;
@@ -157,5 +169,6 @@
 		private System.Windows.Forms.LinkLabel linkLabelUrl;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label3;
 	}
 }
