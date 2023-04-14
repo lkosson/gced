@@ -47,6 +47,7 @@ namespace GCEd
 		{
 			if (!ConfirmAbandonDirty()) return;
 			viewState.NewProgram();
+			Text = "GCEd";
 		}
 
 		private void SaveFile()
