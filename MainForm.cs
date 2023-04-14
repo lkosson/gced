@@ -210,7 +210,6 @@ namespace GCEd
 			viewState.AppendProgram(viewState.LastSelectedOperation, subProgram, before);
 		}
 
-
 		public void ToggleGrid()
 		{
 			if (canvas.ShowMinorGrid)
@@ -246,6 +245,12 @@ namespace GCEd
 			canvas.ShowCursorCoords = !canvas.ShowCursorCoords;
 			if (!canvas.ShowCursorCoords) canvas.ShowItemCoords = !canvas.ShowItemCoords;
 			canvas.Invalidate();
+		}
+
+		private void About()
+		{
+			using var about = new About();
+			about.ShowDialog();
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -334,5 +339,6 @@ namespace GCEd
 		private void commentBeforeCurrentToolStripMenuItem_Click(object sender, EventArgs e) => AddComment(true);
 		private void backgroundImageToolStripMenuItem_Click(object sender, EventArgs e) => AddBackground();
 		private void textShapeToolStripMenuItem_Click(object sender, EventArgs e) => AddText();
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) => About();
 	}
 }

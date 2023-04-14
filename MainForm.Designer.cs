@@ -68,6 +68,7 @@
 			showCoordinatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			showPerformanceStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			insertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			newLineAfterCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			newLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
 			rapidToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,11 +76,11 @@
 			clockwiseArcToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			counterclockwiseArcToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			commentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			commentBeforeCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
 			backgroundImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			textShapeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			newLineAfterCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			commentBeforeCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
 			splitContainer.Panel1.SuspendLayout();
 			splitContainer.Panel2.SuspendLayout();
@@ -176,7 +177,7 @@
 			// 
 			// menuStrip
 			// 
-			menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, viewToolStripMenuItem, insertToolStripMenuItem });
+			menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, viewToolStripMenuItem, insertToolStripMenuItem, aboutToolStripMenuItem });
 			menuStrip.Location = new System.Drawing.Point(0, 0);
 			menuStrip.Name = "menuStrip";
 			menuStrip.Size = new System.Drawing.Size(800, 24);
@@ -409,6 +410,14 @@
 			insertToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
 			insertToolStripMenuItem.Text = "Insert";
 			// 
+			// newLineAfterCurrentToolStripMenuItem
+			// 
+			newLineAfterCurrentToolStripMenuItem.Name = "newLineAfterCurrentToolStripMenuItem";
+			newLineAfterCurrentToolStripMenuItem.ShortcutKeyDisplayString = "I";
+			newLineAfterCurrentToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
+			newLineAfterCurrentToolStripMenuItem.Text = "New line after current";
+			newLineAfterCurrentToolStripMenuItem.Click += newLineAfterCurrentToolStripMenuItem_Click;
+			// 
 			// newLineToolStripMenuItem
 			// 
 			newLineToolStripMenuItem.Name = "newLineToolStripMenuItem";
@@ -420,7 +429,7 @@
 			// toolStripSeparator7
 			// 
 			toolStripSeparator7.Name = "toolStripSeparator7";
-			toolStripSeparator7.Size = new System.Drawing.Size(184, 6);
+			toolStripSeparator7.Size = new System.Drawing.Size(245, 6);
 			// 
 			// rapidToolStripMenuItem
 			// 
@@ -462,10 +471,18 @@
 			commentToolStripMenuItem.Text = "Comment after current";
 			commentToolStripMenuItem.Click += commentToolStripMenuItem_Click;
 			// 
+			// commentBeforeCurrentToolStripMenuItem
+			// 
+			commentBeforeCurrentToolStripMenuItem.Name = "commentBeforeCurrentToolStripMenuItem";
+			commentBeforeCurrentToolStripMenuItem.ShortcutKeyDisplayString = "Shift+;";
+			commentBeforeCurrentToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
+			commentBeforeCurrentToolStripMenuItem.Text = "Comment before current";
+			commentBeforeCurrentToolStripMenuItem.Click += commentBeforeCurrentToolStripMenuItem_Click;
+			// 
 			// toolStripSeparator8
 			// 
 			toolStripSeparator8.Name = "toolStripSeparator8";
-			toolStripSeparator8.Size = new System.Drawing.Size(184, 6);
+			toolStripSeparator8.Size = new System.Drawing.Size(245, 6);
 			// 
 			// backgroundImageToolStripMenuItem
 			// 
@@ -483,21 +500,13 @@
 			textShapeToolStripMenuItem.Text = "Text shape ...";
 			textShapeToolStripMenuItem.Click += textShapeToolStripMenuItem_Click;
 			// 
-			// newLineAfterCurrentToolStripMenuItem
+			// aboutToolStripMenuItem
 			// 
-			newLineAfterCurrentToolStripMenuItem.Name = "newLineAfterCurrentToolStripMenuItem";
-			newLineAfterCurrentToolStripMenuItem.ShortcutKeyDisplayString = "I";
-			newLineAfterCurrentToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
-			newLineAfterCurrentToolStripMenuItem.Text = "New line after current";
-			newLineAfterCurrentToolStripMenuItem.Click += newLineAfterCurrentToolStripMenuItem_Click;
-			// 
-			// commentBeforeCurrentToolStripMenuItem
-			// 
-			commentBeforeCurrentToolStripMenuItem.Name = "commentBeforeCurrentToolStripMenuItem";
-			commentBeforeCurrentToolStripMenuItem.ShortcutKeyDisplayString = "Shift+;";
-			commentBeforeCurrentToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
-			commentBeforeCurrentToolStripMenuItem.Text = "Comment before current";
-			commentBeforeCurrentToolStripMenuItem.Click += commentBeforeCurrentToolStripMenuItem_Click;
+			aboutToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+			aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+			aboutToolStripMenuItem.Text = "About";
+			aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
 			// 
 			// MainForm
 			// 
@@ -575,5 +584,6 @@
 		private System.Windows.Forms.ToolStripMenuItem commentToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newLineAfterCurrentToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem commentBeforeCurrentToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 	}
 }
