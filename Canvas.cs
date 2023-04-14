@@ -115,7 +115,7 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				var bounding = item.AbsBoundingBox;
-				bounding.Inflate(5, 5);
+				bounding.Inflate(20, 20);
 				if (absX1 > bounding.Left) absX1 = bounding.Left;
 				if (absY1 > bounding.Top) absY1 = bounding.Top;
 				if (absX2 < bounding.Right) absX2 = bounding.Right;

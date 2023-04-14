@@ -20,7 +20,7 @@ namespace GCEd
 			operationsList.ViewState = viewState;
 			operationProperties.ViewState = viewState;
 			lineEditor.ViewState = viewState;
-			viewState.LoadProgram("test.nc");
+			viewState.NewProgram();
 			KeyPreview = true;
 			Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 		}
