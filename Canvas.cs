@@ -542,7 +542,7 @@ namespace GCEd
 						item.Operation.AbsXEnd = absPos.X;
 						item.Operation.AbsYEnd = absPos.Y;
 						var newAbsOffset = Geometry.SimilarTriangle(item.Operation.AbsStart, originalAbsEnd, new PointF((float)item.Operation.Line.I.GetValueOrDefault(), (float)item.Operation.Line.J.GetValueOrDefault()), item.Operation.AbsStart, item.Operation.AbsEnd);
-						if (!Single.IsNaN(newAbsOffset.X) && !Single.IsNaN(newAbsOffset.Y))
+						if (Single.IsFinite(newAbsOffset.X) && Single.IsFinite(newAbsOffset.Y))
 						{
 							item.Operation.AbsI = newAbsOffset.X;
 							item.Operation.AbsJ = newAbsOffset.Y;
