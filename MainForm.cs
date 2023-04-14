@@ -290,6 +290,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) ToggleFPS();
 			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) ToggleGrid();
 			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.None) canvas.PanZoomViewToFit();
+			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.Shift) canvas.PanViewToSelection();
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.None) AddNewLine(false);
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine(true);
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
@@ -340,5 +341,7 @@ namespace GCEd
 		private void backgroundImageToolStripMenuItem_Click(object sender, EventArgs e) => AddBackground();
 		private void textShapeToolStripMenuItem_Click(object sender, EventArgs e) => AddText();
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) => About();
+		private void panzoomToFitToolStripMenuItem_Click(object sender, EventArgs e) => canvas.PanZoomViewToFit();
+		private void panViewToSelectionToolStripMenuItem_Click(object sender, EventArgs e) => canvas.PanViewToSelection();
 	}
 }
