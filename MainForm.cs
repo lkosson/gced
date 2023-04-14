@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace GCEd
@@ -21,6 +22,7 @@ namespace GCEd
 			lineEditor.ViewState = viewState;
 			viewState.LoadProgram("test.nc");
 			KeyPreview = true;
+			Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 		}
 
 		private bool ConfirmAbandonDirty()

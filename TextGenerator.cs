@@ -33,6 +33,7 @@ namespace GCEd
 			textBoxY.Text = "0";
 			ready = true;
 			UpdateCode();
+			Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 		}
 
 		protected override void OnResize(EventArgs e)
