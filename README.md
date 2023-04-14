@@ -6,6 +6,8 @@ GCEd is a simple, 2.5D visual G-Code editor, with a focus on engraving and cutti
 
 ![Screen 2](docs/screen2.png)
 
+![Screen 3](docs/screen3.png)
+
 # Features
  * Import G-Code from existing projects, including machine-specific dialects
  * Manual or visual program modifications
