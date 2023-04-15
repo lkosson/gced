@@ -46,6 +46,7 @@ namespace GCEd
 		private void NewFile()
 		{
 			if (!ConfirmAbandonDirty()) return;
+			viewState.SaveUndoState();
 			Environment.CurrentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			viewState.NewProgram();
 			Text = "GCEd";
@@ -69,6 +70,7 @@ namespace GCEd
 		{
 			if (openFileDialog.ShowDialog() != DialogResult.OK) return;
 			if (!ConfirmAbandonDirty()) return;
+			viewState.SaveUndoState();
 			Environment.CurrentDirectory = Path.GetDirectoryName(openFileDialog.FileName)!;
 			viewState.LoadProgram(openFileDialog.FileName);
 			Text = "GCEd [" + openFileDialog.FileName + "]";
