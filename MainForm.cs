@@ -272,7 +272,7 @@ namespace GCEd
 			if (e.KeyCode == Keys.N && ModifierKeys == Keys.Control) NewFile();
 			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.Control) OpenFile();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Control) SaveFile();
-			else if (e.KeyCode == Keys.S && ModifierKeys == (Keys.Control | Keys.Alt)) SaveFileAs();
+			else if (e.KeyCode == Keys.S && ModifierKeys == (Keys.Control | Keys.Shift)) SaveFileAs();
 			else if (e.KeyCode == Keys.Menu) { }
 			else if (editorFocused) { e.Handled = false; }
 
