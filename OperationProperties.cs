@@ -67,7 +67,7 @@ namespace GCEd
 			txtAbsCenterJ.Enabled = hasOperation && isArc;
 			txtAbsCenterK.Enabled = hasOperation && isArc;
 			txtAbsF.Enabled = hasOperation && isMove;
-			txtAbsS.Enabled = hasOperation && (isLine || isArc);
+			txtAbsS.Enabled = hasOperation && isMove;
 
 			txtAbsEndX.ForeColor = isAbsolute ? SystemColors.WindowText : SystemColors.GrayText;
 			txtAbsEndY.ForeColor = isAbsolute ? SystemColors.WindowText : SystemColors.GrayText;
