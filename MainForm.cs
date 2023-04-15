@@ -60,7 +60,7 @@ namespace GCEd
 		{
 			if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
 			viewState.SaveProgram(saveFileDialog.FileName);
-			Text = "GCEd [" + openFileDialog.FileName + "]";
+			Text = "GCEd [" + saveFileDialog.FileName + "]";
 		}
 
 		private void OpenFile()
