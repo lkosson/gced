@@ -45,7 +45,7 @@ namespace GCEd
 		private ViewState viewState;
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
-		private Point mouseDragStart;
+		private Point mouseStart;
 		private PointF originalAbsEnd;
 		private bool matrixUpdated;
 		private CanvasStyle style;
@@ -53,7 +53,7 @@ namespace GCEd
 		private Interaction interaction;
 		private bool panningToSelectionSuspended;
 
-		private enum Interaction { None, Select, Drag, EndMove, OffsetMove, DragEndMove, DragOffsetMove }
+		private enum Interaction { None, Select, Pan, EndMove, OffsetMove, PanDuringEndMove, PanDuringOffsetMove }
 
 		private float GridMinorStep => (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
 		private float GridMajorStep => GridMinorStep * 10;
@@ -275,7 +275,7 @@ namespace GCEd
 			if (interaction != Interaction.Select) return;
 
 			var mousePosition = PointToClient(MousePosition);
-			var viewSelectionRectangle = new Rectangle(mouseDragStart.X, mouseDragStart.Y, mousePosition.X - mouseDragStart.X, mousePosition.Y - mouseDragStart.Y);
+			var viewSelectionRectangle = new Rectangle(mouseStart.X, mouseStart.Y, mousePosition.X - mouseStart.X, mousePosition.Y - mouseStart.Y);
 			if (viewSelectionRectangle.Width < 0) viewSelectionRectangle = new Rectangle(viewSelectionRectangle.X + viewSelectionRectangle.Width, viewSelectionRectangle.Y, -viewSelectionRectangle.Width, viewSelectionRectangle.Height);
 			if (viewSelectionRectangle.Height < 0) viewSelectionRectangle = new Rectangle(viewSelectionRectangle.X, viewSelectionRectangle.Y + viewSelectionRectangle.Height, viewSelectionRectangle.Width, -viewSelectionRectangle.Height);
 
@@ -433,40 +433,40 @@ namespace GCEd
 			Invalidate();
 		}
 
-		private void StartMouseDrag()
+		private void StartMousePan()
 		{
-			if (interaction == Interaction.None) interaction = Interaction.Drag;
-			else if (interaction == Interaction.EndMove) interaction = Interaction.DragEndMove;
-			else if (interaction == Interaction.OffsetMove) interaction = Interaction.DragOffsetMove;
-			mouseDragStart = PointToClient(MousePosition);
+			if (interaction == Interaction.None) interaction = Interaction.Pan;
+			else if (interaction == Interaction.EndMove) interaction = Interaction.PanDuringEndMove;
+			else if (interaction == Interaction.OffsetMove) interaction = Interaction.PanDuringOffsetMove;
+			mouseStart = PointToClient(MousePosition);
 		}
 
-		private void UpdateMouseDrag(Point mouseLocation)
+		private void UpdateMousePan(Point mouseLocation)
 		{
-			viewMatrix.Translate(mouseLocation.X - mouseDragStart.X, mouseLocation.Y - mouseDragStart.Y, MatrixOrder.Append);
+			viewMatrix.Translate(mouseLocation.X - mouseStart.X, mouseLocation.Y - mouseStart.Y, MatrixOrder.Append);
 			matrixUpdated = true;
 
 			Cursor = Cursors.SizeAll;
-			mouseDragStart = mouseLocation;
+			mouseStart = mouseLocation;
 			Invalidate();
 		}
 
-		private void FinishMouseDrag()
+		private void FinishMousePan()
 		{
-			if (interaction == Interaction.Drag) interaction = Interaction.None;
-			if (interaction == Interaction.DragEndMove) interaction = Interaction.EndMove;
-			if (interaction == Interaction.DragOffsetMove) interaction = Interaction.OffsetMove;
+			if (interaction == Interaction.Pan) interaction = Interaction.None;
+			if (interaction == Interaction.PanDuringEndMove) interaction = Interaction.EndMove;
+			if (interaction == Interaction.PanDuringOffsetMove) interaction = Interaction.OffsetMove;
 		}
 
 		private void StartMouseSelect()
 		{
 			interaction = Interaction.Select;
-			mouseDragStart = PointToClient(MousePosition);
+			mouseStart = PointToClient(MousePosition);
 		}
 
 		private void UpdateMouseSelect(Point mouseLocation)
 		{
-			var viewSelectionRectangle = new Rectangle(mouseDragStart.X, mouseDragStart.Y, mouseLocation.X - mouseDragStart.X, mouseLocation.Y - mouseDragStart.Y);
+			var viewSelectionRectangle = new Rectangle(mouseStart.X, mouseStart.Y, mouseLocation.X - mouseStart.X, mouseLocation.Y - mouseStart.Y);
 			var absSelectionRectangle = ViewToAbs(viewSelectionRectangle);
 			var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
 			foreach (var item in items)
@@ -741,7 +741,7 @@ namespace GCEd
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left && interaction == Interaction.None) StartMouseSelect();
-			else if (e.Button == MouseButtons.Middle) StartMouseDrag();
+			else if (e.Button == MouseButtons.Middle) StartMousePan();
 			else if (e.Button == MouseButtons.Right) viewState.SetSelection(Enumerable.Empty<GOperation>());
 			base.OnMouseDown(e);
 		}
@@ -751,15 +751,15 @@ namespace GCEd
 			if (interaction == Interaction.Select) FinishMouseSelect();
 			else if (interaction == Interaction.EndMove) FinishMouseEndMove();
 			else if (interaction == Interaction.OffsetMove) FinishMouseOffsetMove();
-			else if (interaction == Interaction.Drag) FinishMouseDrag();
-			else if (interaction == Interaction.DragEndMove) FinishMouseDrag();
-			else if (interaction == Interaction.DragOffsetMove) FinishMouseDrag();
+			else if (interaction == Interaction.Pan) FinishMousePan();
+			else if (interaction == Interaction.PanDuringEndMove) FinishMousePan();
+			else if (interaction == Interaction.PanDuringOffsetMove) FinishMousePan();
 			base.OnMouseUp(e);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			if (interaction == Interaction.Drag || interaction == Interaction.DragEndMove || interaction == Interaction.DragOffsetMove) UpdateMouseDrag(e.Location);
+			if (interaction == Interaction.Pan || interaction == Interaction.PanDuringEndMove || interaction == Interaction.PanDuringOffsetMove) UpdateMousePan(e.Location);
 			else if (interaction == Interaction.Select) UpdateMouseSelect(e.Location);
 			else if (interaction == Interaction.EndMove) UpdateMouseEndMove(e.Location);
 			else if (interaction == Interaction.OffsetMove) UpdateMouseOffsetMove(e.Location);
