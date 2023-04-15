@@ -286,7 +286,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Shift) ConvertToRelative();
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Control) SelectAll(false);
 			else if (e.KeyCode == Keys.A && ModifierKeys == (Keys.Control | Keys.Shift)) SelectAll(true);
-			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.None) AddBackground();
+			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.Control) AddBackground();
 			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) ToggleCoords();
 			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.Control) Copy();
 			else if (e.KeyCode == Keys.E && ModifierKeys == Keys.None) canvas.StartMouseEndMove();
@@ -299,7 +299,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine(true);
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
-			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) AddText();
+			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.Control) AddText();
 			else if (e.KeyCode == Keys.V && ModifierKeys == Keys.Control) Paste(false);
 			else if (e.KeyCode == Keys.V && ModifierKeys == (Keys.Control | Keys.Shift)) Paste(true);
 			else if (e.KeyCode == Keys.X && ModifierKeys == Keys.Control) Cut();

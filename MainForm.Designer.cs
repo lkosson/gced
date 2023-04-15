@@ -505,7 +505,7 @@
 			// backgroundImageToolStripMenuItem
 			// 
 			backgroundImageToolStripMenuItem.Name = "backgroundImageToolStripMenuItem";
-			backgroundImageToolStripMenuItem.ShortcutKeyDisplayString = "B";
+			backgroundImageToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+B";
 			backgroundImageToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			backgroundImageToolStripMenuItem.Text = "Background image ...";
 			backgroundImageToolStripMenuItem.Click += backgroundImageToolStripMenuItem_Click;
@@ -513,7 +513,7 @@
 			// textShapeToolStripMenuItem
 			// 
 			textShapeToolStripMenuItem.Name = "textShapeToolStripMenuItem";
-			textShapeToolStripMenuItem.ShortcutKeyDisplayString = "T";
+			textShapeToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+T";
 			textShapeToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
 			textShapeToolStripMenuItem.Text = "Text shape ...";
 			textShapeToolStripMenuItem.Click += textShapeToolStripMenuItem_Click;
