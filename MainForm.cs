@@ -76,9 +76,8 @@ namespace GCEd
 			Text = "GCEd [" + openFileDialog.FileName + "]";
 		}
 
-		private void SelectAll()
+		private void SelectAll(bool skipRapid)
 		{
-			var skipRapid = (ModifierKeys & Keys.Alt) == Keys.Alt;
 			var selectedOperations = new List<GOperation>();
 			foreach (var operation in viewState.Operations)
 			{
@@ -204,11 +203,10 @@ namespace GCEd
 			DeleteSelected();
 		}
 
-		private void Paste()
+		private void Paste(bool before)
 		{
 			var code = Clipboard.GetText();
 			if (String.IsNullOrWhiteSpace(code)) return;
-			var before = (ModifierKeys & Keys.Shift) == Keys.Shift;
 			var subProgram = new GProgram();
 			subProgram.Load(new StringReader(code));
 			viewState.SaveUndoState();
@@ -286,7 +284,8 @@ namespace GCEd
 			else if (e.KeyCode == Keys.D3 && ModifierKeys == Keys.Shift) AddG3(true);
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.None) ConvertToAbsolute();
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Shift) ConvertToRelative();
-			else if (e.KeyCode == Keys.A && (ModifierKeys & Keys.Control) == Keys.Control) SelectAll();
+			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Control) SelectAll(false);
+			else if (e.KeyCode == Keys.A && ModifierKeys == (Keys.Control | Keys.Shift)) SelectAll(true);
 			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.None) AddBackground();
 			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) ToggleCoords();
 			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.Control) Copy();
@@ -301,7 +300,8 @@ namespace GCEd
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) AddText();
-			else if (e.KeyCode == Keys.V && (ModifierKeys & Keys.Control) == Keys.Control) Paste();
+			else if (e.KeyCode == Keys.V && ModifierKeys == Keys.Control) Paste(false);
+			else if (e.KeyCode == Keys.V && ModifierKeys == (Keys.Control | Keys.Shift)) Paste(true);
 			else if (e.KeyCode == Keys.X && ModifierKeys == Keys.Control) Cut();
 			else if (e.KeyCode == Keys.Y && ModifierKeys == Keys.Control) Redo();
 			else if (e.KeyCode == Keys.Z && ModifierKeys == Keys.Control) Undo();
@@ -323,9 +323,9 @@ namespace GCEd
 		private void redoToolStripMenuItem_Click(object sender, EventArgs e) => Redo();
 		private void cutToolStripMenuItem_Click(object sender, EventArgs e) => Cut();
 		private void copyToolStripMenuItem_Click(object sender, EventArgs e) => Copy();
-		private void pasteToolStripMenuItem_Click(object sender, EventArgs e) => Paste();
+		private void pasteToolStripMenuItem_Click(object sender, EventArgs e) => Paste(false);
 		private void deleteToolStripMenuItem_Click(object sender, EventArgs e) => DeleteSelected();
-		private void selectAllToolStripMenuItem_Click(object sender, EventArgs e) => SelectAll();
+		private void selectAllToolStripMenuItem_Click(object sender, EventArgs e) => SelectAll(false);
 		private void convertToAbsoluteToolStripMenuItem_Click(object sender, EventArgs e) => ConvertToAbsolute();
 		private void convertToRelativeToolStripMenuItem_Click(object sender, EventArgs e) => ConvertToRelative();
 		private void moveEndpointToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseEndMove();
