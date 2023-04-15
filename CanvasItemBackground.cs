@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
@@ -28,7 +29,7 @@ namespace GCEd
 		{
 			base.OperationChanged();
 
-			if (!String.IsNullOrEmpty(Operation.Line.P)) originalImage = Bitmap.FromFile(Operation.Line.P);
+			if (!String.IsNullOrEmpty(Operation.Line.P) && File.Exists(Operation.Line.P)) originalImage = Bitmap.FromFile(Operation.Line.P);
 			else originalImage = new Bitmap(1, 1);
 			scaledImage = new Bitmap(1, 1);
 
