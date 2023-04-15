@@ -46,6 +46,7 @@ namespace GCEd
 		private void NewFile()
 		{
 			if (!ConfirmAbandonDirty()) return;
+			Environment.CurrentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			viewState.NewProgram();
 			Text = "GCEd";
 		}
@@ -59,6 +60,7 @@ namespace GCEd
 		private void SaveFileAs()
 		{
 			if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+			Environment.CurrentDirectory = Path.GetDirectoryName(saveFileDialog.FileName)!;
 			viewState.SaveProgram(saveFileDialog.FileName);
 			Text = "GCEd [" + saveFileDialog.FileName + "]";
 		}
@@ -67,6 +69,7 @@ namespace GCEd
 		{
 			if (openFileDialog.ShowDialog() != DialogResult.OK) return;
 			if (!ConfirmAbandonDirty()) return;
+			Environment.CurrentDirectory = Path.GetDirectoryName(openFileDialog.FileName)!;
 			viewState.LoadProgram(openFileDialog.FileName);
 			Text = "GCEd [" + openFileDialog.FileName + "]";
 		}
