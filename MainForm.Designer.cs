@@ -61,6 +61,7 @@
 			toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
 			moveEndpointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			moveOffsetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			translateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			showGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			snapToGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -245,7 +246,7 @@
 			// 
 			// editToolStripMenuItem
 			// 
-			editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem, toolStripSeparator3, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, deleteToolStripMenuItem, toolStripSeparator4, selectAllToolStripMenuItem, toolStripSeparator5, convertToAbsoluteToolStripMenuItem, convertToRelativeToolStripMenuItem, toolStripSeparator6, moveEndpointToolStripMenuItem, moveOffsetToolStripMenuItem });
+			editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem, toolStripSeparator3, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, deleteToolStripMenuItem, toolStripSeparator4, selectAllToolStripMenuItem, toolStripSeparator5, convertToAbsoluteToolStripMenuItem, convertToRelativeToolStripMenuItem, toolStripSeparator6, moveEndpointToolStripMenuItem, moveOffsetToolStripMenuItem, translateToolStripMenuItem });
 			editToolStripMenuItem.Name = "editToolStripMenuItem";
 			editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			editToolStripMenuItem.Text = "Edit";
@@ -357,6 +358,14 @@
 			moveOffsetToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			moveOffsetToolStripMenuItem.Text = "Move offset";
 			moveOffsetToolStripMenuItem.Click += moveOffsetToolStripMenuItem_Click;
+			// 
+			// translateToolStripMenuItem
+			// 
+			translateToolStripMenuItem.Name = "translateToolStripMenuItem";
+			translateToolStripMenuItem.ShortcutKeyDisplayString = "T";
+			translateToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+			translateToolStripMenuItem.Text = "Translate";
+			translateToolStripMenuItem.Click += translateToolStripMenuItem_Click;
 			// 
 			// viewToolStripMenuItem
 			// 
@@ -605,5 +614,6 @@
 		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem panzoomToFitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem panViewToSelectionToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem translateToolStripMenuItem;
 	}
 }

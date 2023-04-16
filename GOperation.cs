@@ -37,9 +37,55 @@ namespace GCEd
 		public PointF AbsEnd => new PointF(AbsXEnd, AbsYEnd);
 		public PointF AbsOffset => new PointF(AbsI, AbsJ);
 
+		public GOperation? OriginalValues { get; private set; }
+
 		public GOperation(GLine line)
 		{
 			Line = line;
+		}
+
+		public void SaveOriginalValues()
+		{
+			OriginalValues = new GOperation(Line)
+			{
+				AbsXStart = AbsXStart,
+				AbsYStart = AbsYStart,
+				AbsZStart = AbsZStart,
+
+				AbsXEnd = AbsXEnd,
+				AbsYEnd = AbsYEnd,
+				AbsZEnd = AbsZEnd,
+
+				AbsI = AbsI,
+				AbsJ = AbsJ,
+				AbsK = AbsK,
+
+				F = F,
+				S = S,
+				Active = Active,
+				Absolute = Absolute
+			};
+		}
+
+		public void RestoreOriginalValues()
+		{
+			if (OriginalValues == null) return;
+			AbsXStart = OriginalValues.AbsXStart;
+			AbsYStart = OriginalValues.AbsYStart;
+			AbsZStart = OriginalValues.AbsZStart;
+
+			AbsXEnd = OriginalValues.AbsXEnd;
+			AbsYEnd = OriginalValues.AbsYEnd;
+			AbsZEnd = OriginalValues.AbsZEnd;
+
+			AbsI = OriginalValues.AbsI;
+			AbsJ = OriginalValues.AbsJ;
+			AbsK = OriginalValues.AbsK;
+
+			F = OriginalValues.F;
+			S = OriginalValues.S;
+			Active = OriginalValues.Active;
+			Absolute = OriginalValues.Absolute;
 		}
 
 		public void Execute(GContext context)

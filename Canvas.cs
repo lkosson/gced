@@ -47,13 +47,14 @@ namespace GCEd
 		private Matrix inverseViewMatrix;
 		private Point mouseStart;
 		private PointF originalAbsEnd;
+		private PointF translateDistance;
 		private bool matrixUpdated;
 		private CanvasStyle style;
 		private IEnumerable<CanvasItem> items;
 		private Interaction interaction;
 		private bool panningToSelectionSuspended;
 
-		private enum Interaction { None, Select, Pan, EndMove, OffsetMove, PanDuringEndMove, PanDuringOffsetMove }
+		private enum Interaction { None, Select, Pan, EndMove, OffsetMove, PanDuringEndMove, PanDuringOffsetMove, Translate }
 
 		private float GridMinorStep => (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
 		private float GridMajorStep => GridMinorStep * 10;
@@ -651,6 +652,64 @@ namespace GCEd
 			Invalidate();
 		}
 
+		public void StartMouseTranslate()
+		{
+			SaveOriginalValuesForSelection();
+			interaction = Interaction.Translate;
+			mouseStart = PointToClient(MousePosition);
+			translateDistance = new PointF();
+		}
+
+		private void UpdateMouseTranslate(Point mouseLocation)
+		{
+			var absMouse = ViewToAbs(mouseLocation);
+			var absStart = ViewToAbs(mouseStart);
+			var absDeltaX = absMouse.X - absStart.X;
+			var absDeltaY = absMouse.Y - absStart.Y;
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.AbsXStart += absDeltaX;
+				item.Operation.AbsYStart += absDeltaY;
+				item.Operation.AbsXEnd += absDeltaX;
+				item.Operation.AbsYEnd += absDeltaY;
+				item.Operation.AbsI += absDeltaX;
+				item.Operation.AbsJ += absDeltaY;
+				item.OperationChanged();
+			}
+
+			translateDistance = new PointF(translateDistance.X + absDeltaX, translateDistance.Y + absDeltaY);
+			mouseStart = mouseLocation;
+			Invalidate();
+		}
+
+		private void FinishMouseTranslate()
+		{
+			RestoreOriginalValuesForSelection();
+			viewState.SaveUndoState();
+			viewState.Translate(viewState.SelectedOperations, (decimal)translateDistance.X, (decimal)translateDistance.Y);
+			interaction = Interaction.None;
+			Invalidate();
+		}
+
+		private void SaveOriginalValuesForSelection()
+		{
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.SaveOriginalValues();
+			}
+		}
+
+		private void RestoreOriginalValuesForSelection()
+		{
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.RestoreOriginalValues();
+			}
+		}
+
 		private void UpdateMouseHover(Point mouseLocation)
 		{
 			var absPos = ViewToAbs(mouseLocation);
@@ -735,7 +794,7 @@ namespace GCEd
 
 		public void Abort()
 		{
-			if (interaction == Interaction.EndMove || interaction == Interaction.OffsetMove) AbortMove();
+			AbortMove();
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
@@ -754,6 +813,7 @@ namespace GCEd
 			else if (interaction == Interaction.Pan) FinishMousePan();
 			else if (interaction == Interaction.PanDuringEndMove) FinishMousePan();
 			else if (interaction == Interaction.PanDuringOffsetMove) FinishMousePan();
+			else if (interaction == Interaction.Translate) FinishMouseTranslate();
 			base.OnMouseUp(e);
 		}
 
@@ -763,6 +823,7 @@ namespace GCEd
 			else if (interaction == Interaction.Select) UpdateMouseSelect(e.Location);
 			else if (interaction == Interaction.EndMove) UpdateMouseEndMove(e.Location);
 			else if (interaction == Interaction.OffsetMove) UpdateMouseOffsetMove(e.Location);
+			else if (interaction == Interaction.Translate) UpdateMouseTranslate(e.Location);
 			else if (interaction == Interaction.None) UpdateMouseHover(e.Location);
 			if (ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
 			base.OnMouseMove(e);

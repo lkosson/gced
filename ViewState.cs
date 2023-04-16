@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -150,6 +151,75 @@ namespace GCEd
 				if (operation.Line.X.HasValue) operation.Line.X = (decimal)(operation.AbsXEnd - operation.AbsXStart);
 				if (operation.Line.Y.HasValue) operation.Line.Y = (decimal)(operation.AbsYEnd - operation.AbsYStart);
 			}
+			RunProgram();
+		}
+
+		public void Translate(IEnumerable<GOperation> operations, decimal offsetX, decimal offsetY)
+		{
+			var operationsToTranslate = new Dictionary<GLine, GOperation>();
+			foreach (var operation in operations)
+			{
+				operationsToTranslate[operation.Line] = operation;
+			}
+
+			var first = true;
+			GOperation? last = null;
+			for (var node = program.Lines.First; node != null; node = node.Next)
+			{
+				if (!node.Value.IsVisible) continue;
+				if (!operationsToTranslate.TryGetValue(node.Value, out var operation))
+				{
+					if (!first && last != null)
+					{
+						if (last.Line.Instruction == GInstruction.G0)
+						{
+							last.Line.X = last.Line.X.GetValueOrDefault() - offsetX;
+							last.Line.Y = last.Line.Y.GetValueOrDefault() - offsetY;
+						}
+						else if (node.Value.Instruction == GInstruction.G0)
+						{
+							if (!last.Absolute)
+							{
+								node.Value.X = node.Value.X.GetValueOrDefault() - offsetX;
+								node.Value.Y = node.Value.Y.GetValueOrDefault() - offsetY;
+							}
+						}
+						else
+						{
+							if (last.Absolute) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, X = (decimal)last.AbsXEnd, Y = (decimal)last.AbsYEnd });
+							else program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, X = -offsetX, Y = -offsetY });
+						}
+					}
+					first = true;
+					continue;
+				}
+
+				if (first)
+				{
+					var previousLine = node.Previous?.Value;
+					if (previousLine != null && previousLine.Instruction == GInstruction.G0)
+					{
+						previousLine.X = previousLine.X.GetValueOrDefault() + offsetX;
+						previousLine.Y = previousLine.Y.GetValueOrDefault() + offsetY;
+					}
+					else
+					{
+						if (operation.Absolute) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, X = (decimal)operation.AbsXStart + offsetX, Y = (decimal)operation.AbsYStart + offsetY });
+						else program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, X = offsetX, Y = offsetY });
+					}
+
+					first = false;
+				}
+
+				if (operation.Absolute)
+				{
+					node.Value.X = node.Value.X.GetValueOrDefault() + offsetX;
+					node.Value.Y = node.Value.Y.GetValueOrDefault() + offsetY;
+				}
+
+				last = operation;
+			}
+
 			RunProgram();
 		}
 
