@@ -46,7 +46,6 @@ namespace GCEd
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
 		private Point mouseStart;
-		private PointF originalAbsEnd;
 		private PointF translateDistance;
 		private bool matrixUpdated;
 		private CanvasStyle style;
@@ -512,8 +511,8 @@ namespace GCEd
 		public void StartMouseEndMove()
 		{
 			if (!viewState.SelectedOperations.Any() || viewState.LastSelectedOperation == null) return;
+			SaveOriginalValuesForSelection();
 			interaction = Interaction.EndMove;
-			originalAbsEnd = viewState.LastSelectedOperation.AbsEnd;
 			UpdateMouseEndMove(PointToClient(MousePosition));
 		}
 
@@ -542,7 +541,7 @@ namespace GCEd
 					{
 						item.Operation.AbsXEnd = absPos.X;
 						item.Operation.AbsYEnd = absPos.Y;
-						var newAbsOffset = Geometry.SimilarTriangle(item.Operation.AbsStart, originalAbsEnd, new PointF(item.Operation.AbsXStart + (float)item.Operation.Line.I.GetValueOrDefault(), item.Operation.AbsYStart + (float)item.Operation.Line.J.GetValueOrDefault()), item.Operation.AbsStart, item.Operation.AbsEnd);
+						var newAbsOffset = Geometry.SimilarTriangle(item.Operation.AbsStart, item.Operation.OriginalValues!.AbsEnd, new PointF(item.Operation.AbsXStart + (float)item.Operation.Line.I.GetValueOrDefault(), item.Operation.AbsYStart + (float)item.Operation.Line.J.GetValueOrDefault()), item.Operation.AbsStart, item.Operation.AbsEnd);
 						if (Single.IsFinite(newAbsOffset.X) && Single.IsFinite(newAbsOffset.Y))
 						{
 							item.Operation.AbsI = newAbsOffset.X;
@@ -785,7 +784,7 @@ namespace GCEd
 			}
 
 			var previousOperation = items.Reverse().Select(item => item.Operation).SkipWhile(operation => !operationsToDelete.Contains(operation)).Skip(1).FirstOrDefault();
-			viewState.DeleteOperations(operationsToDelete);
+			if (operationsToDelete.Any()) viewState.DeleteOperations(operationsToDelete);
 			if (previousOperation != null) viewState.SetSelection(new[] { previousOperation });
 			viewState.RunProgram();
 			interaction = Interaction.None;
