@@ -202,6 +202,14 @@ namespace GCEd
 						previousLine.X = previousLine.X.GetValueOrDefault() + offsetX;
 						previousLine.Y = previousLine.Y.GetValueOrDefault() + offsetY;
 					}
+					else if (node.Value.Instruction == GInstruction.G0)
+					{
+						if (!operation.Absolute)
+						{
+							node.Value.X = node.Value.X.GetValueOrDefault() + offsetX;
+							node.Value.Y = node.Value.Y.GetValueOrDefault() + offsetY;
+						}
+					}
 					else
 					{
 						if (operation.Absolute) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, X = (decimal)operation.AbsXStart + offsetX, Y = (decimal)operation.AbsYStart + offsetY });
