@@ -116,6 +116,12 @@ namespace GCEd
 			viewState.ConvertToRelative(viewState.SelectedOperations);
 		}
 
+		private void ConvertToOutline()
+		{
+			viewState.SaveUndoState();
+			viewState.ConvertToOutline(viewState.SelectedOperations, 1f);
+		}
+
 		private void AddNewLine(bool before)
 		{
 			viewState.SaveUndoState();
@@ -302,6 +308,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.Shift) canvas.PanViewToSelection();
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.None) AddNewLine(false);
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine(true);
+			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) ConvertToOutline();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
 			//else if (e.KeyCode == Keys.S && ModifierKeys == (Keys.Control | Keys.Shift)) ToggleSnapToAxes();

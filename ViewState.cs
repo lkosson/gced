@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -322,6 +322,104 @@ namespace GCEd
 			var newLines = new HashSet<GLine>(subprogram.Lines);
 			var newOperations = operations.Where(operation => newLines.Contains(operation.Line));
 			SetSelection(newOperations);
+		}
+
+		public void ConvertToOutline(IEnumerable<GOperation> operations, float thickness)
+		{
+			var elements = GetLineAndNodeForOperations(operations);
+
+			var newLines = new HashSet<GLine>();
+			var leftOutline = new GProgram();
+			var rightOutline = new GProgram();
+
+			foreach (var (line, operation, node, previousInExtent, nextInExtent) in elements)
+			{
+				if (line.IsLine)
+				{
+					var currDirection = Vector2.Normalize(operation.AbsEnd - operation.AbsStart);
+					var prevDirection = previousInExtent == null ? currDirection : Vector2.Normalize(previousInExtent.AbsEnd - previousInExtent.AbsStart);
+					var nextDirection = nextInExtent == null ? currDirection : Vector2.Normalize(nextInExtent.AbsEnd - nextInExtent.AbsStart);
+					var startTangent = Vector2.Normalize((prevDirection + currDirection) / 2);
+					var endTangent = Vector2.Normalize((currDirection + nextDirection) / 2);
+					var startNormal = new Vector2(-startTangent.Y, startTangent.X);
+					var endNormal = new Vector2(-endTangent.Y, endTangent.X);
+					var startDistance = thickness / Vector2.Dot(currDirection, startTangent);
+					var endDistance = thickness / Vector2.Dot(currDirection, endTangent);
+					var leftStartOffset = startNormal * startDistance;
+					var rightStartOffset = -startNormal * startDistance;
+					var leftEndOffset = endNormal * endDistance;
+					var rightEndOffset = -endNormal * endDistance;
+
+					if (previousInExtent == null)
+					{
+						rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXStart + rightStartOffset.X), Y = (decimal)(operation.AbsYStart + rightStartOffset.Y) });
+					}
+
+					var leftSegment = line.Clone();
+					leftSegment.X = (decimal)(operation.AbsXStart + leftStartOffset.X);
+					leftSegment.Y = (decimal)(operation.AbsYStart + leftStartOffset.Y);
+					leftOutline.Lines.AddFirst(leftSegment);
+
+					var rightSegment = line.Clone();
+					rightSegment.X = (decimal)(operation.AbsXEnd + rightEndOffset.X);
+					rightSegment.Y = (decimal)(operation.AbsYEnd + rightEndOffset.Y);
+					rightOutline.Lines.AddLast(rightSegment);
+
+					if (nextInExtent == null)
+					{
+						leftOutline.Lines.AddFirst(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXEnd + leftEndOffset.X), Y = (decimal)(operation.AbsYEnd + leftEndOffset.Y) });
+						leftOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXEnd), Y = (decimal)(operation.AbsYEnd) });
+					}
+				}
+				else if (line.IsArc)
+				{
+
+				}
+				else continue;
+
+				if (nextInExtent == null)
+				{
+					var insertionPoint = node;
+					foreach (var newLine in rightOutline.Lines)
+					{
+						newLines.Add(newLine);
+						insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
+					}
+
+					foreach (var newLine in leftOutline.Lines)
+					{
+						newLines.Add(newLine);
+						insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
+					}
+
+					rightOutline.Lines.Clear();
+					leftOutline.Lines.Clear();
+				}
+
+				Program.Lines.Remove(node);
+			}
+
+			RunProgram();
+			var newOperations = operations.Where(operation => newLines.Contains(operation.Line));
+			SetSelection(newOperations);
+		}
+
+		private IEnumerable<(GLine line, GOperation operation, LinkedListNode<GLine> node, GOperation? previousInExtent, GOperation? nextInExtent)> GetLineAndNodeForOperations(IEnumerable<GOperation> operations)
+		{
+			var operationToLineMapping = new Dictionary<GLine, GOperation>();
+			foreach (var operation in operations)
+			{
+				operationToLineMapping[operation.Line] = operation;
+			}
+			var result = new List<(GLine line, GOperation operation, LinkedListNode<GLine> node, GOperation? previousInExtent, GOperation? nextInExtent)>();
+
+			for (var node = program.Lines.First; node != null; node = node.Next)
+			{
+				if (!operationToLineMapping.TryGetValue(node.Value, out var operation)) continue;
+				result.Add((node.Value, operation, node, node.Previous == null ? null : operationToLineMapping.GetValueOrDefault(node.Previous.Value), node.Next == null ? null : operationToLineMapping.GetValueOrDefault(node.Next.Value)));
+			}
+			return result;
+
 		}
 	}
 }
