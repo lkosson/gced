@@ -33,13 +33,13 @@ namespace GCEd
 			}
 		}
 
-		public bool ShowFPS { get; set; } = true;
+		public bool ShowFPS { get; set; } = false;
 		public bool ShowCursorCoords { get; set; } = true;
 		public bool ShowItemCoords { get; set; } = true;
 		public bool ShowMinorGrid { get; set; } = true;
 		public bool ShowMajorGrid { get; set; } = true;
 		public bool ShowOriginGrid { get; set; } = true;
-		public bool SnapToGrid { get; set; } = false;
+		public bool SnapToGrid { get; set; } = true;
 		public bool SnapToItems { get; set; } = true;
 
 		private ViewState viewState;
