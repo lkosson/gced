@@ -33,9 +33,11 @@ namespace GCEd
 			else originalImage = new Bitmap(1, 1);
 			scaledImage = new Bitmap(1, 1);
 
+			var initialScale = (float)Operation.Line.K.GetValueOrDefault(1);
+
 			if (Operation.Line.I.HasValue) width = (float)Operation.Line.I.Value;
 			else if (Operation.Line.J.HasValue) width = originalImage.Width * (float)Operation.Line.J / originalImage.Height;
-			else width = originalImage.Width / originalImage.HorizontalResolution * 25.4f;
+			else width = originalImage.Width * initialScale / originalImage.HorizontalResolution * 25.4f;
 
 			if (Operation.Line.J.HasValue) height = (float)Operation.Line.J.Value;
 			else height = originalImage.Height * width / originalImage.Width;

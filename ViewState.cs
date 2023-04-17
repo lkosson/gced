@@ -90,15 +90,18 @@ namespace GCEd
 		{
 			var linesToDelete = new HashSet<GLine>(operations.Select(operation => operation.Line));
 			var lineNodesToDelete = new List<LinkedListNode<GLine>>();
+			GLine? newSelection = null;
 			for (var node = program.Lines.First; node != null; node = node.Next)
 			{
 				if (!linesToDelete.Contains(node.Value)) continue;
+				if (node.Previous != null && newSelection == null) newSelection = node.Previous.Value;
 				lineNodesToDelete.Add(node);
 			}
 			foreach (var node in lineNodesToDelete)
 			{
 				program.Lines.Remove(node);
 			}
+			if (newSelection != null) SetSelection(Operations.Where(operation => operation.Line == newSelection));
 			RunProgram();
 		}
 
