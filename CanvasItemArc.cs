@@ -65,7 +65,7 @@ namespace GCEd
 				: Hovered ? style.HoveredActivePen
 				: style.ActivePen;
 
-			if (radius == 0) g.DrawLine(pen, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsXEnd, Operation.AbsYEnd);
+			if (radius == 0 || !Single.IsFinite(radius)) g.DrawLine(pen, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsXEnd, Operation.AbsYEnd);
 			else g.DrawArc(pen, Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius, angle, sweep);
 		}
 
