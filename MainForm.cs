@@ -237,6 +237,11 @@ namespace GCEd
 			canvas.SnapToItems = !canvas.SnapToItems;
 		}
 
+		public void ToggleSnapToAxes()
+		{
+			canvas.SnapToAxes = !canvas.SnapToAxes;
+		}
+
 		public void ToggleFPS()
 		{
 			canvas.ShowFPS = !canvas.ShowFPS;
@@ -299,6 +304,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine(true);
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
+			//else if (e.KeyCode == Keys.S && ModifierKeys == (Keys.Control | Keys.Shift)) ToggleSnapToAxes();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) canvas.StartMouseTranslate();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.Control) AddText();
 			else if (e.KeyCode == Keys.V && ModifierKeys == Keys.Control) Paste(false);
@@ -350,5 +356,6 @@ namespace GCEd
 		private void panzoomToFitToolStripMenuItem_Click(object sender, EventArgs e) => canvas.PanZoomViewToFit();
 		private void panViewToSelectionToolStripMenuItem_Click(object sender, EventArgs e) => canvas.PanViewToSelection();
 		private void translateToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseTranslate();
+		private void snapToAxesToolStripMenuItem_Click(object sender, EventArgs e) => ToggleSnapToAxes();
 	}
 }

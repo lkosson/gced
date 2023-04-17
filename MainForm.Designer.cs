@@ -66,6 +66,7 @@
 			showGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			snapToGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			snapToItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			snapToAxesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			showCoordinatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			showPerformanceStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			panzoomToFitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,7 +98,15 @@
 			canvas.Dock = System.Windows.Forms.DockStyle.Fill;
 			canvas.Location = new System.Drawing.Point(0, 0);
 			canvas.Name = "canvas";
+			canvas.ShowCursorCoords = true;
+			canvas.ShowFPS = false;
+			canvas.ShowItemCoords = true;
+			canvas.ShowMajorGrid = true;
+			canvas.ShowMinorGrid = true;
+			canvas.ShowOriginGrid = true;
 			canvas.Size = new System.Drawing.Size(547, 514);
+			canvas.SnapToGrid = true;
+			canvas.SnapToItems = true;
 			canvas.TabIndex = 0;
 			// 
 			// operationProperties
@@ -361,7 +370,7 @@
 			// 
 			// viewToolStripMenuItem
 			// 
-			viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { showGridToolStripMenuItem, snapToGridToolStripMenuItem, snapToItemsToolStripMenuItem, showCoordinatesToolStripMenuItem, showPerformanceStatsToolStripMenuItem, panzoomToFitToolStripMenuItem, panViewToSelectionToolStripMenuItem });
+			viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { showGridToolStripMenuItem, snapToGridToolStripMenuItem, snapToItemsToolStripMenuItem, snapToAxesToolStripMenuItem, showCoordinatesToolStripMenuItem, showPerformanceStatsToolStripMenuItem, panzoomToFitToolStripMenuItem, panViewToSelectionToolStripMenuItem });
 			viewToolStripMenuItem.Name = "viewToolStripMenuItem";
 			viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			viewToolStripMenuItem.Text = "View";
@@ -389,6 +398,14 @@
 			snapToItemsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
 			snapToItemsToolStripMenuItem.Text = "Snap to items";
 			snapToItemsToolStripMenuItem.Click += snapToItemsToolStripMenuItem_Click;
+			// 
+			// snapToAxesToolStripMenuItem
+			// 
+			snapToAxesToolStripMenuItem.Name = "snapToAxesToolStripMenuItem";
+			snapToAxesToolStripMenuItem.ShortcutKeyDisplayString = "";
+			snapToAxesToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+			snapToAxesToolStripMenuItem.Text = "Snap to axes";
+			snapToAxesToolStripMenuItem.Click += snapToAxesToolStripMenuItem_Click;
 			// 
 			// showCoordinatesToolStripMenuItem
 			// 
@@ -607,5 +624,6 @@
 		private System.Windows.Forms.ToolStripMenuItem panzoomToFitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem panViewToSelectionToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem translateToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem snapToAxesToolStripMenuItem;
 	}
 }

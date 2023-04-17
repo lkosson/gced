@@ -41,6 +41,7 @@ namespace GCEd
 		public bool ShowOriginGrid { get; set; } = true;
 		public bool SnapToGrid { get; set; } = true;
 		public bool SnapToItems { get; set; } = true;
+		public bool SnapToAxes { get; set; } = true;
 
 		private ViewState viewState;
 		private Matrix viewMatrix;
@@ -381,19 +382,23 @@ namespace GCEd
 			var bestYHintDistance = HintSnapDistance;
 			var bestXHint = Single.NaN;
 			var bestYHint = Single.NaN;
-			foreach (var hint in hints)
+
+			if (SnapToAxes)
 			{
-				var hintXDistance = Math.Abs(hint.X - point.X);
-				var hintYDistance = Math.Abs(hint.Y - point.Y);
-				if (hintXDistance < bestXHintDistance)
+				foreach (var hint in hints)
 				{
-					bestXHint = hint.X;
-					bestXHintDistance = hintXDistance;
-				}
-				if (hintYDistance < bestYHintDistance)
-				{
-					bestYHint = hint.Y;
-					bestYHintDistance = hintYDistance;
+					var hintXDistance = Math.Abs(hint.X - point.X);
+					var hintYDistance = Math.Abs(hint.Y - point.Y);
+					if (hintXDistance < bestXHintDistance)
+					{
+						bestXHint = hint.X;
+						bestXHintDistance = hintXDistance;
+					}
+					if (hintYDistance < bestYHintDistance)
+					{
+						bestYHint = hint.Y;
+						bestYHintDistance = hintYDistance;
+					}
 				}
 			}
 
