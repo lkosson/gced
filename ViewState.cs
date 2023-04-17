@@ -328,69 +328,61 @@ namespace GCEd
 		{
 			var elements = GetLineAndNodeForOperations(operations);
 
-			var newLines = new HashSet<GLine>();
 			var leftOutline = new GProgram();
 			var rightOutline = new GProgram();
 
 			foreach (var (line, operation, node, previousInExtent, nextInExtent) in elements)
 			{
-				if (line.IsLine)
+				if (!line.IsVisible) continue;
+
+				var currTangents = Geometry.TangentsForOperation(operation);
+				var (startTangent, endTangent) = Geometry.TangentsForOperation(operation, previousInExtent, nextInExtent);
+				var startNormal = Geometry.Normal(startTangent);
+				var endNormal = Geometry.Normal(endTangent);
+				var startDistance = thickness / Vector2.Dot(currTangents.startTangent, startTangent);
+				var endDistance = thickness / Vector2.Dot(currTangents.endTangent, endTangent);
+				var leftStartOffset = startNormal * startDistance;
+				var rightStartOffset = -startNormal * startDistance;
+				var leftEndOffset = endNormal * endDistance;
+				var rightEndOffset = -endNormal * endDistance;
+
+				if (previousInExtent == null)
 				{
-					var currDirection = Vector2.Normalize(operation.AbsEnd - operation.AbsStart);
-					var prevDirection = previousInExtent == null ? currDirection : Vector2.Normalize(previousInExtent.AbsEnd - previousInExtent.AbsStart);
-					var nextDirection = nextInExtent == null ? currDirection : Vector2.Normalize(nextInExtent.AbsEnd - nextInExtent.AbsStart);
-					var startTangent = Vector2.Normalize((prevDirection + currDirection) / 2);
-					var endTangent = Vector2.Normalize((currDirection + nextDirection) / 2);
-					var startNormal = new Vector2(-startTangent.Y, startTangent.X);
-					var endNormal = new Vector2(-endTangent.Y, endTangent.X);
-					var startDistance = thickness / Vector2.Dot(currDirection, startTangent);
-					var endDistance = thickness / Vector2.Dot(currDirection, endTangent);
-					var leftStartOffset = startNormal * startDistance;
-					var rightStartOffset = -startNormal * startDistance;
-					var leftEndOffset = endNormal * endDistance;
-					var rightEndOffset = -endNormal * endDistance;
-
-					if (previousInExtent == null)
-					{
-						rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXStart + rightStartOffset.X), Y = (decimal)(operation.AbsYStart + rightStartOffset.Y) });
-					}
-
-					var leftSegment = line.Clone();
-					leftSegment.X = (decimal)(operation.AbsXStart + leftStartOffset.X);
-					leftSegment.Y = (decimal)(operation.AbsYStart + leftStartOffset.Y);
-					leftOutline.Lines.AddFirst(leftSegment);
-
-					var rightSegment = line.Clone();
-					rightSegment.X = (decimal)(operation.AbsXEnd + rightEndOffset.X);
-					rightSegment.Y = (decimal)(operation.AbsYEnd + rightEndOffset.Y);
-					rightOutline.Lines.AddLast(rightSegment);
-
-					if (nextInExtent == null)
-					{
-						leftOutline.Lines.AddFirst(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXEnd + leftEndOffset.X), Y = (decimal)(operation.AbsYEnd + leftEndOffset.Y) });
-						leftOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXEnd), Y = (decimal)(operation.AbsYEnd) });
-					}
+					rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXStart + rightStartOffset.X), Y = (decimal)(operation.AbsYStart + rightStartOffset.Y) });
 				}
-				else if (line.IsArc)
+
+				var leftSegment = line.Clone();
+				leftSegment.X = (decimal)(operation.AbsXStart + leftStartOffset.X);
+				leftSegment.Y = (decimal)(operation.AbsYStart + leftStartOffset.Y);
+				if (leftSegment.IsArc)
 				{
-
+					leftSegment.Instruction = leftSegment.Instruction == GInstruction.G2 ? GInstruction.G3 : GInstruction.G2;
+					leftSegment.I = (decimal)(operation.AbsOffset.X - operation.AbsXEnd - rightStartOffset.X);
+					leftSegment.J = (decimal)(operation.AbsOffset.Y - operation.AbsYEnd - rightStartOffset.Y);
 				}
-				else continue;
+				leftOutline.Lines.AddFirst(leftSegment);
+
+				var rightSegment = line.Clone();
+				rightSegment.X = (decimal)(operation.AbsXEnd + rightEndOffset.X);
+				rightSegment.Y = (decimal)(operation.AbsYEnd + rightEndOffset.Y);
+				if (rightSegment.IsArc)
+				{
+					rightSegment.I = (decimal)(operation.AbsOffset.X - operation.AbsXStart - rightStartOffset.X);
+					rightSegment.J = (decimal)(operation.AbsOffset.Y - operation.AbsYStart - rightStartOffset.Y);
+				}
+				rightOutline.Lines.AddLast(rightSegment);
+
+				if (nextInExtent == null)
+				{
+					leftOutline.Lines.AddFirst(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXEnd + leftEndOffset.X), Y = (decimal)(operation.AbsYEnd + leftEndOffset.Y) });
+					leftOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXEnd), Y = (decimal)(operation.AbsYEnd) });
+				}
 
 				if (nextInExtent == null)
 				{
 					var insertionPoint = node;
-					foreach (var newLine in rightOutline.Lines)
-					{
-						newLines.Add(newLine);
-						insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
-					}
-
-					foreach (var newLine in leftOutline.Lines)
-					{
-						newLines.Add(newLine);
-						insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
-					}
+					foreach (var newLine in rightOutline.Lines) insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
+					foreach (var newLine in leftOutline.Lines) insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
 
 					rightOutline.Lines.Clear();
 					leftOutline.Lines.Clear();
@@ -400,8 +392,6 @@ namespace GCEd
 			}
 
 			RunProgram();
-			var newOperations = operations.Where(operation => newLines.Contains(operation.Line));
-			SetSelection(newOperations);
 		}
 
 		private IEnumerable<(GLine line, GOperation operation, LinkedListNode<GLine> node, GOperation? previousInExtent, GOperation? nextInExtent)> GetLineAndNodeForOperations(IEnumerable<GOperation> operations)

@@ -5,6 +5,11 @@ namespace GCEd
 {
 	static class Geometry
 	{
+		public static Vector2 Normal(Vector2 vector)
+		{
+			return new Vector2(-vector.Y, vector.X);
+		}
+
 		public static float LineLength(Vector2 lineOffset)
 		{
 			return lineOffset.Length();
@@ -89,6 +94,38 @@ namespace GCEd
 			var newACDeltaX = (float)(newACLength * Math.Sin(originalACAngle + newABAngle - originalABAngle));
 			var newACDeltaY = (float)(newACLength * Math.Cos(originalACAngle + newABAngle - originalABAngle));
 			return new Vector2(newA.X + newACDeltaX, newA.Y + newACDeltaY);
+		}
+
+		public static (Vector2 startTangent, Vector2 endTangent) TangentsForOperation(GOperation operation)
+		{
+			if (operation.Line.IsLine)
+			{
+				var direction = Vector2.Normalize(operation.AbsEnd - operation.AbsStart);
+				return (direction, direction);
+			}
+			else if (operation.Line.Instruction == GInstruction.G2)
+			{
+				var startRadial = Vector2.Normalize(operation.AbsOffset - operation.AbsStart);
+				var endRadial = Vector2.Normalize(operation.AbsOffset - operation.AbsEnd);
+				return (Normal(startRadial), Normal(endRadial));
+			}
+			else if (operation.Line.Instruction == GInstruction.G3)
+			{
+				var startRadial = Vector2.Normalize(operation.AbsStart - operation.AbsOffset);
+				var endRadial = Vector2.Normalize(operation.AbsEnd - operation.AbsOffset);
+				return (Normal(startRadial), Normal(endRadial));
+			}
+			else return (Vector2.Zero, Vector2.Zero);
+		}
+
+		public static (Vector2 startTangent, Vector2 endTangent) TangentsForOperation(GOperation operation, GOperation? prevOperation, GOperation? nextOperation)
+		{
+			var tangents = TangentsForOperation(operation);
+			var prevTangent = prevOperation == null ? tangents.startTangent : TangentsForOperation(prevOperation).endTangent;
+			var nextTangent = nextOperation == null ? tangents.endTangent : TangentsForOperation(nextOperation).startTangent;
+			var startTangent = Vector2.Normalize((prevTangent + tangents.startTangent) / 2);
+			var endTangent = Vector2.Normalize((tangents.endTangent + nextTangent) / 2);
+			return (startTangent, endTangent);
 		}
 	}
 }
