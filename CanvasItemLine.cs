@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +37,7 @@ namespace GCEd
 			g.DrawLine(pen, Operation.AbsXStart, Operation.AbsYStart, Operation.AbsXEnd, Operation.AbsYEnd);
 		}
 
-		public override float Distance(PointF p)
+		public override float Distance(Vector2 p)
 		{
 			if (AbsBoundingBox == default) return base.Distance(p);
 			return Geometry.DistanceBetweenLineAndPoint(Operation.AbsStart, Operation.AbsEnd, p);

@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
 namespace GCEd
 {
@@ -33,9 +27,9 @@ namespace GCEd
 		public bool Active { get; set; }
 		public bool Absolute { get; set; }
 
-		public PointF AbsStart => new PointF(AbsXStart, AbsYStart);
-		public PointF AbsEnd => new PointF(AbsXEnd, AbsYEnd);
-		public PointF AbsOffset => new PointF(AbsI, AbsJ);
+		public Vector2 AbsStart => new Vector2(AbsXStart, AbsYStart);
+		public Vector2 AbsEnd => new Vector2(AbsXEnd, AbsYEnd);
+		public Vector2 AbsOffset => new Vector2(AbsI, AbsJ);
 
 		public GOperation? OriginalValues { get; private set; }
 
@@ -166,7 +160,7 @@ namespace GCEd
 		{
 			public bool Equals(GOperation? x, GOperation? y) => Object.ReferenceEquals(x?.Line, y?.Line);
 
-			public int GetHashCode([DisallowNull] GOperation obj) => obj.Line == null ? 0 : obj.Line.GetHashCode();
+			public int GetHashCode(GOperation obj) => obj.Line == null ? 0 : obj.Line.GetHashCode();
 		}
 	}
 }

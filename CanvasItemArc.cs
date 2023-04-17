@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
+using System.Numerics;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,7 +70,7 @@ namespace GCEd
 			else g.DrawArc(pen, Operation.AbsI - radius, Operation.AbsJ - radius, 2 * radius, 2 * radius, angle, sweep);
 		}
 
-		public override float Distance(PointF p)
+		public override float Distance(Vector2 p)
 		{
 			var pointAngle = 90 - (float)(Geometry.LineAngle(Operation.AbsOffset, p) * 180 / Math.PI);
 			if (pointAngle < 0) pointAngle += 360;

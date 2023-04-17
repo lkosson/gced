@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -127,20 +128,20 @@ namespace GCEd
 
 			var program = new GProgram();
 
-			var currentPoint = new PointF(0, 0);
-			var startPoint = new PointF(0, 0);
-			var bezierPoints = new List<PointF>(4);
+			var currentPoint = new Vector2(0, 0);
+			var startPoint = new Vector2(0, 0);
+			var bezierPoints = new List<Vector2>(4);
 
 			for (int i = 0; i < pathData.Points.Length; i++)
 			{
 				var type = (PathPointType)pathData.Types[i];
-				var point = pathData.Points[i];
+				var pointF = pathData.Points[i];
 				var start = type == PathPointType.Start;
 				var end = (type & PathPointType.CloseSubpath) == PathPointType.CloseSubpath;
 				var line = (type & PathPointType.PathTypeMask) == PathPointType.Line;
 				var curve = (type & PathPointType.PathTypeMask) == PathPointType.Bezier;
 
-				point = new PointF(point.X, -point.Y);
+				var point = new Vector2(pointF.X, -pointF.Y);
 
 				if (start)
 				{
@@ -245,7 +246,7 @@ namespace GCEd
 			textBoxHeight.PlaceholderText = height.ToString("0.000", CultureInfo.InvariantCulture);
 		}
 
-		private PointF BezierEval(IList<PointF> points, double t)
+		private Vector2 BezierEval(IList<Vector2> points, double t)
 		{
 			var t1 = 1 - t;
 			var c1 = t1 * t1 * t1;
@@ -254,10 +255,10 @@ namespace GCEd
 			var c4 = t * t * t;
 			var x = points[0].X * c1 + points[1].X * c2 + points[2].X * c3 + points[3].X * c4;
 			var y = points[0].Y * c1 + points[1].Y * c2 + points[2].Y * c3 + points[3].Y * c4;
-			return new PointF((float)x, (float)y);
+			return new Vector2((float)x, (float)y);
 		}
 
-		private IEnumerable<GLine> ArcsFromBezier(IList<PointF> bezierPoints, float start, float end)
+		private IEnumerable<GLine> ArcsFromBezier(IList<Vector2> bezierPoints, float start, float end)
 		{
 			var span = end - start;
 			var startPoint = BezierEval(bezierPoints, start);

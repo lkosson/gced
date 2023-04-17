@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace GCEd
 		{
 		}
 
-		public virtual float Distance(PointF p)
+		public virtual float Distance(Vector2 p)
 		{
 			return Single.PositiveInfinity;
 		}

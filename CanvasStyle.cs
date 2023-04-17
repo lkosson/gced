@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,10 +36,10 @@ namespace GCEd
 
 		public virtual void ViewMatrixChanged(Matrix viewMatrix)
 		{
-			var probe = new[] { new Point(100, 100) };
-			var probeLength = Geometry.LineLength(probe[0]);
-			viewMatrix.VectorTransformPoints(probe);
-			var transformedProbeLength = Geometry.LineLength(probe[0]);
+			var probe = new[] { new PointF(100, 100) };
+			var probeLength = Geometry.LineLength((Vector2)probe[0]);
+			viewMatrix.TransformVectors(probe);
+			var transformedProbeLength = Geometry.LineLength((Vector2)probe[0]);
 			var len = Math.Max(transformedProbeLength / probeLength, 0.0001f);
 			PixelSize = (float)(1 / len);
 			var selectedStrokeColor = Color.FromArgb(0xF5, 0xFA, 0xFF);

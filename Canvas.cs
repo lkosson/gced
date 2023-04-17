@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -47,7 +48,7 @@ namespace GCEd
 		private Matrix viewMatrix;
 		private Matrix inverseViewMatrix;
 		private Point mouseStart;
-		private PointF translateDistance;
+		private Vector2 translateDistance;
 		private bool matrixUpdated;
 		private CanvasStyle style;
 		private IEnumerable<CanvasItem> items;
@@ -332,11 +333,11 @@ namespace GCEd
 			return (float)Math.Sqrt(abs.Width * abs.Width + abs.Height * abs.Height);
 		}
 
-		private PointF ViewToAbs(Point point)
+		private Vector2 ViewToAbs(Point point)
 		{
 			var probe = new[] { new PointF(point.X, point.Y) };
 			inverseViewMatrix.TransformPoints(probe);
-			return probe[0];
+			return (Vector2)probe[0];
 		}
 
 		private RectangleF ViewToAbs(Rectangle rectView)
@@ -356,9 +357,9 @@ namespace GCEd
 			return (int)Math.Sqrt(abs.Width * abs.Width + abs.Height * abs.Height);
 		}
 
-		private Point AbsToView(PointF point)
+		private Point AbsToView(Vector2 point)
 		{
-			var probe = new[] { point };
+			var probe = new[] { (PointF)point };
 			viewMatrix.TransformPoints(probe);
 			return new Point((int)Math.Ceiling(probe[0].X), (int)Math.Ceiling(probe[0].Y));
 		}
@@ -374,7 +375,7 @@ namespace GCEd
 			return new Rectangle(viewX1, viewY1, viewX2 - viewX1, viewY2 - viewY1);
 		}
 
-		private PointF Snap(PointF point, params PointF[] hints)
+		private Vector2 Snap(Vector2 point, params Vector2[] hints)
 		{
 			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return point;
 
@@ -416,12 +417,12 @@ namespace GCEd
 				}
 			}
 
-			if (!Single.IsNaN(bestXHint)) point = new PointF(bestXHint, point.Y);
-			if (!Single.IsNaN(bestYHint)) point = new PointF(point.X, bestYHint);
+			if (!Single.IsNaN(bestXHint)) point = new Vector2(bestXHint, point.Y);
+			if (!Single.IsNaN(bestYHint)) point = new Vector2(point.X, bestYHint);
 
 			if (!SnapToGrid) return point;
 			var step = GridMinorStep;
-			return new PointF((float)Math.Floor((point.X + step / 2) / step) * step, (float)Math.Floor((point.Y + step / 2) / step) * step);
+			return new Vector2((float)Math.Floor((point.X + step / 2) / step) * step, (float)Math.Floor((point.Y + step / 2) / step) * step);
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e)
@@ -524,7 +525,7 @@ namespace GCEd
 		private void UpdateMouseEndMove(Point mouseLocation)
 		{
 			var changeArcSweepAngle = (ModifierKeys & Keys.Alt) == Keys.Alt;
-			var hints = new List<PointF>();
+			var hints = new List<Vector2>();
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
@@ -538,7 +539,7 @@ namespace GCEd
 				{
 					if (changeArcSweepAngle)
 					{
-						if (item.Operation.Line.I.HasValue && item.Operation.Line.J.HasValue) absPos = Geometry.ConstrainToCircle(new PointF(item.Operation.AbsI, item.Operation.AbsJ), item.Operation.AbsStart, absPos);
+						if (item.Operation.Line.I.HasValue && item.Operation.Line.J.HasValue) absPos = Geometry.ConstrainToCircle(new Vector2(item.Operation.AbsI, item.Operation.AbsJ), item.Operation.AbsStart, absPos);
 						item.Operation.AbsXEnd = absPos.X;
 						item.Operation.AbsYEnd = absPos.Y; 
 					}
@@ -546,7 +547,7 @@ namespace GCEd
 					{
 						item.Operation.AbsXEnd = absPos.X;
 						item.Operation.AbsYEnd = absPos.Y;
-						var newAbsOffset = Geometry.SimilarTriangle(item.Operation.AbsStart, item.Operation.OriginalValues!.AbsEnd, new PointF(item.Operation.AbsXStart + (float)item.Operation.Line.I.GetValueOrDefault(), item.Operation.AbsYStart + (float)item.Operation.Line.J.GetValueOrDefault()), item.Operation.AbsStart, item.Operation.AbsEnd);
+						var newAbsOffset = Geometry.SimilarTriangle(item.Operation.AbsStart, item.Operation.OriginalValues!.AbsEnd, new Vector2(item.Operation.AbsXStart + (float)item.Operation.Line.I.GetValueOrDefault(), item.Operation.AbsYStart + (float)item.Operation.Line.J.GetValueOrDefault()), item.Operation.AbsStart, item.Operation.AbsEnd);
 						if (Single.IsFinite(newAbsOffset.X) && Single.IsFinite(newAbsOffset.Y))
 						{
 							item.Operation.AbsI = newAbsOffset.X;
@@ -661,7 +662,7 @@ namespace GCEd
 			SaveOriginalValuesForSelection();
 			interaction = Interaction.Translate;
 			mouseStart = PointToClient(MousePosition);
-			translateDistance = new PointF();
+			translateDistance = new Vector2();
 		}
 
 		private void UpdateMouseTranslate(Point mouseLocation)
@@ -682,7 +683,7 @@ namespace GCEd
 				item.OperationChanged();
 			}
 
-			translateDistance = new PointF(translateDistance.X + absDeltaX, translateDistance.Y + absDeltaY);
+			translateDistance = new Vector2(translateDistance.X + absDeltaX, translateDistance.Y + absDeltaY);
 			mouseStart = mouseLocation;
 			Invalidate();
 		}
