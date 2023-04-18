@@ -345,20 +345,31 @@ namespace GCEd
 				var rightStartOffset = -startNormal * startDistance;
 				var leftEndOffset = endNormal * endDistance;
 				var rightEndOffset = -endNormal * endDistance;
+				var leftStart = operation.AbsStart + leftStartOffset;
+				var rightStart = operation.AbsStart + rightStartOffset;
+				var leftEnd = operation.AbsEnd + leftEndOffset;
+				var rightEnd = operation.AbsEnd + rightEndOffset;
 
 				if (previousInExtent == null)
 				{
-					rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXStart + rightStartOffset.X), Y = (decimal)(operation.AbsYStart + rightStartOffset.Y) });
+					rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)rightStart.X, Y = (decimal)rightStart.Y });
 				}
 
 				var leftSegment = line.Clone();
-				leftSegment.X = (decimal)(operation.AbsXStart + leftStartOffset.X);
-				leftSegment.Y = (decimal)(operation.AbsYStart + leftStartOffset.Y);
+				leftSegment.X = (decimal)leftStart.X;
+				leftSegment.Y = (decimal)leftStart.Y;
 				if (leftSegment.IsArc)
 				{
 					leftSegment.Instruction = leftSegment.Instruction == GInstruction.G2 ? GInstruction.G3 : GInstruction.G2;
-					leftSegment.I = (decimal)(operation.AbsOffset.X - operation.AbsXEnd - rightStartOffset.X);
-					leftSegment.J = (decimal)(operation.AbsOffset.Y - operation.AbsYEnd - rightStartOffset.Y);
+					var (angle, sweep) = Geometry.AngleAndSweepForArc(operation.AbsStart, operation.AbsEnd, operation.AbsOffset, operation.Line.Instruction == GInstruction.G2);
+					var radius = Geometry.LineLength(operation.AbsStart, operation.AbsOffset) + (operation.Line.Instruction == GInstruction.G2 ? thickness : -thickness);
+					var midpointAngle = Math.PI * (angle + sweep / 2) / 180f;
+					var midpointOffsetX = (float)(Math.Cos(midpointAngle) * radius);
+					var midpointOffsetY = (float)(Math.Sin(midpointAngle) * radius);
+					var midpoint = new Vector2(operation.AbsI + midpointOffsetX, operation.AbsJ + midpointOffsetY);
+					var center = Geometry.CircleCenterFromThreePoints(leftEnd, leftStart, midpoint);
+					leftSegment.I = (decimal)(center.X - operation.AbsEnd.X - leftEndOffset.X);
+					leftSegment.J = (decimal)(center.Y - operation.AbsEnd.Y - leftEndOffset.Y);
 				}
 				leftOutline.Lines.AddFirst(leftSegment);
 
@@ -367,8 +378,15 @@ namespace GCEd
 				rightSegment.Y = (decimal)(operation.AbsYEnd + rightEndOffset.Y);
 				if (rightSegment.IsArc)
 				{
-					rightSegment.I = (decimal)(operation.AbsOffset.X - operation.AbsXStart - rightStartOffset.X);
-					rightSegment.J = (decimal)(operation.AbsOffset.Y - operation.AbsYStart - rightStartOffset.Y);
+					var (angle, sweep) = Geometry.AngleAndSweepForArc(operation.AbsStart, operation.AbsEnd, operation.AbsOffset, operation.Line.Instruction == GInstruction.G2);
+					var radius = Geometry.LineLength(operation.AbsStart, operation.AbsOffset) + (operation.Line.Instruction == GInstruction.G2 ? -thickness : thickness);
+					var midpointAngle = Math.PI * (angle + sweep / 2) / 180f;
+					var midpointOffsetX = (float)(Math.Cos(midpointAngle) * radius);
+					var midpointOffsetY = (float)(Math.Sin(midpointAngle) * radius);
+					var midpoint = new Vector2(operation.AbsI + midpointOffsetX, operation.AbsJ + midpointOffsetY);
+					var center = Geometry.CircleCenterFromThreePoints(rightEnd, rightStart, midpoint);
+					rightSegment.I = (decimal)(center.X - operation.AbsStart.X - rightStartOffset.X);
+					rightSegment.J = (decimal)(center.Y - operation.AbsStart.Y - rightStartOffset.Y);
 				}
 				rightOutline.Lines.AddLast(rightSegment);
 

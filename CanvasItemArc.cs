@@ -28,15 +28,7 @@ namespace GCEd
 		{
 			base.OperationChanged();
 			radius = Geometry.LineLength(Operation.AbsStart, Operation.AbsOffset);
-			var startAngle = (float)(Geometry.LineAngle(Operation.AbsOffset, Operation.AbsStart) * 180 / Math.PI);
-			var endAngle = (float)(Geometry.LineAngle(Operation.AbsOffset, Operation.AbsEnd) * 180 / Math.PI);
-			if (Operation.Line.Instruction == GInstruction.G2 && endAngle < startAngle) endAngle += 360;
-			if (Operation.Line.Instruction == GInstruction.G3 && startAngle < endAngle) startAngle += 360;
-			startAngle = 90 - startAngle;
-			endAngle = 90 - endAngle;
-			angle = startAngle;
-			sweep = endAngle - startAngle;
-			if (angle < 0) angle += 360;
+			(angle, sweep) = Geometry.AngleAndSweepForArc(Operation.AbsStart, Operation.AbsEnd, Operation.AbsOffset, Operation.Line.Instruction == GInstruction.G2);
 
 			var absMinX = Operation.AbsXStart;
 			var absMaxX = Operation.AbsXStart;

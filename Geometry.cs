@@ -127,5 +127,19 @@ namespace GCEd
 			var endTangent = Vector2.Normalize((tangents.endTangent + nextTangent) / 2);
 			return (startTangent, endTangent);
 		}
+
+		public static (float angle, float sweep) AngleAndSweepForArc(Vector2 arcStart, Vector2 arcEnd, Vector2 arcCenter, bool clockwise)
+		{
+			var startAngle = (float)(Geometry.LineAngle(arcCenter, arcStart) * 180 / Math.PI);
+			var endAngle = (float)(Geometry.LineAngle(arcCenter, arcEnd) * 180 / Math.PI);
+			if (clockwise && endAngle < startAngle) endAngle += 360;
+			if (!clockwise && startAngle < endAngle) startAngle += 360;
+			startAngle = 90 - startAngle;
+			endAngle = 90 - endAngle;
+			var angle = startAngle;
+			var sweep = endAngle - startAngle;
+			if (angle < 0) angle += 360;
+			return (angle, sweep);
+		}
 	}
 }
