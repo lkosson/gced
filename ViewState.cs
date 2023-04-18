@@ -125,8 +125,7 @@ namespace GCEd
 			}
 			foreach (var operation in operations)
 			{
-				if (operation.Line.X.HasValue) operation.Line.X = (decimal)operation.AbsXEnd;
-				if (operation.Line.Y.HasValue) operation.Line.Y = (decimal)operation.AbsYEnd;
+				operation.Line.XY = operation.AbsEnd;
 			}
 			RunProgram();
 		}
@@ -151,8 +150,7 @@ namespace GCEd
 			}
 			foreach (var operation in operations)
 			{
-				if (operation.Line.X.HasValue) operation.Line.X = (decimal)(operation.AbsXEnd - operation.AbsXStart);
-				if (operation.Line.Y.HasValue) operation.Line.Y = (decimal)(operation.AbsYEnd - operation.AbsYStart);
+				operation.Line.XY = operation.AbsEnd - operation.AbsStart;
 			}
 			RunProgram();
 		}
@@ -334,6 +332,7 @@ namespace GCEd
 			foreach (var (line, operation, node, previousInExtent, nextInExtent) in elements)
 			{
 				if (!line.IsVisible) continue;
+				if (Geometry.LineLength(line.XY) == 0) continue;
 
 				var currTangents = Geometry.TangentsForOperation(operation);
 				var (startTangent, endTangent) = Geometry.TangentsForOperation(operation, previousInExtent, nextInExtent);
@@ -352,48 +351,42 @@ namespace GCEd
 
 				if (previousInExtent == null)
 				{
-					rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)rightStart.X, Y = (decimal)rightStart.Y });
+					rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, XY = rightStart });
 				}
 
 				var leftSegment = line.Clone();
-				leftSegment.X = (decimal)leftStart.X;
-				leftSegment.Y = (decimal)leftStart.Y;
+				leftSegment.XY = leftStart;
 				if (leftSegment.IsArc)
 				{
 					leftSegment.Instruction = leftSegment.Instruction == GInstruction.G2 ? GInstruction.G3 : GInstruction.G2;
 					var (angle, sweep) = Geometry.AngleAndSweepForArc(operation.AbsStart, operation.AbsEnd, operation.AbsOffset, operation.Line.Instruction == GInstruction.G2);
 					var radius = Geometry.LineLength(operation.AbsStart, operation.AbsOffset) + (operation.Line.Instruction == GInstruction.G2 ? thickness : -thickness);
 					var midpointAngle = Math.PI * (angle + sweep / 2) / 180f;
-					var midpointOffsetX = (float)(Math.Cos(midpointAngle) * radius);
-					var midpointOffsetY = (float)(Math.Sin(midpointAngle) * radius);
-					var midpoint = new Vector2(operation.AbsI + midpointOffsetX, operation.AbsJ + midpointOffsetY);
+					var midpointOffset = new Vector2((float)(Math.Cos(midpointAngle) * radius), (float)(Math.Sin(midpointAngle) * radius));
+					var midpoint = operation.AbsOffset + midpointOffset;
 					var center = Geometry.CircleCenterFromThreePoints(leftEnd, leftStart, midpoint);
-					leftSegment.I = (decimal)(center.X - operation.AbsEnd.X - leftEndOffset.X);
-					leftSegment.J = (decimal)(center.Y - operation.AbsEnd.Y - leftEndOffset.Y);
+					leftSegment.IJ = center - leftEnd;
 				}
 				leftOutline.Lines.AddFirst(leftSegment);
 
 				var rightSegment = line.Clone();
-				rightSegment.X = (decimal)(operation.AbsXEnd + rightEndOffset.X);
-				rightSegment.Y = (decimal)(operation.AbsYEnd + rightEndOffset.Y);
+				rightSegment.XY = rightEnd;
 				if (rightSegment.IsArc)
 				{
 					var (angle, sweep) = Geometry.AngleAndSweepForArc(operation.AbsStart, operation.AbsEnd, operation.AbsOffset, operation.Line.Instruction == GInstruction.G2);
 					var radius = Geometry.LineLength(operation.AbsStart, operation.AbsOffset) + (operation.Line.Instruction == GInstruction.G2 ? -thickness : thickness);
 					var midpointAngle = Math.PI * (angle + sweep / 2) / 180f;
-					var midpointOffsetX = (float)(Math.Cos(midpointAngle) * radius);
-					var midpointOffsetY = (float)(Math.Sin(midpointAngle) * radius);
-					var midpoint = new Vector2(operation.AbsI + midpointOffsetX, operation.AbsJ + midpointOffsetY);
+					var midpointOffset = new Vector2((float)(Math.Cos(midpointAngle) * radius), (float)(Math.Sin(midpointAngle) * radius));
+					var midpoint = operation.AbsOffset + midpointOffset;
 					var center = Geometry.CircleCenterFromThreePoints(rightEnd, rightStart, midpoint);
-					rightSegment.I = (decimal)(center.X - operation.AbsStart.X - rightStartOffset.X);
-					rightSegment.J = (decimal)(center.Y - operation.AbsStart.Y - rightStartOffset.Y);
+					rightSegment.IJ = center - rightStart;
 				}
 				rightOutline.Lines.AddLast(rightSegment);
 
 				if (nextInExtent == null)
 				{
-					leftOutline.Lines.AddFirst(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXEnd + leftEndOffset.X), Y = (decimal)(operation.AbsYEnd + leftEndOffset.Y) });
-					leftOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, X = (decimal)(operation.AbsXEnd), Y = (decimal)(operation.AbsYEnd) });
+					leftOutline.Lines.AddFirst(new GLine { Instruction = GInstruction.G0, XY = leftEnd });
+					leftOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, XY = operation.AbsEnd });
 				}
 
 				if (nextInExtent == null)

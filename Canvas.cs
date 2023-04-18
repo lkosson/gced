@@ -573,15 +573,13 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				item.Operation.Line.X = (decimal)(item.Operation.Absolute ? item.Operation.AbsXEnd : item.Operation.AbsXEnd - item.Operation.AbsXStart);
-				item.Operation.Line.Y = (decimal)(item.Operation.Absolute ? item.Operation.AbsYEnd : item.Operation.AbsYEnd - item.Operation.AbsYStart);
+				item.Operation.Line.XY = item.Operation.Absolute ? item.Operation.AbsEnd : item.Operation.AbsEnd - item.Operation.AbsStart;
 				if (item.Operation.Line.IsArc)
 				{
 					if (!item.Operation.Line.I.HasValue || !item.Operation.Line.J.HasValue) needsOffset = true;
 					else
 					{
-						item.Operation.Line.I = (decimal)(item.Operation.AbsI - item.Operation.AbsXStart);
-						item.Operation.Line.J = (decimal)(item.Operation.AbsJ - item.Operation.AbsYStart);
+						item.Operation.Line.IJ = item.Operation.AbsOffset - item.Operation.AbsStart;
 					}
 				}
 				item.OperationChanged();
@@ -647,8 +645,7 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				item.Operation.Line.I = (decimal)(item.Operation.AbsI - item.Operation.AbsXStart);
-				item.Operation.Line.J = (decimal)(item.Operation.AbsJ - item.Operation.AbsYStart);
+				item.Operation.Line.IJ = item.Operation.AbsOffset - item.Operation.AbsStart;
 				item.OperationChanged();
 			}
 

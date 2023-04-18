@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,6 +31,9 @@ namespace GCEd
 		public bool IsArc => Instruction == GInstruction.G2 || Instruction == GInstruction.G3;
 		public bool IsVisible => IsLine || IsArc;
 		public bool IsEmpty => !X.HasValue && !Y.HasValue && !Z.HasValue && !I.HasValue && !J.HasValue && !K.HasValue && !F.HasValue && !S.HasValue;
+
+		public Vector2 XY { get => new Vector2((float)X.GetValueOrDefault(), (float)Y.GetValueOrDefault()); set { X = (decimal)value.X; Y = (decimal)value.Y; } }
+		public Vector2 IJ { get => new Vector2((float)I.GetValueOrDefault(), (float)J.GetValueOrDefault()); set { I = (decimal)value.X; J = (decimal)value.Y; } }
 
 		static GLine()
 		{
