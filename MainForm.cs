@@ -118,8 +118,10 @@ namespace GCEd
 
 		private void ConvertToOutline()
 		{
+			using var form = new OutlineParameters();
+			if (form.ShowDialog() != DialogResult.OK) return;
 			viewState.SaveUndoState();
-			viewState.ConvertToOutline(viewState.SelectedOperations, 1f);
+			viewState.ConvertToOutline(viewState.SelectedOperations, form.Thickness, form.LeftFirst, form.SkipLeft, form.SkipRight, form.BothForward);
 		}
 
 		private void AddNewLine(bool before)
@@ -364,5 +366,6 @@ namespace GCEd
 		private void panViewToSelectionToolStripMenuItem_Click(object sender, EventArgs e) => canvas.PanViewToSelection();
 		private void translateToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseTranslate();
 		private void snapToAxesToolStripMenuItem_Click(object sender, EventArgs e) => ToggleSnapToAxes();
+		private void convertToOutlineToolStripMenuItem_Click(object sender, EventArgs e) => ConvertToOutline();
 	}
 }

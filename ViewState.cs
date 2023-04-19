@@ -322,7 +322,7 @@ namespace GCEd
 			SetSelection(newOperations);
 		}
 
-		public void ConvertToOutline(IEnumerable<GOperation> operations, float thickness)
+		public void ConvertToOutline(IEnumerable<GOperation> operations, float thickness, bool leftFirst, bool skipLeft, bool skipRight, bool bothForward)
 		{
 			var elements = GetLineAndNodeForOperations(operations);
 
@@ -351,49 +351,56 @@ namespace GCEd
 
 				if (previousInExtent == null)
 				{
-					rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, XY = rightStart });
+					if (leftFirst || bothForward) leftOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, XY = leftStart });
+					if (!leftFirst || bothForward) rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, XY = rightStart });
 				}
 
 				var leftSegment = line.Clone();
-				leftSegment.XY = leftStart;
+				leftSegment.XY = leftFirst || bothForward ? leftEnd : leftStart;
 				if (leftSegment.IsArc)
 				{
-					leftSegment.Instruction = leftSegment.Instruction == GInstruction.G2 ? GInstruction.G3 : GInstruction.G2;
+					if (!leftFirst && !bothForward) leftSegment.Instruction = leftSegment.Instruction == GInstruction.G2 ? GInstruction.G3 : GInstruction.G2;
 					var (angle, sweep) = Geometry.AngleAndSweepForArc(operation.AbsStart, operation.AbsEnd, operation.AbsOffset, operation.Line.Instruction == GInstruction.G2);
 					var radius = Geometry.LineLength(operation.AbsStart, operation.AbsOffset) + (operation.Line.Instruction == GInstruction.G2 ? thickness : -thickness);
 					var midpointAngle = Math.PI * (angle + sweep / 2) / 180f;
 					var midpointOffset = new Vector2((float)(Math.Cos(midpointAngle) * radius), (float)(Math.Sin(midpointAngle) * radius));
 					var midpoint = operation.AbsOffset + midpointOffset;
 					var center = Geometry.CircleCenterFromThreePoints(leftEnd, leftStart, midpoint);
-					leftSegment.IJ = center - leftEnd;
+					leftSegment.IJ = leftFirst || bothForward ? center - leftStart : center - leftEnd;
 				}
-				leftOutline.Lines.AddFirst(leftSegment);
+				if (leftFirst || bothForward) leftOutline.Lines.AddLast(leftSegment);
+				else leftOutline.Lines.AddFirst(leftSegment);
 
 				var rightSegment = line.Clone();
-				rightSegment.XY = rightEnd;
+				rightSegment.XY = !leftFirst || bothForward ? rightEnd : rightStart;
 				if (rightSegment.IsArc)
 				{
+					if (leftFirst && !bothForward) rightSegment.Instruction = rightSegment.Instruction == GInstruction.G2 ? GInstruction.G3 : GInstruction.G2;
 					var (angle, sweep) = Geometry.AngleAndSweepForArc(operation.AbsStart, operation.AbsEnd, operation.AbsOffset, operation.Line.Instruction == GInstruction.G2);
 					var radius = Geometry.LineLength(operation.AbsStart, operation.AbsOffset) + (operation.Line.Instruction == GInstruction.G2 ? -thickness : thickness);
 					var midpointAngle = Math.PI * (angle + sweep / 2) / 180f;
 					var midpointOffset = new Vector2((float)(Math.Cos(midpointAngle) * radius), (float)(Math.Sin(midpointAngle) * radius));
 					var midpoint = operation.AbsOffset + midpointOffset;
 					var center = Geometry.CircleCenterFromThreePoints(rightEnd, rightStart, midpoint);
-					rightSegment.IJ = center - rightStart;
+					rightSegment.IJ = !leftFirst || bothForward ? center - rightStart : center - rightEnd;
 				}
-				rightOutline.Lines.AddLast(rightSegment);
+				if (!leftFirst || bothForward) rightOutline.Lines.AddLast(rightSegment); 
+				else rightOutline.Lines.AddFirst(rightSegment);
 
 				if (nextInExtent == null)
 				{
-					leftOutline.Lines.AddFirst(new GLine { Instruction = GInstruction.G0, XY = leftEnd });
-					leftOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, XY = operation.AbsEnd });
+					if (leftFirst && !bothForward) rightOutline.Lines.AddFirst(new GLine { Instruction = GInstruction.G0, XY = rightEnd });
+					if (leftFirst) rightOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, XY = operation.AbsEnd });
+					if (!leftFirst && !bothForward) leftOutline.Lines.AddFirst(new GLine { Instruction = GInstruction.G0, XY = leftEnd });
+					if (!leftFirst) leftOutline.Lines.AddLast(new GLine { Instruction = GInstruction.G0, XY = operation.AbsEnd });
 				}
 
 				if (nextInExtent == null)
 				{
 					var insertionPoint = node;
-					foreach (var newLine in rightOutline.Lines) insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
-					foreach (var newLine in leftOutline.Lines) insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
+					if (leftFirst) foreach (var newLine in leftOutline.Lines) insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
+					if (!skipRight) foreach (var newLine in rightOutline.Lines) insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
+					if (!leftFirst && !skipLeft) foreach (var newLine in leftOutline.Lines) insertionPoint = Program.Lines.AddAfter(insertionPoint, newLine);
 
 					rightOutline.Lines.Clear();
 					leftOutline.Lines.Clear();

@@ -85,6 +85,7 @@
 			backgroundImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			textShapeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			convertToOutlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
 			splitContainer.Panel1.SuspendLayout();
 			splitContainer.Panel2.SuspendLayout();
@@ -105,6 +106,7 @@
 			canvas.ShowMinorGrid = true;
 			canvas.ShowOriginGrid = true;
 			canvas.Size = new System.Drawing.Size(547, 514);
+			canvas.SnapToAxes = true;
 			canvas.SnapToGrid = true;
 			canvas.SnapToItems = true;
 			canvas.TabIndex = 0;
@@ -247,7 +249,7 @@
 			// 
 			// editToolStripMenuItem
 			// 
-			editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem, toolStripSeparator3, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, deleteToolStripMenuItem, toolStripSeparator4, selectAllToolStripMenuItem, toolStripSeparator5, convertToAbsoluteToolStripMenuItem, convertToRelativeToolStripMenuItem, toolStripSeparator6, moveEndpointToolStripMenuItem, moveOffsetToolStripMenuItem, translateToolStripMenuItem });
+			editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem, toolStripSeparator3, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, deleteToolStripMenuItem, toolStripSeparator4, selectAllToolStripMenuItem, toolStripSeparator5, convertToAbsoluteToolStripMenuItem, convertToRelativeToolStripMenuItem, toolStripSeparator6, moveEndpointToolStripMenuItem, moveOffsetToolStripMenuItem, translateToolStripMenuItem, convertToOutlineToolStripMenuItem });
 			editToolStripMenuItem.Name = "editToolStripMenuItem";
 			editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			editToolStripMenuItem.Text = "Edit";
@@ -544,6 +546,14 @@
 			aboutToolStripMenuItem.Text = "About";
 			aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
 			// 
+			// convertToOutlineToolStripMenuItem
+			// 
+			convertToOutlineToolStripMenuItem.Name = "convertToOutlineToolStripMenuItem";
+			convertToOutlineToolStripMenuItem.ShortcutKeyDisplayString = "O";
+			convertToOutlineToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+			convertToOutlineToolStripMenuItem.Text = "Convert to outline ...";
+			convertToOutlineToolStripMenuItem.Click += convertToOutlineToolStripMenuItem_Click;
+			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -625,5 +635,6 @@
 		private System.Windows.Forms.ToolStripMenuItem panViewToSelectionToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem translateToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem snapToAxesToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem convertToOutlineToolStripMenuItem;
 	}
 }
