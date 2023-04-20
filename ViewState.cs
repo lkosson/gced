@@ -324,6 +324,7 @@ namespace GCEd
 
 		public void ConvertToOutline(IEnumerable<GOperation> operations, float thickness, bool leftFirst, bool skipLeft, bool skipRight, bool bothForward)
 		{
+			thickness /= 2;
 			var elements = GetLineAndNodeForOperations(operations);
 
 			var leftOutline = new GProgram();
