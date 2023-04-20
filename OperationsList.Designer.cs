@@ -34,6 +34,7 @@
 			// listBoxOperations
 			// 
 			listBoxOperations.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			listBoxOperations.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			listBoxOperations.FormattingEnabled = true;
 			listBoxOperations.IntegralHeight = false;
 			listBoxOperations.ItemHeight = 15;
@@ -42,6 +43,7 @@
 			listBoxOperations.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			listBoxOperations.Size = new System.Drawing.Size(348, 289);
 			listBoxOperations.TabIndex = 0;
+			listBoxOperations.DrawItem += listBoxOperations_DrawItem;
 			listBoxOperations.SelectedIndexChanged += listBoxOperations_SelectedIndexChanged;
 			listBoxOperations.KeyDown += listBoxOperations_KeyDown;
 			listBoxOperations.KeyPress += listBoxOperations_KeyPress;

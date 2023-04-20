@@ -43,7 +43,7 @@ namespace GCEd
 			selectionInProgress = true;
 			var topIndex = listBoxOperations.TopIndex;
 			var selectedItem = (ListItem)listBoxOperations.SelectedItem;
-			var items = viewState.Operations.Select(operation => new ListItem(operation)).Cast<object>().ToArray();
+			var items = viewState.Operations.Select((operation, n) => new ListItem(operation, n + 1)).Cast<object>().ToArray();
 			listBoxOperations.BeginUpdate();
 			listBoxOperations.Items.Clear();
 			listBoxOperations.Items.AddRange(items);
@@ -113,19 +113,39 @@ namespace GCEd
 			e.Handled = true;
 		}
 
+		private void listBoxOperations_DrawItem(object sender, DrawItemEventArgs e)
+		{
+			e.DrawBackground();
+			var item = (ListItem)listBoxOperations.Items[e.Index];
+			var color = e.ForeColor;
+			var text = item.Operation.Line.ToString();
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) color = e.ForeColor;
+			else if (item.Operation.Line.Instruction == GInstruction.Empty) { text = "(empty)"; color = Color.LightGray; }
+			else if (item.Operation.Line.Instruction == GInstruction.Comment) color = Color.Gray;
+			else if (item.Operation.Line.Instruction == GInstruction.Invalid) color = Color.Red;
+			else if (item.Operation.Line.Instruction == GInstruction.Directive) color = Color.Blue;
+
+			using var brush = new SolidBrush(color);
+			var textBounds = new Rectangle(e.Bounds.X, e.Bounds.Y - 1, e.Bounds.Width - 20, e.Bounds.Height + 2);
+			e.Graphics.DrawString(text, e.Font!, brush, textBounds, StringFormat.GenericDefault);
+
+			using var lineNumberFont = new Font(e.Font!.FontFamily, e.Font!.Size * 0.85f, FontStyle.Italic);
+			using var lineNumberFormat = new StringFormat();
+			lineNumberFormat.Alignment = StringAlignment.Far;
+			e.Graphics.DrawString(item.N.ToString(), lineNumberFont, Brushes.DarkGray, e.Bounds, lineNumberFormat);
+
+			e.DrawFocusRectangle();
+		}
+
 		private class ListItem
 		{
 			public GOperation Operation { get; set; }
+			public int N { get; set; }
 
-			public ListItem(GOperation operation)
+			public ListItem(GOperation operation, int n)
 			{
 				Operation = operation;
-			}
-
-			public override string ToString()
-			{
-				if (Operation.Line.Instruction == GInstruction.Empty) return "(empty)";
-				return Operation.Line.ToString();
+				N = n;
 			}
 		}
 	}
