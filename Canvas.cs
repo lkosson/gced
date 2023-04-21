@@ -645,7 +645,16 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				item.Operation.Line.IJ = item.Operation.AbsOffset - item.Operation.AbsStart;
+				if (Single.IsFinite(item.Operation.AbsOffset.X) && Single.IsFinite(item.Operation.AbsOffset.Y))
+				{
+					item.Operation.Line.IJ = item.Operation.AbsOffset - item.Operation.AbsStart;
+				}
+				else
+				{
+					item.Operation.Line.I = null;
+					item.Operation.Line.J = null;
+					item.Operation.Line.Instruction = GInstruction.G1;
+				}
 				item.OperationChanged();
 			}
 
