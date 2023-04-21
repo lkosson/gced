@@ -27,9 +27,13 @@ namespace GCEd
 		public bool Active { get; set; }
 		public bool Absolute { get; set; }
 
+		public TimeSpan TimeStart { get; set; }
+		public TimeSpan TimeEnd { get; set; }
+
 		public Vector2 AbsStart => new Vector2(AbsXStart, AbsYStart);
 		public Vector2 AbsEnd => new Vector2(AbsXEnd, AbsYEnd);
 		public Vector2 AbsOffset => new Vector2(AbsI, AbsJ);
+		public TimeSpan TimeDuration => TimeEnd - TimeStart;
 
 		public GOperation? OriginalValues { get; private set; }
 
@@ -154,6 +158,13 @@ namespace GCEd
 			AbsXEnd = (float)context.X;
 			AbsYEnd = (float)context.Y;
 			AbsZEnd = (float)context.Z;
+
+			TimeStart = context.Time;
+			var length = 0f;
+			if (Line.IsLine) length = Geometry.LineLength(AbsStart, AbsEnd);
+			else if (Line.IsArc) length = Geometry.ArcLength(AbsStart, AbsEnd, AbsOffset, Line.Instruction == GInstruction.G2);
+			if (F > 0) TimeEnd = context.Time + TimeSpan.FromSeconds(length * 60 / (double)F);
+			context.Time = TimeEnd;
 		}
 
 		private class ByGLineEqualityComparerImpl : IEqualityComparer<GOperation>

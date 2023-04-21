@@ -16,6 +16,8 @@ namespace GCEd
 		public decimal F { get; set; }
 		public decimal S { get; set; }
 
+		public TimeSpan Time { get; set; }
+
 		public bool Absolute { get; set; }
 		public bool Inches { get; set; }
 		public bool Active { get; set; }

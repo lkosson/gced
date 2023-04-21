@@ -25,6 +25,13 @@ namespace GCEd
 			return (float)Math.Atan2(lineEnd.X - lineStart.X, lineEnd.Y - lineStart.Y);
 		}
 
+		public static float ArcLength(Vector2 arcStart, Vector2 arcEnd, Vector2 arcCenter, bool clockwise)
+		{
+			var (_, sweep) = AngleAndSweepForArc(arcStart, arcEnd, arcCenter, clockwise);
+			var radius = LineLength(arcStart, arcCenter);
+			return (float)Math.Abs(2 * Math.PI * radius * sweep / 360f);
+		}
+
 		public static float DistanceBetweenLineAndPoint(Vector2 lineStart, Vector2 lineEnd, Vector2 point)
 		{
 			return (float)(Math.Abs((lineEnd.X - lineStart.X) * (lineStart.Y - point.Y) - (lineStart.X - point.X) * (lineEnd.Y - lineStart.Y))
