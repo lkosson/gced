@@ -242,6 +242,13 @@ namespace GCEd
 					valueStart = i + 1;
 				}
 			}
+
+			if (IsArc && !I.HasValue && !J.HasValue)
+			{
+				Instruction = GInstruction.Invalid;
+				Error = "Missing I and J parameters for arc.";
+				ErrorPosition = 0;
+			}
 		}
 
 		public override string ToString()
