@@ -37,6 +37,7 @@
 			listViewOperations.FullRowSelect = true;
 			listViewOperations.Location = new System.Drawing.Point(3, 3);
 			listViewOperations.Name = "listViewOperations";
+			listViewOperations.ShowItemToolTips = true;
 			listViewOperations.Size = new System.Drawing.Size(348, 292);
 			listViewOperations.TabIndex = 0;
 			listViewOperations.UseCompatibleStateImageBehavior = false;
