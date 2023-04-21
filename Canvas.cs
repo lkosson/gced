@@ -52,10 +52,13 @@ namespace GCEd
 		private bool matrixUpdated;
 		private CanvasStyle style;
 		private IEnumerable<CanvasItem> items;
-		private Interaction interaction;
 		private bool panningToSelectionSuspended;
 
-		private enum Interaction { None, Select, Pan, EndMove, OffsetMove, PanDuringEndMove, PanDuringOffsetMove, Translate }
+		private Interaction interaction;
+		private bool panningInProgress;
+		private bool itemAddingInProgress;
+
+		private enum Interaction { None, Select, EndMove, OffsetMove, Translate }
 
 		private float GridMinorStep => (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
 		private float GridMajorStep => GridMinorStep * 10;
@@ -441,9 +444,7 @@ namespace GCEd
 
 		private void StartMousePan()
 		{
-			if (interaction == Interaction.None) interaction = Interaction.Pan;
-			else if (interaction == Interaction.EndMove) interaction = Interaction.PanDuringEndMove;
-			else if (interaction == Interaction.OffsetMove) interaction = Interaction.PanDuringOffsetMove;
+			panningInProgress = true;
 			mouseStart = PointToClient(MousePosition);
 		}
 
@@ -459,9 +460,7 @@ namespace GCEd
 
 		private void FinishMousePan()
 		{
-			if (interaction == Interaction.Pan) interaction = Interaction.None;
-			if (interaction == Interaction.PanDuringEndMove) interaction = Interaction.EndMove;
-			if (interaction == Interaction.PanDuringOffsetMove) interaction = Interaction.OffsetMove;
+			panningInProgress = false;
 		}
 
 		private void StartMouseSelect()
@@ -519,6 +518,7 @@ namespace GCEd
 			if (!viewState.SelectedOperations.Any() || viewState.LastSelectedOperation == null) return;
 			SaveOriginalValuesForSelection();
 			interaction = Interaction.EndMove;
+			itemAddingInProgress = viewState.LastSelectedOperation.Line.IsEmpty;
 			UpdateMouseEndMove(PointToClient(MousePosition));
 		}
 
@@ -576,18 +576,16 @@ namespace GCEd
 				item.Operation.Line.XY = item.Operation.Absolute ? item.Operation.AbsEnd : item.Operation.AbsEnd - item.Operation.AbsStart;
 				if (item.Operation.Line.IsArc)
 				{
-					if (!item.Operation.Line.I.HasValue || !item.Operation.Line.J.HasValue) needsOffset = true;
-					else
-					{
-						item.Operation.Line.IJ = item.Operation.AbsOffset - item.Operation.AbsStart;
-					}
+					if (itemAddingInProgress) needsOffset = true;
+					else item.Operation.Line.IJ = item.Operation.AbsOffset - item.Operation.AbsStart;
 				}
 				item.OperationChanged();
 			}
 
 			viewState.RunProgram();
+			interaction = Interaction.None;
 			if (needsOffset) StartMouseOffsetMove();
-			else interaction = Interaction.None;
+			else itemAddingInProgress = false;
 			Invalidate();
 		}
 
@@ -660,6 +658,7 @@ namespace GCEd
 
 			viewState.RunProgram();
 			interaction = Interaction.None;
+			itemAddingInProgress = false;
 			Invalidate();
 		}
 
@@ -786,20 +785,17 @@ namespace GCEd
 
 		private void AbortMove()
 		{
-			var operationsToDelete = new List<GOperation>();
-			foreach (var item in items)
+			if (itemAddingInProgress)
 			{
-				if (!item.Selected) continue;
-				if (!item.Operation.Line.IsVisible) continue;
-				if (!item.Operation.Line.IsEmpty) continue;
-				operationsToDelete.Add(item.Operation);
+				var operationsToDelete = new HashSet<GOperation>(viewState.SelectedOperations);
+				var previousOperation = items.Reverse().Select(item => item.Operation).SkipWhile(operation => !operationsToDelete.Contains(operation)).Skip(1).FirstOrDefault();
+				viewState.DeleteOperations(operationsToDelete);
+				if (previousOperation != null) viewState.SetSelection(new[] { previousOperation });
 			}
-
-			var previousOperation = items.Reverse().Select(item => item.Operation).SkipWhile(operation => !operationsToDelete.Contains(operation)).Skip(1).FirstOrDefault();
-			if (operationsToDelete.Any()) viewState.DeleteOperations(operationsToDelete);
-			if (previousOperation != null) viewState.SetSelection(new[] { previousOperation });
 			viewState.RunProgram();
 			interaction = Interaction.None;
+			panningInProgress = false;
+			itemAddingInProgress = false;
 			Invalidate();
 		}
 
@@ -818,19 +814,20 @@ namespace GCEd
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			if (interaction == Interaction.Select) FinishMouseSelect();
-			else if (interaction == Interaction.EndMove) FinishMouseEndMove();
-			else if (interaction == Interaction.OffsetMove) FinishMouseOffsetMove();
-			else if (interaction == Interaction.Pan) FinishMousePan();
-			else if (interaction == Interaction.PanDuringEndMove) FinishMousePan();
-			else if (interaction == Interaction.PanDuringOffsetMove) FinishMousePan();
-			else if (interaction == Interaction.Translate) FinishMouseTranslate();
+			if (e.Button == MouseButtons.Left)
+			{
+				if (interaction == Interaction.Select) FinishMouseSelect();
+				else if (interaction == Interaction.EndMove) FinishMouseEndMove();
+				else if (interaction == Interaction.OffsetMove) FinishMouseOffsetMove();
+				else if (interaction == Interaction.Translate) FinishMouseTranslate();
+			}
+			else if (e.Button == MouseButtons.Middle) FinishMousePan();
 			base.OnMouseUp(e);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			if (interaction == Interaction.Pan || interaction == Interaction.PanDuringEndMove || interaction == Interaction.PanDuringOffsetMove) UpdateMousePan(e.Location);
+			if (panningInProgress) UpdateMousePan(e.Location);
 			else if (interaction == Interaction.Select) UpdateMouseSelect(e.Location);
 			else if (interaction == Interaction.EndMove) UpdateMouseEndMove(e.Location);
 			else if (interaction == Interaction.OffsetMove) UpdateMouseOffsetMove(e.Location);
