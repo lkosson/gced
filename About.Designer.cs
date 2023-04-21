@@ -33,9 +33,9 @@
 			pictureBoxLogo = new System.Windows.Forms.PictureBox();
 			flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			label1 = new System.Windows.Forms.Label();
+			label3 = new System.Windows.Forms.Label();
 			label2 = new System.Windows.Forms.Label();
 			linkLabelUrl = new System.Windows.Forms.LinkLabel();
-			label3 = new System.Windows.Forms.Label();
 			tableLayoutPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)pictureBoxLogo).BeginInit();
 			flowLayoutPanel1.SuspendLayout();
@@ -104,6 +104,16 @@
 			label1.TabIndex = 2;
 			label1.Text = "GCEd";
 			// 
+			// label3
+			// 
+			label3.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			label3.AutoSize = true;
+			label3.Location = new System.Drawing.Point(26, 21);
+			label3.Name = "label3";
+			label3.Size = new System.Drawing.Size(139, 15);
+			label3.TabIndex = 4;
+			label3.Text = "Version: 1.1.0, 2023-04-21";
+			// 
 			// label2
 			// 
 			label2.AutoSize = true;
@@ -123,16 +133,6 @@
 			linkLabelUrl.TabStop = true;
 			linkLabelUrl.Text = "https://github.com/lkosson/gced";
 			linkLabelUrl.LinkClicked += linkLabelUrl_LinkClicked;
-			// 
-			// label3
-			// 
-			label3.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			label3.AutoSize = true;
-			label3.Location = new System.Drawing.Point(26, 21);
-			label3.Name = "label3";
-			label3.Size = new System.Drawing.Size(139, 15);
-			label3.TabIndex = 4;
-			label3.Text = "Version: 1.0.0, 2023-04-14";
 			// 
 			// About
 			// 
