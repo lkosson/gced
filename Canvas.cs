@@ -225,7 +225,8 @@ namespace GCEd
 						+ " X=" + ViewState.LastSelectedOperation.AbsXStart.ToString("0.000", CultureInfo.InvariantCulture)
 						+ ", Y=" + ViewState.LastSelectedOperation.AbsYStart.ToString("0.000", CultureInfo.InvariantCulture)
 						+ " - X=" + ViewState.LastSelectedOperation.AbsXEnd.ToString("0.000", CultureInfo.InvariantCulture)
-						+ ", Y=" + ViewState.LastSelectedOperation.AbsYEnd.ToString("0.000", CultureInfo.InvariantCulture);
+						+ ", Y=" + ViewState.LastSelectedOperation.AbsYEnd.ToString("0.000", CultureInfo.InvariantCulture)
+						+ (ViewState.LastSelectedOperation.Line.IsLine ? ", Angle = " + ((Geometry.LineAngle(ViewState.LastSelectedOperation.AbsStart, ViewState.LastSelectedOperation.AbsEnd) / Math.PI * 180 + 360) % 360).ToString("0.000") + "°" : "");
 				var bounds = e.Graphics.MeasureString(coords, Font);
 				e.Graphics.DrawString(coords, Font, style.TextBrush, 0, Height - bounds.Height);
 			}
