@@ -36,44 +36,65 @@ namespace GCEd
 		{
 			viewState = new ViewState();
 			InitializeComponent();
+			listViewOperations.Columns.Add(new ColumnHeader());
+			listViewOperations.Columns.Add(new ColumnHeader() { TextAlign = HorizontalAlignment.Right });
+			listViewOperations.HeaderStyle = ColumnHeaderStyle.None;
+		}
+
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+			UpdateColumnWidths();
+		}
+
+		private void UpdateColumnWidths()
+		{
+			if (listViewOperations.Columns.Count < 2) return;
+			listViewOperations.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.ColumnContent);
+			listViewOperations.Columns[0].Width = listViewOperations.ClientSize.Width - listViewOperations.Columns[1].Width;
 		}
 
 		private void ViewState_OperationsChanged()
 		{
 			selectionInProgress = true;
-			var topIndex = listBoxOperations.TopIndex;
-			var selectedItem = (ListItem)listBoxOperations.SelectedItem;
-			var items = viewState.Operations.Select((operation, n) => new ListItem(operation, n + 1)).Cast<object>().ToArray();
-			listBoxOperations.BeginUpdate();
-			listBoxOperations.Items.Clear();
-			listBoxOperations.Items.AddRange(items);
-			if (selectedItem != null)
+			listViewOperations.BeginUpdate();
+			listViewOperations.Items.Clear();
+			var items = new List<ListViewItem>();
+			foreach (var operation in viewState.Operations)
 			{
-				var newSelectedItem = items.Cast<ListItem>().FirstOrDefault(item => item.Operation.Line == selectedItem.Operation.Line);
-				if (newSelectedItem != null) listBoxOperations.SelectedItem = newSelectedItem;
+				var item = new ListViewItem();
+				item.Text = operation.Line.ToString();
+				item.Tag = operation;
+				item.ToolTipText = operation.Line.Error;
+				item.UseItemStyleForSubItems = false;
+				var subitem = item.SubItems.Add((items.Count + 1).ToString());
+				subitem.ForeColor = Color.DarkGray;
+
+				if (operation.Line.Instruction == GInstruction.Empty) { item.Text = "(empty)"; item.ForeColor = Color.LightGray; }
+				else if (operation.Line.Instruction == GInstruction.Comment) item.ForeColor = Color.Gray;
+				else if (operation.Line.Instruction == GInstruction.Invalid) item.ForeColor = Color.Red;
+				else if (operation.Line.Instruction == GInstruction.Directive) item.ForeColor = Color.Blue;
+
+				items.Add(item);
 			}
-			listBoxOperations.EndUpdate();
-			if (topIndex < items.Length) listBoxOperations.TopIndex = topIndex;
-			else listBoxOperations.TopIndex = items.Length;
+			listViewOperations.Items.AddRange(items.ToArray());
+			listViewOperations.EndUpdate();
 			selectionInProgress = false;
+			UpdateColumnWidths();
 		}
 
 		private void ViewState_SelectedOperationsChanged()
 		{
 			if (selectionInProgress) return;
 			selectionInProgress = true;
-			var newSelectedItems = new List<ListItem>();
-			foreach (ListItem item in listBoxOperations.Items)
+			listViewOperations.BeginUpdate();
+			foreach (ListViewItem item in listViewOperations.Items)
 			{
-				if (viewState.SelectedOperations.Contains(item.Operation)) newSelectedItems.Add(item);
+				var operation = (GOperation)item.Tag;
+				item.Selected = viewState.SelectedOperations.Contains(operation);
+				if (viewState.LastSelectedOperation == operation) listViewOperations.TopItem = listViewOperations.Items[Math.Max(0, item.Index - 3)];
 			}
-			listBoxOperations.BeginUpdate();
-			listBoxOperations.SelectedItems.Clear();
-			foreach (var item in newSelectedItems)
-			{
-				listBoxOperations.SelectedItems.Add(item);
-			}
-			listBoxOperations.EndUpdate();
+			listViewOperations.EndUpdate();
 			selectionInProgress = false;
 		}
 
@@ -83,13 +104,13 @@ namespace GCEd
 			selectionInProgress = true;
 			var allVisible = true;
 			var selectedOperations = new List<GOperation>();
-			foreach (ListItem item in listBoxOperations.SelectedItems)
+			foreach (ListViewItem item in listViewOperations.SelectedItems)
 			{
-				selectedOperations.Add(item.Operation);
-				allVisible &= item.Operation.Line.Instruction == GInstruction.G0 || item.Operation.Line.Instruction == GInstruction.G1 || item.Operation.Line.Instruction == GInstruction.G2 || item.Operation.Line.Instruction == GInstruction.G3;
+				var operation = (GOperation)item.Tag;
+				selectedOperations.Add(operation);
+				allVisible &= operation.Line.IsVisible;
 			}
 			viewState.SetSelection(selectedOperations);
-			//if (allVisible) viewState.FocusCanvas();
 			selectionInProgress = false;
 		}
 
@@ -98,9 +119,10 @@ namespace GCEd
 			if (e.KeyCode == Keys.Delete)
 			{
 				var selectedOperations = new List<GOperation>();
-				foreach (ListItem item in listBoxOperations.SelectedItems)
+				foreach (ListViewItem item in listViewOperations.SelectedItems)
 				{
-					selectedOperations.Add(item.Operation);
+					var operation = (GOperation)item.Tag;
+					selectedOperations.Add(operation);
 				}
 				viewState.SaveUndoState();
 				viewState.DeleteOperations(selectedOperations);
@@ -113,39 +135,11 @@ namespace GCEd
 			e.Handled = true;
 		}
 
-		private void listBoxOperations_DrawItem(object sender, DrawItemEventArgs e)
+		private class DoubleBufferedListView : ListView
 		{
-			e.DrawBackground();
-			var item = (ListItem)listBoxOperations.Items[e.Index];
-			var color = e.ForeColor;
-			var text = item.Operation.Line.ToString();
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) color = e.ForeColor;
-			else if (item.Operation.Line.Instruction == GInstruction.Empty) { text = "(empty)"; color = Color.LightGray; }
-			else if (item.Operation.Line.Instruction == GInstruction.Comment) color = Color.Gray;
-			else if (item.Operation.Line.Instruction == GInstruction.Invalid) color = Color.Red;
-			else if (item.Operation.Line.Instruction == GInstruction.Directive) color = Color.Blue;
-
-			using var brush = new SolidBrush(color);
-			var textBounds = new Rectangle(e.Bounds.X, e.Bounds.Y - 1, e.Bounds.Width - 20, e.Bounds.Height + 2);
-			e.Graphics.DrawString(text, e.Font!, brush, textBounds, StringFormat.GenericDefault);
-
-			using var lineNumberFont = new Font(e.Font!.FontFamily, e.Font!.Size * 0.85f, FontStyle.Italic);
-			using var lineNumberFormat = new StringFormat();
-			lineNumberFormat.Alignment = StringAlignment.Far;
-			e.Graphics.DrawString(item.N.ToString(), lineNumberFont, Brushes.DarkGray, e.Bounds, lineNumberFormat);
-
-			e.DrawFocusRectangle();
-		}
-
-		private class ListItem
-		{
-			public GOperation Operation { get; set; }
-			public int N { get; set; }
-
-			public ListItem(GOperation operation, int n)
+			public DoubleBufferedListView()
 			{
-				Operation = operation;
-				N = n;
+				DoubleBuffered = true;
 			}
 		}
 	}

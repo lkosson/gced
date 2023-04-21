@@ -28,31 +28,28 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			listBoxOperations = new System.Windows.Forms.ListBox();
+			listViewOperations = new DoubleBufferedListView();
 			SuspendLayout();
 			// 
-			// listBoxOperations
+			// listViewOperations
 			// 
-			listBoxOperations.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			listBoxOperations.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-			listBoxOperations.FormattingEnabled = true;
-			listBoxOperations.IntegralHeight = false;
-			listBoxOperations.ItemHeight = 15;
-			listBoxOperations.Location = new System.Drawing.Point(3, 3);
-			listBoxOperations.Name = "listBoxOperations";
-			listBoxOperations.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			listBoxOperations.Size = new System.Drawing.Size(348, 289);
-			listBoxOperations.TabIndex = 0;
-			listBoxOperations.DrawItem += listBoxOperations_DrawItem;
-			listBoxOperations.SelectedIndexChanged += listBoxOperations_SelectedIndexChanged;
-			listBoxOperations.KeyDown += listBoxOperations_KeyDown;
-			listBoxOperations.KeyPress += listBoxOperations_KeyPress;
+			listViewOperations.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			listViewOperations.FullRowSelect = true;
+			listViewOperations.Location = new System.Drawing.Point(3, 3);
+			listViewOperations.Name = "listViewOperations";
+			listViewOperations.Size = new System.Drawing.Size(348, 292);
+			listViewOperations.TabIndex = 0;
+			listViewOperations.UseCompatibleStateImageBehavior = false;
+			listViewOperations.View = System.Windows.Forms.View.Details;
+			listViewOperations.SelectedIndexChanged += listBoxOperations_SelectedIndexChanged;
+			listViewOperations.KeyDown += listBoxOperations_KeyDown;
+			listViewOperations.KeyPress += listBoxOperations_KeyPress;
 			// 
 			// OperationsList
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			Controls.Add(listBoxOperations);
+			Controls.Add(listViewOperations);
 			Name = "OperationsList";
 			Size = new System.Drawing.Size(354, 298);
 			ResumeLayout(false);
@@ -60,6 +57,6 @@
 
 		#endregion
 
-		private System.Windows.Forms.ListBox listBoxOperations;
+		private DoubleBufferedListView listViewOperations;
 	}
 }
