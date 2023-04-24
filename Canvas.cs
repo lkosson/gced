@@ -221,12 +221,19 @@ namespace GCEd
 				if (ShowCursorCoords) coords += $"X={absMouse.X.ToString("0.000", CultureInfo.InvariantCulture)}, Y={absMouse.Y.ToString("0.000", CultureInfo.InvariantCulture)}";
 				if (ShowCursorCoords && ShowItemCoords) coords += "\n";
 				if (ShowItemCoords && ViewState.LastSelectedOperation != null)
+				{
 					coords += ViewState.LastSelectedOperation.Line.Instruction
 						+ " X=" + ViewState.LastSelectedOperation.AbsXStart.ToString("0.000", CultureInfo.InvariantCulture)
 						+ ", Y=" + ViewState.LastSelectedOperation.AbsYStart.ToString("0.000", CultureInfo.InvariantCulture)
 						+ " - X=" + ViewState.LastSelectedOperation.AbsXEnd.ToString("0.000", CultureInfo.InvariantCulture)
-						+ ", Y=" + ViewState.LastSelectedOperation.AbsYEnd.ToString("0.000", CultureInfo.InvariantCulture)
-						+ (ViewState.LastSelectedOperation.Line.IsLine ? ", Angle = " + ((Geometry.LineAngle(ViewState.LastSelectedOperation.AbsStart, ViewState.LastSelectedOperation.AbsEnd) / Math.PI * 180 + 360) % 360).ToString("0.000") + "°" : "");
+						+ ", Y=" + ViewState.LastSelectedOperation.AbsYEnd.ToString("0.000", CultureInfo.InvariantCulture);
+
+					if (ViewState.LastSelectedOperation.Line.IsLine)
+					{
+						coords += ", Angle = " + ((Geometry.LineAngle(ViewState.LastSelectedOperation.AbsStart, ViewState.LastSelectedOperation.AbsEnd) / Math.PI * 180 + 360) % 360).ToString("0.000") + "°";
+						coords += ", Length = " + Geometry.LineLength(ViewState.LastSelectedOperation.AbsStart, ViewState.LastSelectedOperation.AbsEnd).ToString("0.000");
+					}
+				}
 				var bounds = e.Graphics.MeasureString(coords, Font);
 				e.Graphics.DrawString(coords, Font, style.TextBrush, 0, Height - bounds.Height);
 			}
