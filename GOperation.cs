@@ -30,9 +30,9 @@ namespace GCEd
 		public TimeSpan TimeStart { get; set; }
 		public TimeSpan TimeEnd { get; set; }
 
-		public Vector2 AbsStart => new Vector2(AbsXStart, AbsYStart);
-		public Vector2 AbsEnd => new Vector2(AbsXEnd, AbsYEnd);
-		public Vector2 AbsOffset => new Vector2(AbsI, AbsJ);
+		public Vector2 AbsStart { get => new Vector2(AbsXStart, AbsYStart); set => (AbsXStart, AbsYStart) = (value.X, value.Y); }
+		public Vector2 AbsEnd { get => new Vector2(AbsXEnd, AbsYEnd); set => (AbsXEnd, AbsYEnd) = (value.X, value.Y); }
+		public Vector2 AbsOffset { get => new Vector2(AbsI, AbsJ); set => (AbsI, AbsJ) = (value.X, value.Y); }
 		public TimeSpan TimeDuration => TimeEnd - TimeStart;
 
 		public GOperation? OriginalValues { get; private set; }

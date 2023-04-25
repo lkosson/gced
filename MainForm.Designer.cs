@@ -62,6 +62,7 @@
 			moveEndpointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			moveOffsetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			translateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			convertToOutlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			showGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			snapToGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,7 +86,7 @@
 			backgroundImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			textShapeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			convertToOutlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			rotateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
 			splitContainer.Panel1.SuspendLayout();
 			splitContainer.Panel2.SuspendLayout();
@@ -249,7 +250,7 @@
 			// 
 			// editToolStripMenuItem
 			// 
-			editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem, toolStripSeparator3, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, deleteToolStripMenuItem, toolStripSeparator4, selectAllToolStripMenuItem, toolStripSeparator5, convertToAbsoluteToolStripMenuItem, convertToRelativeToolStripMenuItem, toolStripSeparator6, moveEndpointToolStripMenuItem, moveOffsetToolStripMenuItem, translateToolStripMenuItem, convertToOutlineToolStripMenuItem });
+			editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem, toolStripSeparator3, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, deleteToolStripMenuItem, toolStripSeparator4, selectAllToolStripMenuItem, toolStripSeparator5, convertToAbsoluteToolStripMenuItem, convertToRelativeToolStripMenuItem, toolStripSeparator6, moveEndpointToolStripMenuItem, moveOffsetToolStripMenuItem, translateToolStripMenuItem, rotateToolStripMenuItem, convertToOutlineToolStripMenuItem });
 			editToolStripMenuItem.Name = "editToolStripMenuItem";
 			editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
 			editToolStripMenuItem.Text = "Edit";
@@ -369,6 +370,14 @@
 			translateToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			translateToolStripMenuItem.Text = "Translate";
 			translateToolStripMenuItem.Click += translateToolStripMenuItem_Click;
+			// 
+			// convertToOutlineToolStripMenuItem
+			// 
+			convertToOutlineToolStripMenuItem.Name = "convertToOutlineToolStripMenuItem";
+			convertToOutlineToolStripMenuItem.ShortcutKeyDisplayString = "O";
+			convertToOutlineToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+			convertToOutlineToolStripMenuItem.Text = "Convert to outline ...";
+			convertToOutlineToolStripMenuItem.Click += convertToOutlineToolStripMenuItem_Click;
 			// 
 			// viewToolStripMenuItem
 			// 
@@ -546,13 +555,13 @@
 			aboutToolStripMenuItem.Text = "About";
 			aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
 			// 
-			// convertToOutlineToolStripMenuItem
+			// rotateToolStripMenuItem
 			// 
-			convertToOutlineToolStripMenuItem.Name = "convertToOutlineToolStripMenuItem";
-			convertToOutlineToolStripMenuItem.ShortcutKeyDisplayString = "O";
-			convertToOutlineToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-			convertToOutlineToolStripMenuItem.Text = "Convert to outline ...";
-			convertToOutlineToolStripMenuItem.Click += convertToOutlineToolStripMenuItem_Click;
+			rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
+			rotateToolStripMenuItem.ShortcutKeyDisplayString = "R";
+			rotateToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+			rotateToolStripMenuItem.Text = "Rotate";
+			rotateToolStripMenuItem.Click += rotateToolStripMenuItem_Click;
 			// 
 			// MainForm
 			// 
@@ -636,5 +645,6 @@
 		private System.Windows.Forms.ToolStripMenuItem translateToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem snapToAxesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem convertToOutlineToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem rotateToolStripMenuItem;
 	}
 }

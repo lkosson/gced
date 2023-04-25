@@ -49,6 +49,8 @@ namespace GCEd
 		private Matrix inverseViewMatrix;
 		private Point mouseStart;
 		private Vector2 translateDistance;
+		private float rotationAngle;
+		private Vector2 rotationCenter;
 		private bool matrixUpdated;
 		private CanvasStyle style;
 		private IEnumerable<CanvasItem> items;
@@ -58,7 +60,7 @@ namespace GCEd
 		private bool panningInProgress;
 		private bool itemAddingInProgress;
 
-		private enum Interaction { None, Select, EndMove, OffsetMove, Translate }
+		private enum Interaction { None, Select, EndMove, OffsetMove, Translate, Rotate }
 
 		private float GridMinorStep => (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
 		private float GridMajorStep => GridMinorStep * 10;
@@ -710,6 +712,74 @@ namespace GCEd
 			Invalidate();
 		}
 
+		public void StartMouseRotate()
+		{
+			SaveOriginalValuesForSelection();
+			interaction = Interaction.Rotate;
+			mouseStart = PointToClient(MousePosition);
+			rotationAngle = 0f;
+			rotationCenter = ViewToAbs(mouseStart);
+
+			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return;
+
+			var bestSnapDistance = HintSnapDistance;
+			var bestSnap = rotationCenter;
+
+			var first = true;
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				if (first)
+				{
+					first = false;
+					var firstItemDistance = Geometry.LineLength(item.Operation.AbsStart, rotationCenter);
+					if (firstItemDistance < bestSnapDistance)
+					{
+						bestSnapDistance = firstItemDistance;
+						bestSnap = item.Operation.AbsStart;
+					}
+				}
+				var itemDistance = Geometry.LineLength(item.Operation.AbsEnd, rotationCenter);
+				if (itemDistance < bestSnapDistance)
+				{
+					bestSnapDistance = itemDistance;
+					bestSnap = item.Operation.AbsEnd;
+				}
+			}
+
+			rotationCenter = bestSnap;
+		}
+
+		private void UpdateMouseRotate(Point mouseLocation)
+		{
+			rotationAngle = -720f * (mouseLocation.X - mouseStart.X) / ClientSize.Width;
+
+			if (((ModifierKeys & Keys.Shift) == Keys.Shift) ^ SnapToAxes) rotationAngle = rotationAngle - (rotationAngle % 5f);
+
+			var matrix = Matrix3x2.CreateRotation((float)(rotationAngle * Math.PI / 180f), rotationCenter);
+
+			RestoreOriginalValuesForSelection();
+
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.AbsStart = Vector2.Transform(item.Operation.AbsStart, matrix);
+				item.Operation.AbsEnd = Vector2.Transform(item.Operation.AbsEnd, matrix);
+				item.Operation.AbsOffset = Vector2.Transform(item.Operation.AbsOffset, matrix);
+				item.OperationChanged();
+			}
+			Invalidate();
+		}
+
+		private void FinishMouseRotate()
+		{
+			RestoreOriginalValuesForSelection();
+			viewState.SaveUndoState();
+			viewState.Rotate(viewState.SelectedOperations, rotationCenter, rotationAngle);
+			interaction = Interaction.None;
+			Invalidate();
+		}
+
 		private void SaveOriginalValuesForSelection()
 		{
 			foreach (var item in items)
@@ -725,6 +795,7 @@ namespace GCEd
 			{
 				if (!item.Selected) continue;
 				item.Operation.RestoreOriginalValues();
+				item.OperationChanged();
 			}
 		}
 
@@ -828,6 +899,7 @@ namespace GCEd
 				else if (interaction == Interaction.EndMove) FinishMouseEndMove();
 				else if (interaction == Interaction.OffsetMove) FinishMouseOffsetMove();
 				else if (interaction == Interaction.Translate) FinishMouseTranslate();
+				else if (interaction == Interaction.Rotate) FinishMouseRotate();
 			}
 			else if (e.Button == MouseButtons.Middle) FinishMousePan();
 			base.OnMouseUp(e);
@@ -840,6 +912,7 @@ namespace GCEd
 			else if (interaction == Interaction.EndMove) UpdateMouseEndMove(e.Location);
 			else if (interaction == Interaction.OffsetMove) UpdateMouseOffsetMove(e.Location);
 			else if (interaction == Interaction.Translate) UpdateMouseTranslate(e.Location);
+			else if (interaction == Interaction.Rotate) UpdateMouseRotate(e.Location);
 			else if (interaction == Interaction.None) UpdateMouseHover(e.Location);
 			if (ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
 			base.OnMouseMove(e);

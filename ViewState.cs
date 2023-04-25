@@ -232,6 +232,41 @@ namespace GCEd
 			RunProgram();
 		}
 
+		public void Rotate(IEnumerable<GOperation> operations, Vector2 center, float angle)
+		{
+			var elements = GetLineAndNodeForOperations(operations);
+			if (!elements.Any()) return;
+
+			var matrix = Matrix3x2.CreateRotation((float)(angle * Math.PI / 180f), center);
+
+			foreach (var (line, operation, node, previousInExtent, nextInExtent) in elements)
+			{
+				var newStart = Vector2.Transform(operation.AbsStart, matrix);
+				var newEnd = Vector2.Transform(operation.AbsEnd, matrix);
+
+				if (previousInExtent == null && operation.AbsStart != center)
+				{
+					var target = operation.Absolute ? newStart : newStart - operation.AbsStart;
+					if (node.Previous == null || node.Previous.Value.Instruction != GInstruction.G0) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, XY = target });
+					else node.Previous.Value.XY = target;
+				}
+				if (nextInExtent == null && operation.AbsEnd != center)
+				{
+					if (node.Next == null || node.Next.Value.Instruction != GInstruction.G0) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G0, XY = operation.Absolute ? operation.AbsEnd : operation.AbsEnd - operation.AbsStart });
+				}
+				line.XY = operation.Absolute ? newEnd : newEnd - newStart;
+
+				if (line.IsArc)
+				{
+					var newOffset = Vector2.Transform(operation.AbsOffset, matrix);
+					newOffset -= newStart;
+					line.IJ = newOffset;
+				}
+			}
+
+			RunProgram();
+		}
+
 		public void FocusCanvas()
 		{
 			CanvasFocused?.Invoke();

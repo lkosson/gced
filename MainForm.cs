@@ -311,6 +311,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.None) AddNewLine(false);
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine(true);
 			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) ConvertToOutline();
+			else if (e.KeyCode == Keys.R && ModifierKeys == Keys.None) canvas.StartMouseRotate();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
 			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
 			//else if (e.KeyCode == Keys.S && ModifierKeys == (Keys.Control | Keys.Shift)) ToggleSnapToAxes();
@@ -367,5 +368,6 @@ namespace GCEd
 		private void translateToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseTranslate();
 		private void snapToAxesToolStripMenuItem_Click(object sender, EventArgs e) => ToggleSnapToAxes();
 		private void convertToOutlineToolStripMenuItem_Click(object sender, EventArgs e) => ConvertToOutline();
+		private void rotateToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseRotate();
 	}
 }
