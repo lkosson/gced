@@ -537,19 +537,29 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
+				if (item.Operation.Line.Instruction == GInstruction.Directive) continue;
 				hints.Add(item.Operation.AbsStart);
 			}
 			var absPos = Snap(ViewToAbs(mouseLocation), hints.ToArray());
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				if (item.Operation.Line.IsArc)
+				if (item.Operation.Line.Directive == Directive.Line)
+				{
+					item.Operation.AbsStart = absPos;
+				}
+				else if (item.Operation.Line.Directive == Directive.Circle)
+				{
+					item.Operation.AbsEnd = item.Operation.AbsEnd - item.Operation.AbsStart + absPos;
+					item.Operation.AbsStart = absPos;
+				}
+				else if (item.Operation.Line.IsArc)
 				{
 					if (changeArcSweepAngle)
 					{
 						if (item.Operation.Line.I.HasValue && item.Operation.Line.J.HasValue) absPos = Geometry.ConstrainToCircle(new Vector2(item.Operation.AbsI, item.Operation.AbsJ), item.Operation.AbsStart, absPos);
 						item.Operation.AbsXEnd = absPos.X;
-						item.Operation.AbsYEnd = absPos.Y; 
+						item.Operation.AbsYEnd = absPos.Y;
 					}
 					else
 					{
@@ -581,7 +591,19 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				item.Operation.Line.XY = item.Operation.Absolute ? item.Operation.AbsEnd : item.Operation.AbsEnd - item.Operation.AbsStart;
+				if (item.Operation.Line.Directive == Directive.Line)
+				{
+					item.Operation.Line.IJ = item.Operation.Line.IJ + item.Operation.Line.XY - item.Operation.AbsStart;
+					item.Operation.Line.XY = item.Operation.AbsStart;
+				}
+				else if (item.Operation.Line.Directive == Directive.Circle)
+				{
+					item.Operation.Line.XY = item.Operation.AbsStart;
+				}
+				else
+				{
+					item.Operation.Line.XY = item.Operation.Absolute ? item.Operation.AbsEnd : item.Operation.AbsEnd - item.Operation.AbsStart;
+				}
 				if (item.Operation.Line.IsArc)
 				{
 					if (itemAddingInProgress) needsOffset = true;
@@ -605,7 +627,7 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				if (!item.Operation.Line.IsArc)
+				if (!item.Operation.Line.IsArc && item.Operation.Line.Instruction != GInstruction.Directive)
 				{
 					skipped = true;
 					continue;
@@ -626,19 +648,26 @@ namespace GCEd
 			{
 				if (!item.Selected) continue;
 
-				var offset =
-					byThreePoints ? Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, Snap(absPos, item.Operation.AbsStart, item.Operation.AbsEnd))
-					: Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, Snap(absPos, item.Operation.AbsStart, item.Operation.AbsEnd));
-
-				if (byThreePoints)
+				if (item.Operation.Line.Instruction == GInstruction.Directive)
 				{
-					var side = (item.Operation.AbsXEnd - item.Operation.AbsXStart) * (absPos.Y - item.Operation.AbsYStart)
-						- (item.Operation.AbsYEnd - item.Operation.AbsYStart) * (absPos.X - item.Operation.AbsXStart);
-					item.Operation.Line.Instruction = side > 0 ? GInstruction.G2 : GInstruction.G3;
+					item.Operation.AbsEnd = Snap(absPos);
 				}
+				else if (item.Operation.Line.IsArc)
+				{
+					var offset =
+						byThreePoints ? Geometry.CircleCenterFromThreePoints(item.Operation.AbsStart, item.Operation.AbsEnd, Snap(absPos, item.Operation.AbsStart, item.Operation.AbsEnd))
+						: Geometry.ClosestPointOnNormal(item.Operation.AbsStart, item.Operation.AbsEnd, Snap(absPos, item.Operation.AbsStart, item.Operation.AbsEnd));
 
-				item.Operation.AbsI = offset.X;
-				item.Operation.AbsJ = offset.Y;
+					if (byThreePoints)
+					{
+						var side = (item.Operation.AbsXEnd - item.Operation.AbsXStart) * (absPos.Y - item.Operation.AbsYStart)
+							- (item.Operation.AbsYEnd - item.Operation.AbsYStart) * (absPos.X - item.Operation.AbsXStart);
+						item.Operation.Line.Instruction = side > 0 ? GInstruction.G2 : GInstruction.G3;
+					}
+
+					item.Operation.AbsI = offset.X;
+					item.Operation.AbsJ = offset.Y;
+				}
 				item.OperationChanged();
 			}
 
@@ -651,15 +680,22 @@ namespace GCEd
 			foreach (var item in items)
 			{
 				if (!item.Selected) continue;
-				if (Single.IsFinite(item.Operation.AbsOffset.X) && Single.IsFinite(item.Operation.AbsOffset.Y))
+				if (item.Operation.Line.Instruction == GInstruction.Directive)
 				{
-					item.Operation.Line.IJ = item.Operation.AbsOffset - item.Operation.AbsStart;
+					item.Operation.Line.IJ = item.Operation.AbsEnd - item.Operation.AbsStart;
 				}
-				else
+				else if (item.Operation.Line.IsArc)
 				{
-					item.Operation.Line.I = null;
-					item.Operation.Line.J = null;
-					item.Operation.Line.Instruction = GInstruction.G1;
+					if (Single.IsFinite(item.Operation.AbsOffset.X) && Single.IsFinite(item.Operation.AbsOffset.Y))
+					{
+						item.Operation.Line.IJ = item.Operation.AbsOffset - item.Operation.AbsStart;
+					}
+					else
+					{
+						item.Operation.Line.I = null;
+						item.Operation.Line.J = null;
+						item.Operation.Line.Instruction = GInstruction.G1;
+					}
 				}
 				item.OperationChanged();
 			}

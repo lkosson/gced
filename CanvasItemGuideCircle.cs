@@ -21,8 +21,8 @@ namespace GCEd
 		public override void OperationChanged()
 		{
 			base.OperationChanged();
-			AbsBoundingBox = new RectangleF((float)(Operation.Line.X.GetValueOrDefault() - Operation.Line.I.GetValueOrDefault()), (float)(Operation.Line.Y.GetValueOrDefault() - Operation.Line.J.GetValueOrDefault()),
-				(float)(2 * Operation.Line.I.GetValueOrDefault()), (float)(2 * Operation.Line.J.GetValueOrDefault()));
+			var axes = Operation.AbsEnd - Operation.AbsStart;
+			AbsBoundingBox = new RectangleF(Operation.AbsXStart - axes.X, Operation.AbsYStart - axes.Y, axes.X * 2, axes.Y * 2);
 		}
 
 		public override void Draw(Graphics g, CanvasStyle style)
@@ -31,8 +31,9 @@ namespace GCEd
 				: Hovered ? style.HoveredGuidePen
 				: style.GuidePen;
 
-			g.DrawEllipse(pen, (float)(Operation.Line.X.GetValueOrDefault() - Operation.Line.I.GetValueOrDefault()), (float)(Operation.Line.Y.GetValueOrDefault() - Operation.Line.J.GetValueOrDefault()),
-				(float)(2 * Operation.Line.I.GetValueOrDefault()), (float)(2 * Operation.Line.J.GetValueOrDefault()));
+			var axes = Operation.AbsEnd - Operation.AbsStart;
+
+			g.DrawEllipse(pen, Operation.AbsXStart - axes.X, Operation.AbsYStart - axes.Y, axes.X * 2, axes.Y * 2);
 		}
 
 		public override float Distance(Vector2 p)

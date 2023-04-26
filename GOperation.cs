@@ -169,7 +169,7 @@ namespace GCEd
 			if (Line.Instruction == GInstruction.Directive)
 			{
 				AbsStart = Line.XY;
-				if (Line.Directive == Directive.Line) AbsEnd = Line.XY + Line.IJ;
+				if (Line.Directive == Directive.Line || Line.Directive == Directive.Circle) AbsEnd = Line.XY + Line.IJ;
 			}
 		}
 
