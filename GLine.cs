@@ -13,6 +13,7 @@ namespace GCEd
 		private static Dictionary<(char, decimal), GInstruction> instructions;
 
 		public GInstruction Instruction { get; set; }
+		public Directive Directive { get; set; }
 		public string RawText { get; set; }
 		public string Comment { get; set; }
 		public string? Error { get; set; }
@@ -142,8 +143,18 @@ namespace GCEd
 						if (i == 0 && text.Length > 2 && ch == ';' && text[1] == '.' && text.Contains(' '))
 						{
 							i = text.IndexOf(' ');
-							Instruction = GInstruction.Directive;
-							Comment = text[2..i];
+							var directiveText = text[2..i];
+							if (Enum.TryParse<Directive>(directiveText, true, out var directive))
+							{
+								Instruction = GInstruction.Directive;
+								Directive = directive;
+							}
+							else
+							{
+								Instruction = GInstruction.Invalid;
+								Error = $"Unknown directive '{directiveText}'";
+								ErrorPosition = 2;
+							}
 						}
 						else
 						{
@@ -262,7 +273,7 @@ namespace GCEd
 			if (Instruction == GInstruction.Directive)
 			{
 				sb.Append(";.");
-				sb.Append(Comment);
+				sb.Append(Directive);
 			}
 			else sb.Append(Instruction.ToString());
 
@@ -275,7 +286,7 @@ namespace GCEd
 			if (F.HasValue) { sb.Append(" F"); sb.Append(F.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
 			if (S.HasValue) { sb.Append(" S"); sb.Append(S.Value.ToString("0.0###", CultureInfo.InvariantCulture)); }
 			if (P != null) { sb.Append(" P\""); sb.Append(P); sb.Append("\""); }
-			if (!String.IsNullOrEmpty(Comment) && Instruction != GInstruction.Directive) { sb.Append(" "); sb.Append(Comment); }
+			if (!String.IsNullOrEmpty(Comment)) { sb.Append(" "); sb.Append(Comment); }
 
 			return sb.ToString();
 		}
@@ -380,5 +391,13 @@ namespace GCEd
 		/// Spindle off
 		/// </summary>
 		M5
+	}
+
+	enum Directive
+	{
+		None,
+		Background,
+		Line,
+		Circle
 	}
 }

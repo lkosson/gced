@@ -165,6 +165,12 @@ namespace GCEd
 			else if (Line.IsArc) length = Geometry.ArcLength(AbsStart, AbsEnd, AbsOffset, Line.Instruction == GInstruction.G2);
 			if (F > 0) TimeEnd = context.Time + TimeSpan.FromSeconds(length * 60 / (double)F);
 			context.Time = TimeEnd;
+
+			if (Line.Instruction == GInstruction.Directive)
+			{
+				AbsStart = Line.XY;
+				if (Line.Directive == Directive.Line) AbsEnd = Line.XY + Line.IJ;
+			}
 		}
 
 		private class ByGLineEqualityComparerImpl : IEqualityComparer<GOperation>

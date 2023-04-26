@@ -99,11 +99,9 @@ namespace GCEd
 		{
 			foreach (var item in items)
 			{
-				var selected = viewState.SelectedOperations.Contains(item.Operation);
-				if (!(selected ^ item.Selected)) continue;
-				item.Selected = selected;
-				Invalidate(item);
+				item.Selected = viewState.SelectedOperations.Contains(item.Operation);
 			}
+			Invalidate();
 			PanViewToSelection();
 		}
 
@@ -230,7 +228,7 @@ namespace GCEd
 						+ " - X=" + ViewState.LastSelectedOperation.AbsXEnd.ToString("0.000", CultureInfo.InvariantCulture)
 						+ ", Y=" + ViewState.LastSelectedOperation.AbsYEnd.ToString("0.000", CultureInfo.InvariantCulture);
 
-					if (ViewState.LastSelectedOperation.Line.IsLine)
+					if (ViewState.LastSelectedOperation.Line.IsLine || ViewState.LastSelectedOperation.Line.Directive == Directive.Line)
 					{
 						coords += ", Angle = " + ((Geometry.LineAngle(ViewState.LastSelectedOperation.AbsStart, ViewState.LastSelectedOperation.AbsEnd) / Math.PI * 180 + 360) % 360).ToString("0.000") + "°";
 						coords += ", Length = " + Geometry.LineLength(ViewState.LastSelectedOperation.AbsStart, ViewState.LastSelectedOperation.AbsEnd).ToString("0.000");

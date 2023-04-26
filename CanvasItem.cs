@@ -49,7 +49,9 @@ namespace GCEd
 		{
 			if (operation.Line.IsLine) return new CanvasItemLine(operation);
 			else if (operation.Line.IsArc) return new CanvasItemArc(operation);
-			else if (operation.Line.Instruction == GInstruction.Directive && operation.Line.Comment == "background") return new CanvasItemBackground(operation);
+			else if (operation.Line.Directive == Directive.Background) return new CanvasItemBackground(operation);
+			else if (operation.Line.Directive == Directive.Line) return new CanvasItemGuideLine(operation);
+			else if (operation.Line.Directive == Directive.Circle) return new CanvasItemGuideCircle(operation);
 			else return null;
 		}
 	}
