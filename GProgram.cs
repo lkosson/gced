@@ -79,5 +79,18 @@ namespace GCEd
 				newProgram.Lines.AddLast(line.Clone());
 			return newProgram;
 		}
+
+		public IEnumerable<LineNodeOperation> GetLNOForOperations(IEnumerable<GOperation> operations)
+		{
+			var operationToLineMapping = operations.ToDictionary(operation => operation.Line);
+
+			var result = new List<LineNodeOperation>();
+			for (var node = Lines.First; node != null; node = node.Next)
+			{
+				if (!operationToLineMapping.TryGetValue(node.Value, out var operation)) continue;
+				result.Add(new LineNodeOperation(node.Value, node, operation, node.Previous == null ? null : operationToLineMapping.GetValueOrDefault(node.Previous.Value), node.Next == null ? null : operationToLineMapping.GetValueOrDefault(node.Next.Value)));
+			}
+			return result;
+		}
 	}
 }

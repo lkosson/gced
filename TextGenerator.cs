@@ -317,6 +317,9 @@ namespace GCEd
 				MajorGridPen = MinorGridPen;
 				OriginGridPen = MinorGridPen;
 				SelectionPen = MinorGridPen;
+				GuidePen = MinorGridPen;
+				HoveredGuidePen = MinorGridPen;
+				SelectedGuidePen = MinorGridPen;
 				TextBrush = new SolidBrush(Color.Transparent);
 				BackgroundBrush = TextBrush;
 				SelectionBrush = TextBrush;

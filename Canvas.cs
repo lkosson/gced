@@ -741,7 +741,7 @@ namespace GCEd
 		{
 			RestoreOriginalValuesForSelection();
 			viewState.SaveUndoState();
-			viewState.Translate(viewState.SelectedOperations, (decimal)translateDistance.X, (decimal)translateDistance.Y);
+			viewState.Translate(viewState.SelectedOperations, translateDistance);
 			interaction = Interaction.None;
 			Invalidate();
 		}
