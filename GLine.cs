@@ -63,9 +63,9 @@ namespace GCEd
 			Parse(text);
 		}
 
-		public void Parse(string text)
+		public void Parse(string text, GInstruction lastInstruction = GInstruction.Empty)
 		{
-			Instruction = GInstruction.Empty;
+			Instruction = lastInstruction;
 			RawText = text;
 			Comment = "";
 			Error = null;

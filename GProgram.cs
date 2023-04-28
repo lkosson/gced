@@ -33,9 +33,13 @@ namespace GCEd
 		{
 			string? line;
 			Lines.Clear();
+			GInstruction last = GInstruction.Empty;
 			while ((line = reader.ReadLine()) != null)
 			{
-				Lines.AddLast(new GLine(line));
+				var gline = new GLine();
+				gline.Parse(line, last);
+				Lines.AddLast(gline);
+				last = gline.Instruction;
 			}
 		}
 
