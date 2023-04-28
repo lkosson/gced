@@ -298,6 +298,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Shift) ConvertToRelative();
 			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Control) SelectAll(false);
 			else if (e.KeyCode == Keys.A && ModifierKeys == (Keys.Control | Keys.Shift)) SelectAll(true);
+			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Alt) ToggleSnapToAxes();
 			else if (e.KeyCode == Keys.B && ModifierKeys == Keys.Control) AddBackground();
 			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.None) ToggleCoords();
 			else if (e.KeyCode == Keys.C && ModifierKeys == Keys.Control) Copy();
@@ -305,15 +306,15 @@ namespace GCEd
 			else if (e.KeyCode == Keys.E && ModifierKeys == Keys.Shift) canvas.StartMouseOffsetMove();
 			else if (e.KeyCode == Keys.F && ModifierKeys == Keys.None) ToggleFPS();
 			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.None) ToggleGrid();
+			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.Alt) ToggleSnapToGrid();
 			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.None) canvas.PanZoomViewToFit();
 			else if (e.KeyCode == Keys.H && ModifierKeys == Keys.Shift) canvas.PanViewToSelection();
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.None) AddNewLine(false);
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine(true);
+			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Alt) ToggleSnapToItems();
 			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) ConvertToOutline();
 			else if (e.KeyCode == Keys.R && ModifierKeys == Keys.None) canvas.StartMouseRotate();
-			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.Alt) ToggleSnapToGrid();
-			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Alt) ToggleSnapToItems();
-			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Alt) ToggleSnapToAxes();
+			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) canvas.StartMouseScale();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) canvas.StartMouseTranslate();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.Control) AddText();
 			else if (e.KeyCode == Keys.V && ModifierKeys == Keys.Control) Paste(false);

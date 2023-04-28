@@ -118,6 +118,12 @@ namespace GCEd
 			RunProgram();
 		}
 
+		public void Scale(IEnumerable<GOperation> operations, Vector2 center, float amount)
+		{
+			Mutator.Scale(program, operations, center, amount);
+			RunProgram();
+		}
+
 		public void FocusCanvas()
 		{
 			CanvasFocused?.Invoke();

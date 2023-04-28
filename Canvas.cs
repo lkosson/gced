@@ -51,6 +51,8 @@ namespace GCEd
 		private Vector2 translateDistance;
 		private float rotationAngle;
 		private Vector2 rotationCenter;
+		private float scaleAmount;
+		private Vector2 scaleCenter;
 		private bool matrixUpdated;
 		private CanvasStyle style;
 		private IEnumerable<CanvasItem> items;
@@ -60,7 +62,7 @@ namespace GCEd
 		private bool panningInProgress;
 		private bool itemAddingInProgress;
 
-		private enum Interaction { None, Select, EndMove, OffsetMove, Translate, Rotate }
+		private enum Interaction { None, Select, EndMove, OffsetMove, Translate, Rotate, Scale }
 
 		private float GridMinorStep => (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
 		private float GridMajorStep => GridMinorStep * 10;
@@ -811,6 +813,73 @@ namespace GCEd
 			Invalidate();
 		}
 
+		public void StartMouseScale()
+		{
+			SaveOriginalValuesForSelection();
+			interaction = Interaction.Scale;
+			mouseStart = PointToClient(MousePosition);
+			scaleAmount = 1f;
+			scaleCenter = ViewToAbs(mouseStart);
+
+			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return;
+
+			var bestSnapDistance = HintSnapDistance;
+			var bestSnap = scaleCenter;
+
+			var first = true;
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				if (first)
+				{
+					first = false;
+					var firstItemDistance = Geometry.LineLength(item.Operation.AbsStart, scaleCenter);
+					if (firstItemDistance < bestSnapDistance)
+					{
+						bestSnapDistance = firstItemDistance;
+						bestSnap = item.Operation.AbsStart;
+					}
+				}
+				var itemDistance = Geometry.LineLength(item.Operation.AbsEnd, scaleCenter);
+				if (itemDistance < bestSnapDistance)
+				{
+					bestSnapDistance = itemDistance;
+					bestSnap = item.Operation.AbsEnd;
+				}
+			}
+
+			scaleCenter = bestSnap;
+		}
+
+		private void UpdateMouseScale(Point mouseLocation)
+		{
+			if (mouseLocation.X < mouseStart.X) scaleAmount = Math.Max(0.01f, 1.0f * mouseLocation.X / mouseStart.X);
+			else scaleAmount = 1f + 20f * (mouseLocation.X - mouseStart.X) * (mouseLocation.X - mouseStart.X) / (ClientSize.Width - mouseStart.X) / (ClientSize.Width - mouseStart.X);
+
+			var matrix = Matrix3x2.CreateScale(scaleAmount, scaleCenter);
+
+			RestoreOriginalValuesForSelection();
+
+			foreach (var item in items)
+			{
+				if (!item.Selected) continue;
+				item.Operation.AbsStart = Vector2.Transform(item.Operation.AbsStart, matrix);
+				item.Operation.AbsEnd = Vector2.Transform(item.Operation.AbsEnd, matrix);
+				item.Operation.AbsOffset = Vector2.Transform(item.Operation.AbsOffset, matrix);
+				item.OperationChanged();
+			}
+			Invalidate();
+		}
+
+		private void FinishMouseScale()
+		{
+			RestoreOriginalValuesForSelection();
+			viewState.SaveUndoState();
+			viewState.Scale(viewState.SelectedOperations, scaleCenter, scaleAmount);
+			interaction = Interaction.None;
+			Invalidate();
+		}
+
 		private void SaveOriginalValuesForSelection()
 		{
 			foreach (var item in items)
@@ -931,6 +1000,7 @@ namespace GCEd
 				else if (interaction == Interaction.OffsetMove) FinishMouseOffsetMove();
 				else if (interaction == Interaction.Translate) FinishMouseTranslate();
 				else if (interaction == Interaction.Rotate) FinishMouseRotate();
+				else if (interaction == Interaction.Scale) FinishMouseScale();
 			}
 			else if (e.Button == MouseButtons.Middle) FinishMousePan();
 			base.OnMouseUp(e);
@@ -944,6 +1014,7 @@ namespace GCEd
 			else if (interaction == Interaction.OffsetMove) UpdateMouseOffsetMove(e.Location);
 			else if (interaction == Interaction.Translate) UpdateMouseTranslate(e.Location);
 			else if (interaction == Interaction.Rotate) UpdateMouseRotate(e.Location);
+			else if (interaction == Interaction.Scale) UpdateMouseScale(e.Location);
 			else if (interaction == Interaction.None) UpdateMouseHover(e.Location);
 			if (ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
 			base.OnMouseMove(e);
