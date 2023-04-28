@@ -94,7 +94,7 @@ namespace GCEd
 						wasQuoted = true;
 					}
 				}
-				else if (Char.IsWhiteSpace(ch) || ch == ';' || ch == '(' || ch == '\0')
+				else if (Char.IsWhiteSpace(ch) || Char.IsLetter(ch) || ch == ';' || ch == '(' || ch == '\0')
 				{
 					if (currentField.HasValue)
 					{
@@ -138,6 +138,12 @@ namespace GCEd
 						wasQuoted = false;
 					}
 
+					if (Char.IsLetter(ch))
+					{
+						currentField = Char.ToUpper(ch);
+						valueStart = null;
+					}
+
 					if (ch == ';' || ch == '(')
 					{
 						if (i == 0 && text.Length > 2 && ch == ';' && text[1] == '.' && text.Contains(' '))
@@ -165,19 +171,6 @@ namespace GCEd
 					}
 
 					if (ch == '\0') break;
-				}
-				else if (Char.IsLetter(ch))
-				{
-					if (currentField.HasValue)
-					{
-						Instruction = GInstruction.Invalid;
-						Error = $"Invalid character '{ch}' in '{currentField}' field.";
-						ErrorPosition = i;
-						return;
-					}
-
-					currentField = Char.ToUpper(ch);
-					valueStart = null;
 				}
 				else if (Char.IsDigit(ch))
 				{
