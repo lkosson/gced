@@ -286,7 +286,6 @@ namespace GCEd
 			else if (e.KeyCode == Keys.S && ModifierKeys == (Keys.Control | Keys.Shift)) SaveFileAs();
 			else if (e.KeyCode == Keys.Menu) { }
 			else if (editorFocused) { e.Handled = false; }
-
 			else if (e.KeyCode == Keys.D0 && ModifierKeys == Keys.None) AddG0(false);
 			else if (e.KeyCode == Keys.D0 && ModifierKeys == Keys.Shift) AddG0(true);
 			else if (e.KeyCode == Keys.D1 && ModifierKeys == Keys.None) AddG1(false);
@@ -312,9 +311,9 @@ namespace GCEd
 			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Shift) AddNewLine(true);
 			else if (e.KeyCode == Keys.O && ModifierKeys == Keys.None) ConvertToOutline();
 			else if (e.KeyCode == Keys.R && ModifierKeys == Keys.None) canvas.StartMouseRotate();
-			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.None) ToggleSnapToGrid();
-			else if (e.KeyCode == Keys.S && ModifierKeys == Keys.Shift) ToggleSnapToItems();
-			//else if (e.KeyCode == Keys.S && ModifierKeys == (Keys.Control | Keys.Shift)) ToggleSnapToAxes();
+			else if (e.KeyCode == Keys.G && ModifierKeys == Keys.Alt) ToggleSnapToGrid();
+			else if (e.KeyCode == Keys.I && ModifierKeys == Keys.Alt) ToggleSnapToItems();
+			else if (e.KeyCode == Keys.A && ModifierKeys == Keys.Alt) ToggleSnapToAxes();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.None) canvas.StartMouseTranslate();
 			else if (e.KeyCode == Keys.T && ModifierKeys == Keys.Control) AddText();
 			else if (e.KeyCode == Keys.V && ModifierKeys == Keys.Control) Paste(false);
@@ -327,6 +326,8 @@ namespace GCEd
 			else if (e.KeyCode == Keys.OemSemicolon && ModifierKeys == Keys.None) AddComment(false);
 			else if (e.KeyCode == Keys.OemSemicolon && ModifierKeys == Keys.Shift) AddComment(true);
 			else { e.Handled = false; }
+
+			if (e.Handled && e.Alt) { e.SuppressKeyPress = true; }
 
 			base.OnKeyDown(e);
 		}

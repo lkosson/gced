@@ -62,6 +62,7 @@
 			moveEndpointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			moveOffsetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			translateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			rotateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			convertToOutlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			showGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,7 +87,6 @@
 			backgroundImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			textShapeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			rotateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
 			splitContainer.Panel1.SuspendLayout();
 			splitContainer.Panel2.SuspendLayout();
@@ -371,6 +371,14 @@
 			translateToolStripMenuItem.Text = "Translate";
 			translateToolStripMenuItem.Click += translateToolStripMenuItem_Click;
 			// 
+			// rotateToolStripMenuItem
+			// 
+			rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
+			rotateToolStripMenuItem.ShortcutKeyDisplayString = "R";
+			rotateToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+			rotateToolStripMenuItem.Text = "Rotate";
+			rotateToolStripMenuItem.Click += rotateToolStripMenuItem_Click;
+			// 
 			// convertToOutlineToolStripMenuItem
 			// 
 			convertToOutlineToolStripMenuItem.Name = "convertToOutlineToolStripMenuItem";
@@ -397,7 +405,7 @@
 			// snapToGridToolStripMenuItem
 			// 
 			snapToGridToolStripMenuItem.Name = "snapToGridToolStripMenuItem";
-			snapToGridToolStripMenuItem.ShortcutKeyDisplayString = "S";
+			snapToGridToolStripMenuItem.ShortcutKeyDisplayString = "Alt+G";
 			snapToGridToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
 			snapToGridToolStripMenuItem.Text = "Snap to grid";
 			snapToGridToolStripMenuItem.Click += snapToGridToolStripMenuItem_Click;
@@ -405,7 +413,7 @@
 			// snapToItemsToolStripMenuItem
 			// 
 			snapToItemsToolStripMenuItem.Name = "snapToItemsToolStripMenuItem";
-			snapToItemsToolStripMenuItem.ShortcutKeyDisplayString = "Shift+S";
+			snapToItemsToolStripMenuItem.ShortcutKeyDisplayString = "Alt+I";
 			snapToItemsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
 			snapToItemsToolStripMenuItem.Text = "Snap to items";
 			snapToItemsToolStripMenuItem.Click += snapToItemsToolStripMenuItem_Click;
@@ -413,7 +421,7 @@
 			// snapToAxesToolStripMenuItem
 			// 
 			snapToAxesToolStripMenuItem.Name = "snapToAxesToolStripMenuItem";
-			snapToAxesToolStripMenuItem.ShortcutKeyDisplayString = "";
+			snapToAxesToolStripMenuItem.ShortcutKeyDisplayString = "Alt+A";
 			snapToAxesToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
 			snapToAxesToolStripMenuItem.Text = "Snap to axes";
 			snapToAxesToolStripMenuItem.Click += snapToAxesToolStripMenuItem_Click;
@@ -554,14 +562,6 @@
 			aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
 			aboutToolStripMenuItem.Text = "About";
 			aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
-			// 
-			// rotateToolStripMenuItem
-			// 
-			rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
-			rotateToolStripMenuItem.ShortcutKeyDisplayString = "R";
-			rotateToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-			rotateToolStripMenuItem.Text = "Rotate";
-			rotateToolStripMenuItem.Click += rotateToolStripMenuItem_Click;
 			// 
 			// MainForm
 			// 
