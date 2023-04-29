@@ -43,8 +43,10 @@
 			listViewOperations.UseCompatibleStateImageBehavior = false;
 			listViewOperations.View = System.Windows.Forms.View.Details;
 			listViewOperations.SelectedIndexChanged += listBoxOperations_SelectedIndexChanged;
-			listViewOperations.KeyDown += listBoxOperations_KeyDown;
-			listViewOperations.KeyPress += listBoxOperations_KeyPress;
+			listViewOperations.KeyDown += listViewOperations_KeyDown;
+			listViewOperations.KeyPress += listViewOperations_KeyPress;
+			listViewOperations.KeyUp += listViewOperations_KeyUp;
+			listViewOperations.MouseUp += listViewOperations_MouseUp;
 			// 
 			// OperationsList
 			// 

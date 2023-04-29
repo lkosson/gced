@@ -31,6 +31,7 @@ namespace GCEd
 
 		private ViewState viewState;
 		private bool selectionInProgress;
+		private bool selectionChanged;
 
 		public OperationsList()
 		{
@@ -100,6 +101,13 @@ namespace GCEd
 
 		private void listBoxOperations_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			selectionChanged = true;
+		}
+
+		private void UpdateSelectionIfChanged()
+		{
+			if (!selectionChanged) return;
+			selectionChanged = false;
 			if (selectionInProgress) return;
 			selectionInProgress = true;
 			var allVisible = true;
@@ -114,7 +122,7 @@ namespace GCEd
 			selectionInProgress = false;
 		}
 
-		private void listBoxOperations_KeyDown(object sender, KeyEventArgs e)
+		private void listViewOperations_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Delete)
 			{
@@ -130,9 +138,19 @@ namespace GCEd
 			}
 		}
 
-		private void listBoxOperations_KeyPress(object sender, KeyPressEventArgs e)
+		private void listViewOperations_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			e.Handled = true;
+		}
+
+		private void listViewOperations_MouseUp(object sender, MouseEventArgs e)
+		{
+			UpdateSelectionIfChanged();
+		}
+
+		private void listViewOperations_KeyUp(object sender, KeyEventArgs e)
+		{
+			UpdateSelectionIfChanged();
 		}
 
 		private class DoubleBufferedListView : ListView
