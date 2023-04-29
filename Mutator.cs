@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace GCEd
 {
@@ -91,99 +87,66 @@ namespace GCEd
 
 		public static void Translate(GProgram program, IEnumerable<GOperation> operations, Vector2 offset)
 		{
-			var lnos = program.GetLNOForOperations(operations);
-			foreach (var (line, node, operation, previousInExtent, nextInExtent) in lnos)
-			{
-				if (previousInExtent == null)
-				{
-					var previousLine = node.Previous?.Value;
-					if (previousLine != null && previousLine.Instruction == GInstruction.G0)
-					{
-						previousLine.XY += offset;
-					}
-					else if (line.Instruction == GInstruction.G0)
-					{
-						if (!operation.Absolute) line.XY += offset;
-					}
-					else
-					{
-						if (operation.Absolute) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, XY = operation.AbsStart + offset });
-						else program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, XY = offset });
-					}
-				}
-
-				if (nextInExtent == null)
-				{
-					var nextLine = node.Next?.Value;
-					if (nextLine != null && nextLine.Instruction == GInstruction.G0)
-					{
-						if (!operation.Absolute) nextLine.XY -= offset;
-					}
-					else if (line.Instruction == GInstruction.G0)
-					{
-						if (!operation.Absolute) line.XY -= offset;
-					}
-					else
-					{
-						if (operation.Absolute) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G0, XY = operation.AbsEnd });
-						else program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G0, XY = -offset });
-					}
-				}
-
-				if (operation.Absolute) line.XY += offset;
-			}
+			var matrix = Matrix3x2.CreateTranslation(offset);
+			Transform(program, operations, matrix);
 		}
 
 		public static void Rotate(GProgram program, IEnumerable<GOperation> operations, Vector2 center, float angle)
 		{
 			var matrix = Matrix3x2.CreateRotation((float)(angle * Math.PI / 180f), center);
-			var lnos = program.GetLNOForOperations(operations);
-			foreach (var (line, node, operation, previousInExtent, nextInExtent) in lnos)
-			{
-				var newStart = Vector2.Transform(operation.AbsStart, matrix);
-				var newEnd = Vector2.Transform(operation.AbsEnd, matrix);
-
-				if (previousInExtent == null && operation.AbsStart != center)
-				{
-					var target = operation.Absolute ? newStart : newStart - operation.AbsStart;
-					if (node.Previous == null || node.Previous.Value.Instruction != GInstruction.G0) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, XY = target });
-					else node.Previous.Value.XY = target;
-				}
-				if (nextInExtent == null && operation.AbsEnd != center)
-				{
-					if (node.Next == null || node.Next.Value.Instruction != GInstruction.G0) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G0, XY = operation.Absolute ? operation.AbsEnd : operation.AbsEnd - operation.AbsStart });
-				}
-				line.XY = operation.Absolute ? newEnd : newEnd - newStart;
-
-				if (line.IsArc)
-				{
-					var newOffset = Vector2.Transform(operation.AbsOffset, matrix);
-					newOffset -= newStart;
-					line.IJ = newOffset;
-				}
-			}
+			Transform(program, operations, matrix);
 		}
 
 		public static void Scale(GProgram program, IEnumerable<GOperation> operations, Vector2 center, float amount)
 		{
 			var matrix = Matrix3x2.CreateScale(amount, center);
+			Transform(program, operations, matrix);
+		}
+
+		private static void Transform(GProgram program, IEnumerable<GOperation> operations, Matrix3x2 matrix)
+		{
 			var lnos = program.GetLNOForOperations(operations);
 			foreach (var (line, node, operation, previousInExtent, nextInExtent) in lnos)
 			{
 				var newStart = Vector2.Transform(operation.AbsStart, matrix);
 				var newEnd = Vector2.Transform(operation.AbsEnd, matrix);
 
-				if (previousInExtent == null && operation.AbsStart != center)
+				if (operation.Absolute)
 				{
-					var target = operation.Absolute ? newStart : newStart - operation.AbsStart;
-					if (node.Previous == null || node.Previous.Value.Instruction != GInstruction.G0) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, XY = target });
-					else node.Previous.Value.XY = target;
+					line.XY = newEnd;
+
+					if (previousInExtent == null && operation.AbsStart != newStart)
+					{
+						if (node.Previous?.Value is GLine previousLine && previousLine.Instruction == GInstruction.G0) previousLine.XY = newStart;
+						else if (line.Instruction == GInstruction.G0) line.XY = newEnd;
+						else program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, XY = newStart });
+					}
+
+					if (nextInExtent == null && operation.AbsEnd != newEnd)
+					{
+						if (node.Next?.Value is GLine nextLine && nextLine.Instruction == GInstruction.G0) { }
+						else if (line.Instruction == GInstruction.G0) line.XY = operation.AbsEnd;
+						else program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G0, XY = operation.AbsEnd });
+					}
 				}
-				if (nextInExtent == null && operation.AbsEnd != center)
+				else
 				{
-					if (node.Next == null || node.Next.Value.Instruction != GInstruction.G0) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G0, XY = operation.Absolute ? operation.AbsEnd : operation.AbsEnd - operation.AbsStart });
+					line.XY = newEnd - newStart;
+
+					if (previousInExtent == null && operation.AbsStart != newStart)
+					{
+						if (node.Previous?.Value is GLine previousLine && previousLine.Instruction == GInstruction.G0) previousLine.XY += newStart - operation.AbsStart;
+						else if (line.Instruction == GInstruction.G0) line.XY = newEnd - operation.AbsStart;
+						else program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G0, XY = newStart - operation.AbsStart });
+					}
+
+					if (nextInExtent == null && operation.AbsEnd != newEnd)
+					{
+						if (node.Next?.Value is GLine nextLine && nextLine.Instruction == GInstruction.G0) nextLine.XY -= newEnd - operation.AbsEnd;
+						else if (line.Instruction == GInstruction.G0) line.XY = operation.AbsEnd - newStart;
+						else program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G0, XY = operation.AbsEnd - newEnd });
+					}
 				}
-				line.XY = operation.Absolute ? newEnd : newEnd - newStart;
 
 				if (line.IsArc)
 				{
