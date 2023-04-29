@@ -43,18 +43,16 @@ namespace GCEd
 			foreach (var (line, node, operation, previousInExtent, nextInExtent) in lnos)
 			{
 				if (line.Instruction == GInstruction.G91) program.Lines.Remove(node);
-				if (previousInExtent == null)
+				if (previousInExtent == null && node.Previous != null && node.Previous.Value is GLine previousLine)
 				{
-					var previousLine = node.Previous?.Value;
-					if (previousLine != null && previousLine.Instruction == GInstruction.G91) program.Lines.Remove(node.Previous!);
-					else if (previousLine != null && previousLine.Instruction != GInstruction.G90) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G90 });
+					if (previousLine.Instruction == GInstruction.G91) program.Lines.Remove(node.Previous!);
+					else if (previousLine.Instruction != GInstruction.G90) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G90 });
 				}
 
-				if (nextInExtent == null)
+				if (nextInExtent == null && node.Next != null && node.Next.Value is GLine nextLine)
 				{
-					var nextLine = node.Next?.Value;
-					if (nextLine != null && nextLine.Instruction == GInstruction.G90) program.Lines.Remove(node.Next!);
-					else if (nextLine != null && nextLine.Instruction != GInstruction.G91) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G91 });
+					if (nextLine.Instruction == GInstruction.G90) program.Lines.Remove(node.Next!);
+					else if (nextLine.Instruction != GInstruction.G91) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G91 });
 				}
 
 				if (line.IsVisible) line.XY = operation.AbsEnd;
@@ -67,18 +65,16 @@ namespace GCEd
 			foreach (var (line, node, operation, previousInExtent, nextInExtent) in lnos)
 			{
 				if (line.Instruction == GInstruction.G90) program.Lines.Remove(node);
-				if (previousInExtent == null)
+				if (previousInExtent == null && node.Previous != null && node.Previous.Value is GLine previousLine)
 				{
-					var previousLine = node.Previous?.Value;
-					if (previousLine != null && previousLine.Instruction == GInstruction.G90) program.Lines.Remove(node.Previous!);
-					else if (previousLine != null && previousLine.Instruction != GInstruction.G91) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G91 });
+					if (previousLine.Instruction == GInstruction.G90) program.Lines.Remove(node.Previous!);
+					else if (previousLine.Instruction != GInstruction.G91) program.Lines.AddBefore(node, new GLine { Instruction = GInstruction.G91 });
 				}
 
-				if (nextInExtent == null)
+				if (nextInExtent == null && node.Next != null && node.Next.Value is GLine nextLine)
 				{
-					var nextLine = node.Next?.Value;
-					if (nextLine != null && nextLine.Instruction == GInstruction.G91) program.Lines.Remove(node.Next!);
-					else if (nextLine != null && nextLine.Instruction != GInstruction.G90) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G90 });
+					if (nextLine.Instruction == GInstruction.G91) program.Lines.Remove(node.Next!);
+					else if (nextLine.Instruction != GInstruction.G90) program.Lines.AddAfter(node, new GLine { Instruction = GInstruction.G90 });
 				}
 
 				if (line.IsVisible) line.XY = operation.AbsEnd - operation.AbsStart;
