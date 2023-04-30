@@ -65,7 +65,7 @@ namespace GCEd
 
 		public void Parse(string text, GInstruction lastInstruction = GInstruction.Empty)
 		{
-			Instruction = lastInstruction;
+			Instruction = GInstruction.Empty;
 			RawText = text;
 			Comment = "";
 			Error = null;
@@ -76,6 +76,7 @@ namespace GCEd
 			bool hasDecimalPoint = false;
 			bool isQuoted = false;
 			bool wasQuoted = false;
+			bool hasField = false;
 			for (var i = 0; i <= text.Length; i++)
 			{
 				var ch = i == text.Length ? '\0' : text[i];
@@ -136,6 +137,7 @@ namespace GCEd
 
 						currentField = null;
 						wasQuoted = false;
+						hasField = true;
 					}
 
 					if (Char.IsLetter(ch))
@@ -164,7 +166,7 @@ namespace GCEd
 						}
 						else
 						{
-							if (Instruction == GInstruction.Empty) Instruction = GInstruction.Comment;
+							if (Instruction == GInstruction.Empty && !hasField) Instruction = GInstruction.Comment;
 							Comment = text[i..];
 							break;
 						}
@@ -253,6 +255,8 @@ namespace GCEd
 				Error = "Missing I and J parameters for arc.";
 				ErrorPosition = 0;
 			}
+
+			if (Instruction == GInstruction.Empty && hasField) Instruction = lastInstruction;
 		}
 
 		public override string ToString()
