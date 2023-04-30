@@ -107,6 +107,13 @@ namespace GCEd
 				var newStart = Vector2.Transform(operation.AbsStart, matrix);
 				var newEnd = Vector2.Transform(operation.AbsEnd, matrix);
 
+				if (operation.Line.Directive == Directive.Line || operation.Line.Directive == Directive.Circle)
+				{
+					line.XY = newStart;
+					line.IJ = newEnd - newStart;
+					continue;
+				}
+
 				if (operation.Absolute)
 				{
 					line.XY = newEnd;
