@@ -36,6 +36,96 @@ namespace GCEd
 		{
 			viewState = new ViewState();
 			InitializeComponent();
+			txtRelEndX.Tag = new OperationPropertyAccessors(operation => operation.AbsXEnd - operation.AbsXStart, (operation, value) => operation.Line.X = operation.Absolute ? (decimal)operation.AbsXStart + value : value);
+			txtRelEndY.Tag = new OperationPropertyAccessors(operation => operation.AbsYEnd - operation.AbsYStart, (operation, value) => operation.Line.Y = operation.Absolute ? (decimal)operation.AbsYStart + value : value);
+			txtRelEndZ.Tag = new OperationPropertyAccessors(operation => operation.AbsZEnd - operation.AbsZStart, (operation, value) => operation.Line.Z = operation.Absolute ? (decimal)operation.AbsZStart + value : value);
+			txtRelCenterI.Tag = new OperationPropertyAccessors(operation => operation.Line.I, (operation, value) => operation.Line.I = value);
+			txtRelCenterJ.Tag = new OperationPropertyAccessors(operation => operation.Line.J, (operation, value) => operation.Line.J = value);
+			txtRelCenterK.Tag = new OperationPropertyAccessors(operation => operation.Line.K, (operation, value) => operation.Line.K = value);
+			txtRelF.Tag = new OperationPropertyAccessors(operation => operation.Line.F);
+			txtRelS.Tag = new OperationPropertyAccessors(operation => operation.Line.S);
+			txtAbsStartX.Tag = new OperationPropertyAccessors(operation => operation.AbsXStart);
+			txtAbsStartY.Tag = new OperationPropertyAccessors(operation => operation.AbsYStart);
+			txtAbsStartZ.Tag = new OperationPropertyAccessors(operation => operation.AbsZStart);
+			txtAbsEndX.Tag = new OperationPropertyAccessors(operation => operation.AbsXEnd, (operation, value) => operation.Line.X = value.HasValue ? operation.Absolute ? value : value - (decimal)operation.AbsXStart : null);
+			txtAbsEndY.Tag = new OperationPropertyAccessors(operation => operation.AbsYEnd, (operation, value) => operation.Line.Y = value.HasValue ? operation.Absolute ? value : value - (decimal)operation.AbsYStart : null);
+			txtAbsEndZ.Tag = new OperationPropertyAccessors(operation => operation.AbsZEnd, (operation, value) => operation.Line.Z = value.HasValue ? operation.Absolute ? value : value - (decimal)operation.AbsZStart : null);
+			txtAbsCenterI.Tag = new OperationPropertyAccessors(operation => operation.Line.I.HasValue ? (decimal?)operation.AbsI : null, (operation, value) => operation.Line.I = value.HasValue ? value - (decimal)operation.AbsXStart : null);
+			txtAbsCenterJ.Tag = new OperationPropertyAccessors(operation => operation.Line.J.HasValue ? (decimal?)operation.AbsJ : null, (operation, value) => operation.Line.J = value.HasValue ? value - (decimal)operation.AbsYStart : null);
+			txtAbsCenterK.Tag = new OperationPropertyAccessors(operation => operation.Line.K.HasValue ? (decimal?)operation.AbsK : null, (operation, value) => operation.Line.K = value.HasValue ? value - (decimal)operation.AbsZStart : null);
+			txtAbsF.Tag = new OperationPropertyAccessors(operation => operation.Line.F, (operation, value) => operation.Line.F = value);
+			txtAbsS.Tag = new OperationPropertyAccessors(operation => operation.Line.S, (operation, value) => operation.Line.S = value);
+
+			foreach (var textbox in tableLayoutPanel.Controls.Cast<Control>().OfType<TextBox>())
+			{
+				textbox.KeyDown += txtKeyDown;
+				textbox.Validating += txtValidating;
+				textbox.Validated += txtValidated;
+			}
+		}
+
+		private void txtValidated(object? sender, EventArgs e)
+		{
+			if (sender is not TextBox textBox) return;
+			if (textBox.Tag is not OperationPropertyAccessors accessors) return;
+			if (operationChangeInProgress) return;
+			if (textBoxChangeInProgress != null) return;
+			if (ViewState.LastSelectedOperation == null) return;
+			var valueChanged = false;
+			textBoxChangeInProgress = textBox;
+
+			var oldValue = accessors.Getter(ViewState.LastSelectedOperation);
+			if (String.IsNullOrWhiteSpace(textBox.Text))
+			{
+				accessors.Setter(ViewState.LastSelectedOperation, null);
+				valueChanged = oldValue != null;
+			}
+			else
+			{
+				Decimal.TryParse(textBox.Text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var newValue);
+				valueChanged = oldValue == null || Math.Abs(oldValue.Value - newValue) > 0.00001m;
+				if (valueChanged)
+				{
+					accessors.Setter(ViewState.LastSelectedOperation, newValue);
+					textBox.Text = Fmt(newValue);
+				}
+			}
+			if (!operationChangeInProgress && valueChanged)
+			{
+				ViewState.RunProgram();
+			}
+			textBoxChangeInProgress = null;
+		}
+
+		private void txtValidating(object? sender, CancelEventArgs e)
+		{
+			if (sender is not TextBox textBox) return;
+			if (String.IsNullOrWhiteSpace(textBox.Text) || Decimal.TryParse(textBox.Text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var _))
+			{
+				textBox.BackColor = SystemColors.Window;
+			}
+			else
+			{
+				textBox.BackColor = Color.Red;
+				e.Cancel = true;
+			}
+		}
+
+		private void txtKeyDown(object? sender, KeyEventArgs e)
+		{
+			if (sender is not TextBox textBox) return;
+			if (textBox.Tag is not OperationPropertyAccessors accessors) return;
+			if (ViewState.LastSelectedOperation == null) return;
+			if (e.KeyCode == Keys.Enter)
+			{
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+				SelectNextControl(ActiveControl, true, true, true, true);
+			}
+			else if (e.KeyCode == Keys.Escape)
+			{
+				textBox.Text = Fmt(accessors.Getter(ViewState.LastSelectedOperation));
+			}
 		}
 
 		private void ViewState_SelectedOperationsChanged()
@@ -87,105 +177,41 @@ namespace GCEd
 
 			if (ViewState.LastSelectedOperation == null)
 			{
-				txtRelEndX.Text = "";
-				txtRelEndY.Text = "";
-				txtRelEndZ.Text = "";
-				txtRelCenterI.Text = "";
-				txtRelCenterJ.Text = "";
-				txtRelCenterK.Text = "";
-				txtRelF.Text = "";
-				txtRelS.Text = "";
-
-				txtAbsStartX.Text = "";
-				txtAbsStartY.Text = "";
-				txtAbsStartZ.Text = "";
-				txtAbsEndX.Text = "";
-				txtAbsEndY.Text = "";
-				txtAbsEndZ.Text = "";
-				txtAbsCenterI.Text = "";
-				txtAbsCenterJ.Text = "";
-				txtAbsCenterK.Text = "";
-
-				txtAbsF.Text = "";
-				txtAbsS.Text = "";
+				foreach (var textBox in tableLayoutPanel.Controls.Cast<Control>().OfType<TextBox>())
+				{
+					textBox.Text = "";
+				}
 			}
 			else
 			{
-				if (textBoxChangeInProgress != txtRelEndX) txtRelEndX.Text = Fmt(ViewState.LastSelectedOperation.AbsXEnd - ViewState.LastSelectedOperation.AbsXStart);
-				if (textBoxChangeInProgress != txtRelEndY) txtRelEndY.Text = Fmt(ViewState.LastSelectedOperation.AbsYEnd - ViewState.LastSelectedOperation.AbsYStart);
-				if (textBoxChangeInProgress != txtRelEndZ) txtRelEndZ.Text = Fmt(ViewState.LastSelectedOperation.AbsZEnd - ViewState.LastSelectedOperation.AbsZStart);
-				if (textBoxChangeInProgress != txtRelCenterI) txtRelCenterI.Text = Fmt(ViewState.LastSelectedOperation.Line.I);
-				if (textBoxChangeInProgress != txtRelCenterJ) txtRelCenterJ.Text = Fmt(ViewState.LastSelectedOperation.Line.J);
-				if (textBoxChangeInProgress != txtRelCenterK) txtRelCenterK.Text = Fmt(ViewState.LastSelectedOperation.Line.K);
-				if (textBoxChangeInProgress != txtRelF) txtRelF.Text = Fmt(ViewState.LastSelectedOperation.F);
-				if (textBoxChangeInProgress != txtRelS) txtRelS.Text = Fmt(ViewState.LastSelectedOperation.S);
-				if (textBoxChangeInProgress != txtAbsStartX) txtAbsStartX.Text = Fmt(ViewState.LastSelectedOperation.AbsXStart);
-				if (textBoxChangeInProgress != txtAbsStartY) txtAbsStartY.Text = Fmt(ViewState.LastSelectedOperation.AbsYStart);
-				if (textBoxChangeInProgress != txtAbsStartZ) txtAbsStartZ.Text = Fmt(ViewState.LastSelectedOperation.AbsZStart);
-				if (textBoxChangeInProgress != txtAbsEndX) txtAbsEndX.Text = Fmt(ViewState.LastSelectedOperation.AbsXEnd);
-				if (textBoxChangeInProgress != txtAbsEndY) txtAbsEndY.Text = Fmt(ViewState.LastSelectedOperation.AbsYEnd);
-				if (textBoxChangeInProgress != txtAbsEndZ) txtAbsEndZ.Text = Fmt(ViewState.LastSelectedOperation.AbsZEnd);
-				if (textBoxChangeInProgress != txtAbsCenterI) txtAbsCenterI.Text = ViewState.LastSelectedOperation.Line.I.HasValue ? Fmt(ViewState.LastSelectedOperation.AbsI) : "";
-				if (textBoxChangeInProgress != txtAbsCenterJ) txtAbsCenterJ.Text = ViewState.LastSelectedOperation.Line.J.HasValue ? Fmt(ViewState.LastSelectedOperation.AbsJ) : "";
-				if (textBoxChangeInProgress != txtAbsCenterK) txtAbsCenterK.Text = ViewState.LastSelectedOperation.Line.K.HasValue ? Fmt(ViewState.LastSelectedOperation.AbsK) : "";
-				if (textBoxChangeInProgress != txtAbsF) txtAbsF.Text = Fmt(ViewState.LastSelectedOperation.Line.F);
-				if (textBoxChangeInProgress != txtAbsS) txtAbsS.Text = Fmt(ViewState.LastSelectedOperation.Line.S);
+				foreach (var textBox in tableLayoutPanel.Controls.Cast<Control>().OfType<TextBox>())
+				{
+					if (textBox == textBoxChangeInProgress) continue;
+					if (textBox.Tag is not OperationPropertyAccessors accessors) continue;
+					textBox.Text = Fmt(accessors.Getter(ViewState.LastSelectedOperation));
+				}
 			}
 			operationChangeInProgress = false;
 		}
 
-		private static string Fmt(float val) => val.ToString("0.000", CultureInfo.InvariantCulture);
 		private static string Fmt(decimal? val) => val.HasValue ? val.Value.ToString("0.000", CultureInfo.InvariantCulture) : "";
-		private static decimal? ValDecimal(string txt) => String.IsNullOrWhiteSpace(txt) ? null : Decimal.TryParse(txt, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var val) ? val : null;
 
-		private void SetVal(object textboxSender, Action<decimal?> setter)
+		class OperationPropertyAccessors
 		{
-			if (textboxSender is not TextBox textbox) return;
-			if (operationChangeInProgress) return;
-			if (textBoxChangeInProgress != null) return;
-			textBoxChangeInProgress = textbox;
+			public Func<GOperation, decimal?> Getter { get; init; }
+			public Action<GOperation, decimal?> Setter { get; init; }
 
-			if (String.IsNullOrWhiteSpace(textbox.Text))
+			public OperationPropertyAccessors(Func<GOperation, decimal?> getter, Action<GOperation, decimal?>? setter = null)
 			{
-				textbox.BackColor = SystemColors.Window;
-				setter(null);
-				if (!operationChangeInProgress)
-				{
-					ViewState.RunProgram();
-				}
+				Getter = getter;
+				Setter = setter ?? delegate { };
 			}
-			else
+
+			public OperationPropertyAccessors(Func<GOperation, float> getter, Action<GOperation, decimal?>? setter = null)
 			{
-				if (Decimal.TryParse(textbox.Text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var val))
-				{
-					textbox.BackColor = SystemColors.Window;
-					setter(val);
-					if (!operationChangeInProgress)
-					{
-						ViewState.RunProgram();
-					}
-				}
-				else
-				{
-					textbox.BackColor = Color.Red;
-				}
+				Getter = operation => (decimal)getter(operation);
+				Setter = setter ?? delegate { };
 			}
-			textBoxChangeInProgress = null;
 		}
-
-		private void txtRelEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.X = ViewState.LastSelectedOperation!.Absolute ? (decimal)ViewState.LastSelectedOperation!.AbsXStart + value : value);
-		private void txtRelEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.Y = ViewState.LastSelectedOperation!.Absolute ? (decimal)ViewState.LastSelectedOperation!.AbsYStart + value : value);
-		private void txtRelEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.Z = ViewState.LastSelectedOperation!.Absolute ? (decimal)ViewState.LastSelectedOperation!.AbsZStart + value : value);
-		private void txtRelCenterI_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.I = value);
-		private void txtRelCenterJ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.J = value);
-		private void txtRelCenterK_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.K = value);
-		private void txtAbsEndX_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.X = value.HasValue ? ViewState.LastSelectedOperation!.Absolute ? value.Value : value.Value - (decimal)ViewState.LastSelectedOperation!.AbsXStart : null);
-		private void txtAbsEndY_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.Y = value.HasValue ? ViewState.LastSelectedOperation!.Absolute ? value.Value : value.Value - (decimal)ViewState.LastSelectedOperation!.AbsYStart : null);
-		private void txtAbsEndZ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.Z = value.HasValue ? ViewState.LastSelectedOperation!.Absolute ? value.Value : value.Value - (decimal)ViewState.LastSelectedOperation!.AbsZStart : null);
-		private void txtAbsCenterI_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.I = value.HasValue ? value.Value - (decimal)ViewState.LastSelectedOperation!.AbsXStart : null);
-		private void txtAbsCenterJ_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.J = value.HasValue ? value.Value - (decimal)ViewState.LastSelectedOperation!.AbsYStart : null);
-		private void txtAbsCenterK_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.K = value.HasValue ? value.Value - (decimal)ViewState.LastSelectedOperation!.AbsZStart : null);
-		private void txtAbsF_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.F = value);
-		private void txtAbsS_TextChanged(object sender, EventArgs e) => SetVal(sender, value => ViewState.LastSelectedOperation!.Line.S = value);
 	}
 }
