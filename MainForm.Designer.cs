@@ -101,16 +101,7 @@
 			canvas.Dock = System.Windows.Forms.DockStyle.Fill;
 			canvas.Location = new System.Drawing.Point(0, 0);
 			canvas.Name = "canvas";
-			canvas.ShowCursorCoords = true;
-			canvas.ShowFPS = false;
-			canvas.ShowItemCoords = true;
-			canvas.ShowMajorGrid = true;
-			canvas.ShowMinorGrid = true;
-			canvas.ShowOriginGrid = true;
 			canvas.Size = new System.Drawing.Size(547, 514);
-			canvas.SnapToAxes = true;
-			canvas.SnapToGrid = true;
-			canvas.SnapToItems = true;
 			canvas.TabIndex = 0;
 			// 
 			// operationProperties

@@ -10,11 +10,14 @@ namespace GCEd
 	public partial class MainForm : Form
 	{
 		private ViewState viewState;
+		private Settings settings;
 
 		public MainForm()
 		{
 			InitializeComponent();
 			DoubleBuffered = true;
+			settings = new Settings();
+			canvas.Settings = settings;
 			viewState = new ViewState();
 			canvas.ViewState = viewState;
 			operationsList.ViewState = viewState;
@@ -223,43 +226,43 @@ namespace GCEd
 
 		public void ToggleGrid()
 		{
-			if (canvas.ShowMinorGrid)
+			if (settings.ShowMinorGrid)
 			{
-				canvas.ShowMinorGrid = false;
-				canvas.ShowMajorGrid = false;
-				canvas.ShowOriginGrid = false;
+				settings.ShowMinorGrid = false;
+				settings.ShowMajorGrid = false;
+				settings.ShowOriginGrid = false;
 			}
-			else if (!canvas.ShowOriginGrid) canvas.ShowOriginGrid = true;
-			else if (!canvas.ShowMajorGrid) canvas.ShowMajorGrid = true;
-			else canvas.ShowMinorGrid = true;
+			else if (!settings.ShowOriginGrid) settings.ShowOriginGrid = true;
+			else if (!settings.ShowMajorGrid) settings.ShowMajorGrid = true;
+			else settings.ShowMinorGrid = true;
 			canvas.Invalidate();
 		}
 
 		public void ToggleSnapToGrid()
 		{
-			canvas.SnapToGrid = !canvas.SnapToGrid;
+			settings.SnapToGrid = !settings.SnapToGrid;
 		}
 
 		public void ToggleSnapToItems()
 		{
-			canvas.SnapToItems = !canvas.SnapToItems;
+			settings.SnapToItems = !settings.SnapToItems;
 		}
 
 		public void ToggleSnapToAxes()
 		{
-			canvas.SnapToAxes = !canvas.SnapToAxes;
+			settings.SnapToAxes = !settings.SnapToAxes;
 		}
 
 		public void ToggleFPS()
 		{
-			canvas.ShowFPS = !canvas.ShowFPS;
+			settings.ShowFPS = !settings.ShowFPS;
 			canvas.Invalidate();
 		}
 
 		public void ToggleCoords()
 		{
-			canvas.ShowCursorCoords = !canvas.ShowCursorCoords;
-			if (!canvas.ShowCursorCoords) canvas.ShowItemCoords = !canvas.ShowItemCoords;
+			settings.ShowCursorCoords = !settings.ShowCursorCoords;
+			if (!settings.ShowCursorCoords) settings.ShowItemCoords = !settings.ShowItemCoords;
 			canvas.Invalidate();
 		}
 

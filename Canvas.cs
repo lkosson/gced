@@ -34,15 +34,8 @@ namespace GCEd
 			}
 		}
 
-		public bool ShowFPS { get; set; } = false;
-		public bool ShowCursorCoords { get; set; } = true;
-		public bool ShowItemCoords { get; set; } = true;
-		public bool ShowMinorGrid { get; set; } = true;
-		public bool ShowMajorGrid { get; set; } = true;
-		public bool ShowOriginGrid { get; set; } = true;
-		public bool SnapToGrid { get; set; } = true;
-		public bool SnapToItems { get; set; } = true;
-		public bool SnapToAxes { get; set; } = true;
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Settings Settings { get => settings; set { settings = value; style.Settings = value; } }
 
 		private ViewState viewState;
 		private Matrix viewMatrix;
@@ -57,6 +50,7 @@ namespace GCEd
 		private CanvasStyle style;
 		private IEnumerable<CanvasItem> items;
 		private bool panningToSelectionSuspended;
+		private Settings settings;
 
 		private Interaction interaction;
 		private bool panningInProgress;
@@ -64,13 +58,13 @@ namespace GCEd
 
 		private enum Interaction { None, Select, EndMove, OffsetMove, Translate, Rotate, Scale }
 
-		private float GridMinorStep => (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
-		private float GridMajorStep => GridMinorStep * 10;
-		private float HintSnapDistance => 2;
+		private float GridMinorStep => settings.GridMinorStep ?? (float)Math.Pow(10, 1 + Math.Floor(Math.Log10(ViewToAbs(10))));
+		private float GridMajorStep => settings.GridMajorStep ?? GridMinorStep * 10;
 
 		public Canvas()
 		{
 			DoubleBuffered = true;
+			settings = new Settings();
 			viewState = new ViewState();
 			viewMatrix = new Matrix();
 			inverseViewMatrix = new Matrix();
@@ -211,18 +205,18 @@ namespace GCEd
 			sw.Stop();
 			var paintTime = (int)sw.ElapsedMilliseconds;
 
-			if (ShowFPS)
+			if (Settings.ShowFPS)
 			{
 				e.Graphics.DrawString($"{paintTime} ms\n{(paintTime == 0 ? 999 : 1000 / paintTime)} fps\n{itemCount} items\n{visCount} visible", Font, style.TextBrush, 0, 0);
 			}
 
-			if (ShowCursorCoords || ShowItemCoords)
+			if (Settings.ShowCursorCoords || Settings.ShowItemCoords)
 			{
 				var absMouse = ViewToAbs(PointToClient(MousePosition));
 				var coords = "";
-				if (ShowCursorCoords) coords += $"X={absMouse.X.ToString("0.000", CultureInfo.InvariantCulture)}, Y={absMouse.Y.ToString("0.000", CultureInfo.InvariantCulture)}";
-				if (ShowCursorCoords && ShowItemCoords) coords += "\n";
-				if (ShowItemCoords && ViewState.LastSelectedOperation != null)
+				if (Settings.ShowCursorCoords) coords += $"X={absMouse.X.ToString("0.000", CultureInfo.InvariantCulture)}, Y={absMouse.Y.ToString("0.000", CultureInfo.InvariantCulture)}";
+				if (Settings.ShowCursorCoords && Settings.ShowItemCoords) coords += "\n";
+				if (Settings.ShowItemCoords && ViewState.LastSelectedOperation != null)
 				{
 					coords += ViewState.LastSelectedOperation.Line.Instruction
 						+ " X=" + ViewState.LastSelectedOperation.AbsXStart.ToString("0.000", CultureInfo.InvariantCulture)
@@ -243,7 +237,7 @@ namespace GCEd
 
 		private void PaintGrid(Graphics g, RectangleF absClipRect)
 		{
-			if (!ShowMajorGrid && !ShowMinorGrid && !ShowOriginGrid) return;
+			if (!Settings.ShowMajorGrid && !Settings.ShowMinorGrid && !Settings.ShowOriginGrid) return;
 
 			var gs = g.Save();
 			g.SmoothingMode = SmoothingMode.None;
@@ -258,7 +252,7 @@ namespace GCEd
 			var horizGridStart = absArea.Top - absArea.Top % absStepMajor - (absArea.Top < 0 ? absStepMajor : 0);
 			var horizGridEnd = absArea.Bottom - absArea.Bottom % absStepMajor + (absArea.Bottom < 0 ? absStepMajor : 0) + absStepMajor;
 
-			if (ShowMinorGrid)
+			if (Settings.ShowMinorGrid)
 			{
 				for (var x = vertGridStart; x < vertGridEnd; x += absStepMinor)
 					g.DrawLine(style.MinorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
@@ -267,7 +261,7 @@ namespace GCEd
 					g.DrawLine(style.MinorGridPen, absClipRect.Left, y, absClipRect.Right, y);
 			}
 
-			if (ShowMajorGrid)
+			if (Settings.ShowMajorGrid)
 			{
 				for (var x = vertGridStart; x < vertGridEnd; x += absStepMajor)
 					g.DrawLine(style.MajorGridPen, x, absClipRect.Top, x, absClipRect.Bottom);
@@ -276,7 +270,7 @@ namespace GCEd
 					g.DrawLine(style.MajorGridPen, absClipRect.Left, y, absClipRect.Right, y);
 			}
 
-			if (ShowOriginGrid)
+			if (Settings.ShowOriginGrid)
 			{
 				g.DrawLine(style.OriginGridPen, 0, absClipRect.Top, 0, absClipRect.Bottom);
 				g.DrawLine(style.OriginGridPen, absClipRect.Left, 0, absClipRect.Right, 0);
@@ -334,7 +328,7 @@ namespace GCEd
 			var viewBound = AbsToView(absBounds);
 			viewBound.Inflate(10, 10);
 			Invalidate(viewBound);
-			if (ShowFPS) Invalidate(new Rectangle(0, 0, 100, 100));
+			if (Settings.ShowFPS) Invalidate(new Rectangle(0, 0, 100, 100));
 		}
 
 		private float ViewToAbs(int dist)
@@ -389,12 +383,12 @@ namespace GCEd
 		{
 			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return point;
 
-			var bestXHintDistance = HintSnapDistance;
-			var bestYHintDistance = HintSnapDistance;
+			var bestXHintDistance = settings.HintSnapDistance;
+			var bestYHintDistance = settings.HintSnapDistance;
 			var bestXHint = Single.NaN;
 			var bestYHint = Single.NaN;
 
-			if (SnapToAxes)
+			if (Settings.SnapToAxes)
 			{
 				foreach (var hint in hints)
 				{
@@ -413,7 +407,7 @@ namespace GCEd
 				}
 			}
 
-			if (SnapToItems)
+			if (Settings.SnapToItems)
 			{
 				foreach (var item in items)
 				{
@@ -430,7 +424,7 @@ namespace GCEd
 			if (!Single.IsNaN(bestXHint)) point = new Vector2(bestXHint, point.Y);
 			if (!Single.IsNaN(bestYHint)) point = new Vector2(point.X, bestYHint);
 
-			if (!SnapToGrid) return point;
+			if (!Settings.SnapToGrid) return point;
 			var step = GridMinorStep;
 			return new Vector2((float)Math.Floor((point.X + step / 2) / step) * step, (float)Math.Floor((point.Y + step / 2) / step) * step);
 		}
@@ -755,7 +749,7 @@ namespace GCEd
 
 			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return;
 
-			var bestSnapDistance = HintSnapDistance;
+			var bestSnapDistance = settings.HintSnapDistance;
 			var bestSnap = rotationCenter;
 
 			var first = true;
@@ -787,7 +781,7 @@ namespace GCEd
 		{
 			rotationAngle = -720f * (mouseLocation.X - mouseStart.X) / ClientSize.Width;
 
-			if (((ModifierKeys & Keys.Shift) == Keys.Shift) ^ SnapToAxes) rotationAngle = rotationAngle - (rotationAngle % 5f);
+			if (((ModifierKeys & Keys.Shift) == Keys.Shift) ^ Settings.SnapToAxes) rotationAngle = rotationAngle - (rotationAngle % 5f);
 
 			var matrix = Matrix3x2.CreateRotation((float)(rotationAngle * Math.PI / 180f), rotationCenter);
 
@@ -823,7 +817,7 @@ namespace GCEd
 
 			if ((ModifierKeys & Keys.Shift) == Keys.Shift) return;
 
-			var bestSnapDistance = HintSnapDistance;
+			var bestSnapDistance = settings.HintSnapDistance;
 			var bestSnap = scaleCenter;
 
 			var first = true;
@@ -1016,7 +1010,7 @@ namespace GCEd
 			else if (interaction == Interaction.Rotate) UpdateMouseRotate(e.Location);
 			else if (interaction == Interaction.Scale) UpdateMouseScale(e.Location);
 			else if (interaction == Interaction.None) UpdateMouseHover(e.Location);
-			if (ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
+			if (Settings.ShowCursorCoords) Invalidate(new Rectangle(0, Height - 40, 500, 40));
 			base.OnMouseMove(e);
 		}
 	}
