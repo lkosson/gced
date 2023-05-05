@@ -36,8 +36,8 @@ namespace GCEd
 		public float MajorGridThickness { get; set; } = 1;
 		public Color OriginGridColor { get; set; } = Color.FromArgb(0xE0, 0xF0, 0xFF);
 		public float OriginGridThickness { get; set; } = 2;
-		public Color SelectionBorderColor { get; set; } = Color.FromArgb(0x40, 0xE0, 0xEA, 0xF5);
-		public Color SelectionAreaColor { get; set; } = Color.FromArgb(0xAF, 0xCF, 0xFF);
+		public Color SelectionBorderColor { get; set; } = Color.FromArgb(0xAF, 0xCF, 0xFF);
+		public Color SelectionAreaColor { get; set; } = Color.FromArgb(0x40, 0xE0, 0xEA, 0xF5);
 		public Color TextColor { get; set; } = Color.FromArgb(0xE5, 0xF5, 0xFF);
 		public Color BackgroundColor { get; set; } = Color.FromArgb(0x20, 0x4A, 0x7F);
 	}
