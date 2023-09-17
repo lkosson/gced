@@ -88,9 +88,16 @@ namespace GCEd
 
 		public void DeleteOperations(IEnumerable<GOperation> operations)
 		{
-			var newSelection = this.operations.AsEnumerable().Reverse().SkipWhile(operation => operation != LastSelectedOperation).Skip(1).FirstOrDefault();
+			var operationsLookup = operations.ToHashSet();
+			var newSelection = new List<GOperation>();
+			var selectNext = false;
+			foreach (var operation in Operations)
+			{
+				if (operationsLookup.Contains(operation)) selectNext = true;
+				else if (selectNext) { newSelection.Add(operation); selectNext = false;}
+			}
 			Mutator.Delete(program, operations);
-			if (newSelection != null) SetSelection(new[] { newSelection });
+			if (newSelection != null) SetSelection(newSelection);
 			RunProgram();
 		}
 
