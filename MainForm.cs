@@ -322,6 +322,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.I && e.Modifiers == Keys.Shift) AddNewLine(true);
 			else if (e.KeyCode == Keys.I && e.Modifiers == Keys.Alt) ToggleSnapToItems();
 			else if (e.KeyCode == Keys.O && e.Modifiers == Keys.None) ConvertToOutline();
+			else if (e.KeyCode == Keys.P && e.Modifiers == Keys.None) canvas.StartMousePan();
 			else if (e.KeyCode == Keys.R && e.Modifiers == Keys.None) canvas.StartMouseRotate();
 			else if (e.KeyCode == Keys.S && e.Modifiers == Keys.None) canvas.StartMouseScale();
 			else if (e.KeyCode == Keys.T && e.Modifiers == Keys.None) canvas.StartMouseTranslate();
@@ -386,5 +387,6 @@ namespace GCEd
 		private void commentUncommentLinesToolStripMenuItem_Click(object sender, EventArgs e) => ToggleComment();
 		private void zoomInToolStripMenuItem_Click(object sender, EventArgs e) => canvas.Zoom(1.5f);
 		private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e) => canvas.Zoom(1 / 1.5f);
+		private void panViewToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMousePan();
 	}
 }

@@ -451,7 +451,7 @@ namespace GCEd
 			Invalidate();
 		}
 
-		private void StartMousePan()
+		public void StartMousePan()
 		{
 			panningInProgress = true;
 			mouseStart = PointToClient(MousePosition);
@@ -997,7 +997,7 @@ namespace GCEd
 				else if (interaction == Interaction.Rotate) FinishMouseRotate();
 				else if (interaction == Interaction.Scale) FinishMouseScale();
 			}
-			else if (e.Button == MouseButtons.Middle) FinishMousePan();
+			if (panningInProgress) FinishMousePan();
 			base.OnMouseUp(e);
 		}
 
