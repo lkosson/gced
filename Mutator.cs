@@ -37,6 +37,31 @@ namespace GCEd
 			if (marker != null) program.Lines.Remove(marker);
 		}
 
+		public static void ToggleComment(IEnumerable<GLine> lines)
+		{
+			if (!lines.Any()) return;
+			if (lines.First().Instruction == GInstruction.Comment) UncommentLines(lines);
+			else CommentLines(lines);
+		}
+
+		public static void CommentLines(IEnumerable<GLine> lines)
+		{
+			foreach (var line in lines)
+			{
+				if (line.Instruction == GInstruction.Comment) continue;
+				line.Parse("; " + line.ToString());
+			}
+		}
+
+		public static void UncommentLines(IEnumerable<GLine> lines)
+		{
+			foreach (var line in lines)
+			{
+				if (line.Instruction != GInstruction.Comment) continue;
+				line.Parse(line.ToString().Substring(1).TrimStart());
+			}
+		}
+
 		public static void ConvertToAbsolute(GProgram program, IEnumerable<GOperation> operations)
 		{
 			var lnos = program.GetLNOForOperations(operations.Where(operation => !operation.Absolute));

@@ -131,6 +131,12 @@ namespace GCEd
 			RunProgram();
 		}
 
+		public void ToggleComment(IEnumerable<GOperation> operations)
+		{
+			Mutator.ToggleComment(operations.Select(operation => operation.Line));
+			RunProgram();
+		}
+
 		public void FocusCanvas()
 		{
 			CanvasFocused?.Invoke();

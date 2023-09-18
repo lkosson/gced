@@ -141,6 +141,12 @@ namespace GCEd
 			viewState.FocusLineEditor();
 		}
 
+		private void ToggleComment()
+		{
+			viewState.SaveUndoState();
+			viewState.ToggleComment(viewState.SelectedOperations);
+		}
+
 		private void AddG0(bool before)
 		{
 			canvas.SuspendPanningToSelection();
@@ -329,6 +335,7 @@ namespace GCEd
 			else if (e.KeyCode == Keys.Escape) canvas.Abort();
 			else if (e.KeyCode == Keys.OemSemicolon && e.Modifiers == Keys.None) AddComment(false);
 			else if (e.KeyCode == Keys.OemSemicolon && e.Modifiers == Keys.Shift) AddComment(true);
+			else if (e.KeyCode == Keys.OemQuestion && e.Modifiers == Keys.None) ToggleComment();
 			else { e.Handled = false; }
 
 			if (e.Handled && e.Alt) { e.SuppressKeyPress = true; }
@@ -374,5 +381,6 @@ namespace GCEd
 		private void snapToAxesToolStripMenuItem_Click(object sender, EventArgs e) => ToggleSnapToAxes();
 		private void convertToOutlineToolStripMenuItem_Click(object sender, EventArgs e) => ConvertToOutline();
 		private void rotateToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseRotate();
+		private void commentUncommentLinesToolStripMenuItem_Click(object sender, EventArgs e) => ToggleComment();
 	}
 }
