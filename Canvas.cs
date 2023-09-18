@@ -498,15 +498,8 @@ namespace GCEd
 				if (item.Hovered)
 				{
 					item.Hovered = false;
-					item.Selected = true;
-					selectedOperations.Add(item.Operation);
-				}
-				else
-				{
-					if (!append && item.Selected)
-					{
-						item.Selected = false;
-					}
+					if (item.Selected) selectedOperations.Remove(item.Operation);
+					else selectedOperations.Add(item.Operation);
 				}
 			}
 			viewState.SetSelection(selectedOperations);
