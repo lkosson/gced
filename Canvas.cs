@@ -432,11 +432,19 @@ namespace GCEd
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
 			base.OnMouseWheel(e);
+			Zoom(e.Delta > 0 ? 1.1f : 1 / 1.1f, e.X, e.Y);
+		}
 
-			viewMatrix.Translate(-e.X, -e.Y, MatrixOrder.Append);
-			if (e.Delta > 0) viewMatrix.Scale(1.1f, 1.1f, MatrixOrder.Append);
-			else viewMatrix.Scale(1 / 1.1f, 1 / 1.1f, MatrixOrder.Append);
-			viewMatrix.Translate(e.X, e.Y, MatrixOrder.Append);
+		public void Zoom(float scale)
+		{
+			Zoom(scale, Width / 2, Height / 2);
+		}
+
+		public void Zoom(float scale, int x, int y)
+		{
+			viewMatrix.Translate(-x, -y, MatrixOrder.Append);
+			viewMatrix.Scale(scale, scale, MatrixOrder.Append);
+			viewMatrix.Translate(x, y, MatrixOrder.Append);
 
 			matrixUpdated = true;
 

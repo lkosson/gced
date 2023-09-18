@@ -336,6 +336,8 @@ namespace GCEd
 			else if (e.KeyCode == Keys.OemSemicolon && e.Modifiers == Keys.None) AddComment(false);
 			else if (e.KeyCode == Keys.OemSemicolon && e.Modifiers == Keys.Shift) AddComment(true);
 			else if (e.KeyCode == Keys.OemQuestion && e.Modifiers == Keys.None) ToggleComment();
+			else if (e.KeyCode == Keys.Oemplus && e.Modifiers == Keys.None) canvas.Zoom(1.1f);
+			else if (e.KeyCode == Keys.OemMinus && e.Modifiers == Keys.None) canvas.Zoom(1 / 1.1f);
 			else { e.Handled = false; }
 
 			if (e.Handled && e.Alt) { e.SuppressKeyPress = true; }
@@ -382,5 +384,7 @@ namespace GCEd
 		private void convertToOutlineToolStripMenuItem_Click(object sender, EventArgs e) => ConvertToOutline();
 		private void rotateToolStripMenuItem_Click(object sender, EventArgs e) => canvas.StartMouseRotate();
 		private void commentUncommentLinesToolStripMenuItem_Click(object sender, EventArgs e) => ToggleComment();
+		private void zoomInToolStripMenuItem_Click(object sender, EventArgs e) => canvas.Zoom(1.5f);
+		private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e) => canvas.Zoom(1 / 1.5f);
 	}
 }

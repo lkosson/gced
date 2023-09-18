@@ -56,6 +56,8 @@
 			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+			commentUncommentLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
 			convertToAbsoluteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			convertToRelativeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
@@ -88,8 +90,8 @@
 			backgroundImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			textShapeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			commentUncommentLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+			zoomInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
 			splitContainer.Panel1.SuspendLayout();
 			splitContainer.Panel2.SuspendLayout();
@@ -320,6 +322,19 @@
 			toolStripSeparator5.Name = "toolStripSeparator5";
 			toolStripSeparator5.Size = new System.Drawing.Size(241, 6);
 			// 
+			// commentUncommentLinesToolStripMenuItem
+			// 
+			commentUncommentLinesToolStripMenuItem.Name = "commentUncommentLinesToolStripMenuItem";
+			commentUncommentLinesToolStripMenuItem.ShortcutKeyDisplayString = "/";
+			commentUncommentLinesToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+			commentUncommentLinesToolStripMenuItem.Text = "Comment / uncomment lines";
+			commentUncommentLinesToolStripMenuItem.Click += commentUncommentLinesToolStripMenuItem_Click;
+			// 
+			// toolStripSeparator9
+			// 
+			toolStripSeparator9.Name = "toolStripSeparator9";
+			toolStripSeparator9.Size = new System.Drawing.Size(241, 6);
+			// 
 			// convertToAbsoluteToolStripMenuItem
 			// 
 			convertToAbsoluteToolStripMenuItem.Name = "convertToAbsoluteToolStripMenuItem";
@@ -390,7 +405,7 @@
 			// 
 			// viewToolStripMenuItem
 			// 
-			viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { showGridToolStripMenuItem, snapToGridToolStripMenuItem, snapToItemsToolStripMenuItem, snapToAxesToolStripMenuItem, showCoordinatesToolStripMenuItem, showPerformanceStatsToolStripMenuItem, panzoomToFitToolStripMenuItem, panViewToSelectionToolStripMenuItem });
+			viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { showGridToolStripMenuItem, snapToGridToolStripMenuItem, snapToItemsToolStripMenuItem, snapToAxesToolStripMenuItem, showCoordinatesToolStripMenuItem, showPerformanceStatsToolStripMenuItem, panzoomToFitToolStripMenuItem, panViewToSelectionToolStripMenuItem, zoomInToolStripMenuItem, zoomOutToolStripMenuItem });
 			viewToolStripMenuItem.Name = "viewToolStripMenuItem";
 			viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
 			viewToolStripMenuItem.Text = "View";
@@ -564,18 +579,21 @@
 			aboutToolStripMenuItem.Text = "About";
 			aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
 			// 
-			// commentUncommentLinesToolStripMenuItem
+			// zoomInToolStripMenuItem
 			// 
-			commentUncommentLinesToolStripMenuItem.Name = "commentUncommentLinesToolStripMenuItem";
-			commentUncommentLinesToolStripMenuItem.ShortcutKeyDisplayString = "/";
-			commentUncommentLinesToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-			commentUncommentLinesToolStripMenuItem.Text = "Comment / uncomment lines";
-			commentUncommentLinesToolStripMenuItem.Click += commentUncommentLinesToolStripMenuItem_Click;
+			zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
+			zoomInToolStripMenuItem.ShortcutKeyDisplayString = "=";
+			zoomInToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+			zoomInToolStripMenuItem.Text = "Zoom in";
+			zoomInToolStripMenuItem.Click += zoomInToolStripMenuItem_Click;
 			// 
-			// toolStripSeparator9
+			// zoomOutToolStripMenuItem
 			// 
-			toolStripSeparator9.Name = "toolStripSeparator9";
-			toolStripSeparator9.Size = new System.Drawing.Size(241, 6);
+			zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
+			zoomOutToolStripMenuItem.ShortcutKeyDisplayString = "-";
+			zoomOutToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+			zoomOutToolStripMenuItem.Text = "Zoom out";
+			zoomOutToolStripMenuItem.Click += zoomOutToolStripMenuItem_Click;
 			// 
 			// MainForm
 			// 
@@ -663,5 +681,7 @@
 		private System.Windows.Forms.ToolStripMenuItem scaleToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem commentUncommentLinesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+		private System.Windows.Forms.ToolStripMenuItem zoomInToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem zoomOutToolStripMenuItem;
 	}
 }
