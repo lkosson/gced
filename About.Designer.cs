@@ -112,7 +112,7 @@
 			label3.Name = "label3";
 			label3.Size = new System.Drawing.Size(139, 15);
 			label3.TabIndex = 4;
-			label3.Text = "Version: 1.2.1, 2023-09-18";
+			label3.Text = "Version: 1.2.2, 2023-09-21";
 			// 
 			// label2
 			// 
