@@ -93,7 +93,11 @@ namespace GCEd
 			{
 				var operation = (GOperation)item.Tag;
 				item.Selected = viewState.SelectedOperations.Contains(operation);
-				if (viewState.LastSelectedOperation == operation) listViewOperations.TopItem = listViewOperations.Items[Math.Max(0, item.Index - 3)];
+				if (viewState.LastSelectedOperation == operation)
+				{
+					listViewOperations.TopItem = listViewOperations.Items[Math.Max(0, item.Index - 3)];
+					listViewOperations.FocusedItem = listViewOperations.Items[Math.Max(0, item.Index - 3)];
+				}
 			}
 			listViewOperations.EndUpdate();
 			selectionInProgress = false;
